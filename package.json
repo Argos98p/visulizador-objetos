@@ -6,8 +6,12 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
+    "js-cloudimage-360-view": "^3.0.3",
     "react": "^18.2.0",
     "react-360-view": "^0.1.3",
+    "react-360-view-extended": "^0.1.6",
+    "react-360-view-lilith": "^0.1.7",
+    "react-360-view-simple": "^0.1.3",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
