@@ -1,23 +1,25 @@
-import logo from './logo.svg';
 import './App.css';
-
+import React360Viewer from "react-360-view";
 function App() {
+  var visualizerContainer={width:"38%", };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <div className="row" style={{textAlign:"center"}}>
+        <div className="col-12 mb-4 card p-0"  style={{textAlign:"center", margin: "auto",
+  width: "65%"}}>
+          
+          <div className="card" style={visualizerContainer}>
+          <React360Viewer
+            amount={114}
+            imagePath={`./img/`}
+            fileName="control_{index}.jpg"
+            buttonClass="ligth"
+          />
+          </div>
+          
+        </div>
+      </div>
+      
     </div>
   );
 }
