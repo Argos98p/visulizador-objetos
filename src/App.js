@@ -1,17 +1,18 @@
 import './App.css';
-import React360Viewer from "react-360-view-simple";
-//import ThreeSixty from 'react-360-view-lilith';
-import ThreeSixty from 'react-360-view-extended';
-function App() { // var visualizerContainer={width:"42%", };
-    return (
+import React from 'react';
+import 'react-tridi/dist/index.css';
+import {Visualizador} from './visualizador/Visualizador'
 
-        <div className="container">
+function App() {
+
+    return (
+       <div className="container">
+            
             <div className="row">
                 <div className="col-12 col-md-6 card p-0">
-                    <div className="v360-header text-light bg-dark">
-                        <span className="v360-header-title">36 Images - Autoplay (1 loop) - Reverse Spin</span>
-                        <span className="v360-header-description"></span>
-                    </div>
+                <Visualizador></Visualizador>
+
+                    {/*
 
                     <React360Viewer amount={73}
                         imagePath={`./carro/`}
@@ -33,9 +34,7 @@ function App() { // var visualizerContainer={width:"42%", };
                         loop={1}
                         //buttonClass="ligth"
                     />
-
-
-                </div>
+*/} </div>
             </div>
         </div>
 
