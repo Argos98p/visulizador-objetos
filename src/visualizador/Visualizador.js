@@ -1,18 +1,21 @@
 import React, {useState, useRef} from "react";
 import "./visualizador_style.css";
 import {
-
+    FaCarSide,
     FaPlus,
     FaMinus,
     FaPlay,
     FaChevronLeft,
     FaChevronRight,
-    FaPause
-
+    FaPause,
 } from "react-icons/fa/index.js";
+import {GiSteeringWheel, GiCarDoor} from "react-icons/gi/index.js"
 import Tridi from "react-tridi";
 import "react-tridi/dist/index.css";
 import LottieControl from "../lottieFiles/lottieAnimation";
+import { ReelImages } from "../ReelImages";
+import Imagen from "../pruebas";
+
 
 export function Visualizador() {
     const [imageLocation, setImageLocation] = useState("./carro");
@@ -36,9 +39,8 @@ export function Visualizador() {
     const zoomValueHandler =(valueZoom)=>zoomValue=valueZoom;
 
     return (
-        <div style={
-            {height: "100%"}
-        }>
+        <div className="visualizador" /* style={{ width: '1070px' }}*/>
+            
             <Tridi ref={tridiRef}
                 zoom={1}
                 maxZoom= {3}
@@ -64,29 +66,43 @@ export function Visualizador() {
                     )
                 }
                 inverse
-                showControlBar
-                //showStatusBar
+                //showControlBar
+                showStatusBar
                 mousewheel
                 pins={pins}
                 setPins={setPins}
                 //hintOnStartup
                 //hintText="Drag to view"
+                
             />
 
-            <div className="flex-container">
-                <div className="flex-items">
+            <div className="navigation-container">
+                <div className="navigation-item">
+                    <button className="semi-transparent-button"><FaCarSide size={50}/></button>
+                </div>
+                <div className="navigation-item">
+                    <button className="semi-transparent-button"><GiCarDoor size={50}/></button>
+                </div>
+                <div className="navigation-item">
+                    <button className="semi-transparent-button"><GiSteeringWheel size={50}/></button>
+                </div>
+               
+            </div>
+
+            <div className="options-container">
+                <div className="option-item">
                     <button className="semi-transparent-button"
                         onClick={
                             () => tridiRef.current.prev()
                     }><FaChevronLeft/></button>
                 </div>
-                <div className="flex-items">
+                <div className="option-item">
                     <button className="semi-transparent-button"
                         onClick={
                             () => tridiRef.current.next()
                     }><FaChevronRight/></button>
                 </div>
-                <div className="flex-items">
+                <div className="option-item">
                     <button className="semi-transparent-button"
                         onClick={
                             () => tridiRef.current.toggleAutoplay(!isAutoPlayRunning)
@@ -95,15 +111,20 @@ export function Visualizador() {
                         isAutoPlayRunning ? <FaPause/>: <FaPlay/>
                     }</button>
                 </div>
-                <div className="flex-items">
+                <div className="option-item">
                     <button className="semi-transparent-button" onClick={() =>tridiRef.current.setZoom(zoomValue+0.3)}><FaPlus/></button>
                 </div>
-                <div className="flex-items">
+                <div className="option-item">
                     <button className="semi-transparent-button" onClick={()=>tridiRef.current.setZoom(zoomValue-0.1)}><FaMinus/></button>
                 </div>
                 
             </div>
 
+            <div className="reel">                
+                <ReelImages></ReelImages>
+            </div>
+
+            
         </div>
     );
 };

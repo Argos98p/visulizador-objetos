@@ -1,18 +1,55 @@
-.flex-container {
+.reel{
+  background-color: rgba(0, 0, 0, 0.705);
+  position: fixed;
+  height: 20%;
+  bottom: 0;
+  width: 100%;
+}
+
+.visualizador{
+  height: 100vh;
+}
+
+
+.navigation-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: normal;
+  align-items: normal;
+  align-content: normal;
+  position: fixed;
+  top: 50%;
+    transform: translate(-50%, -50%);
+  left: 40px;
+}
+.navigation-item{
+  display: block;
+    flex-grow: 0;
+    flex-shrink: 1;
+    flex-basis: auto;
+    align-self: auto;
+    order: 0;
+    
+    /*margin: 10px;*/
+}
+
+
+
+.options-container {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
     justify-content: normal;
     align-items: normal;
     align-content: normal;
-    position: absolute;
-    top: 200px;
-    bottom: 0;
-    right: 0;
-    margin: auto;
+    position: fixed;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  right: -30px;
   }
   
-  .flex-items:nth-child(1) {
+  .option-item:nth-child(1) {
     display: block;
     flex-grow: 0;
     flex-shrink: 1;
@@ -21,7 +58,7 @@
     order: 0;
   }
   
-  .flex-items:nth-child(2) {
+  .option-item:nth-child(2) {
     display: block;
     flex-grow: 0;
     flex-shrink: 1;
@@ -30,7 +67,7 @@
     order: 0;
   }
   
-  .flex-items:nth-child(3) {
+  .option-item:nth-child(3) {
     display: block;
     flex-grow: 0;
     flex-shrink: 1;
@@ -39,7 +76,7 @@
     order: 0;
   }
   
-  .flex-items:nth-child(4) {
+  .option-item:nth-child(4) {
     display: block;
     flex-grow: 0;
     flex-shrink: 1;
