@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useRef, useEffect} from "react";
 import "./visualizador_style.css";
 import {
     FaCarSide,
@@ -7,28 +7,33 @@ import {
     FaPlay,
     FaChevronLeft,
     FaChevronRight,
-    FaPause,
+    FaPause
 } from "react-icons/fa/index.js";
 import {GiSteeringWheel, GiCarDoor} from "react-icons/gi/index.js"
 import Tridi from "react-tridi";
 import "react-tridi/dist/index.css";
 import LottieControl from "../lottieFiles/lottieAnimation";
-import { ReelImages } from "../ReelImages";
-import Imagen from "../pruebas";
+import {ReelImages} from "../ReelImages";
+import { useParams } from 'react-router-dom'
 
 
 export function Visualizador() {
-    const [imageLocation, setImageLocation] = useState("./carro");
+    const [imageLocation, setImageLocation] = useState("/carro");
     const [isAutoPlayRunning, setIsAutoPlayRunning] = useState(false);
     const [pins, setPins] = useState([]);
     const tridiRef = useRef(null);
-    var zoomValue=0;
+    var zoomValue = 0;
+    const [visibleExtras, setVisibleExtras] = useState("false");
+    function handleClickExtras(){
+        setVisibleExtras(!visibleExtras)
+        console.log(visibleExtras);
+    }
+    let { objeto, escena } = useParams();
+    console.log(objeto, escena);
 
     const frameChangeHandler = (currentFrameIndex) => { // console.log("current frame index", currentFrameIndex);
     };
-
     const recordStartHandler = (recordingSessionId) => console.log("on record start", {recordingSessionId, pins});
-
     const recordStopHandler = (recordingSessionId) => console.log("on record stop", {recordingSessionId, pins});
 
     const pinClickHandler = (pin) => {
@@ -36,15 +41,17 @@ export function Visualizador() {
         tridiRef.current.toggleRecording(true, pin.recordingSessionId);
     };
 
-    const zoomValueHandler =(valueZoom)=>zoomValue=valueZoom;
+    const zoomValueHandler = (valueZoom) => zoomValue = valueZoom;
+
+    
 
     return (
-        <div className="visualizador" /* style={{ width: '1070px' }}*/>
-            
+        <div className="visualizador">
+
             <Tridi ref={tridiRef}
                 zoom={1}
-                maxZoom= {3}
-                minZoom= {1}
+                maxZoom={3}
+                minZoom={1}
                 onZoom={zoomValueHandler}
                 location={imageLocation}
                 format="png"
@@ -73,7 +80,6 @@ export function Visualizador() {
                 setPins={setPins}
                 //hintOnStartup
                 //hintText="Drag to view"
-                
             />
 
             <div className="navigation-container">
@@ -86,7 +92,6 @@ export function Visualizador() {
                 <div className="navigation-item">
                     <button className="semi-transparent-button"><GiSteeringWheel size={50}/></button>
                 </div>
-               
             </div>
 
             <div className="options-container">
@@ -112,19 +117,29 @@ export function Visualizador() {
                     }</button>
                 </div>
                 <div className="option-item">
-                    <button className="semi-transparent-button" onClick={() =>tridiRef.current.setZoom(zoomValue+0.3)}><FaPlus/></button>
+                    <button className="semi-transparent-button"
+                        onClick={
+                            () => tridiRef.current.setZoom(zoomValue + 0.3)
+                    }><FaPlus/></button>
                 </div>
                 <div className="option-item">
-                    <button className="semi-transparent-button" onClick={()=>tridiRef.current.setZoom(zoomValue-0.1)}><FaMinus/></button>
+                    <button className="semi-transparent-button"
+                        onClick={
+                            () => tridiRef.current.setZoom(zoomValue - 0.1)
+                    }><FaMinus/></button>
                 </div>
-                
-            </div>
 
-            <div className="reel">                
-                <ReelImages></ReelImages>
+            </div>
+            <div className="reel-container">
+                <button className="reel-btn" onClick={handleClickExtras} >Extras</button>
+                <div className={`reel ${!visibleExtras && "no-visible" } `}>
+                    <ReelImages></ReelImages>
+                </div>                
             </div>
 
             
+
+
         </div>
     );
 };

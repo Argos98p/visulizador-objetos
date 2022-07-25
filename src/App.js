@@ -1,18 +1,17 @@
 import "./App.css";
 import React from "react";
 import "react-tridi/dist/index.css";
-import { Visualizador } from "./visualizador/Visualizador";
-import Imagen from "./pruebas";
+import {Visualizador} from "./visualizador/Visualizador";
+import Controller  from "./Controller/controller";
+
+import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
+
 function App() {
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-12 col-md-6 card p-0">
-          <Visualizador></Visualizador>
-        </div>
-      </div>
-      
-    </div>
+    <Routes>
+            <Route  path="/visualizador/:objeto/:escena" element= {<Controller/>}/>
+    </Routes>    
+  
   );
 }
 

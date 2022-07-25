@@ -1,10 +1,38 @@
 .reel{
   background-color: rgba(0, 0, 0, 0.705);
   position: fixed;
-  height: 20%;
+  height: 15%;
   bottom: 0;
   width: 100%;
+  
 }
+
+.reel-container{
+  position: fixed;
+  height: 20%;
+  bottom: 0;
+}
+
+.reel-btn{
+  background-color: rgba(0, 0, 0, 0.705);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px;
+  cursor: pointer;
+  margin-left: 2px;
+}
+.reel-btn:hover{
+  background: rgba(30, 52, 142, 0.5);
+    color: rgb(255, 255, 255); 
+    transition: all 0.5s ease-in;
+}
+
+.no-visible{
+  display: none;
+}
+
+
 
 .visualizador{
   height: 100vh;
@@ -29,9 +57,7 @@
     flex-shrink: 1;
     flex-basis: auto;
     align-self: auto;
-    order: 0;
-    
-    /*margin: 10px;*/
+    order: 0;    
 }
 
 
@@ -97,5 +123,5 @@
   .semi-transparent-button:hover
   { /*background: #fff; */
     background: rgba(30, 52, 142, 0.5);
-    color: #000; 
+    color: rgb(255, 255, 255); 
     transition: all 0.5s ease-in; }
