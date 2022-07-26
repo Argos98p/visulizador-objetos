@@ -83,7 +83,7 @@ export function Visualizador(props) {
                 } 
                 inverse
                 //showControlBar
-                showStatusBar
+                //showStatusBar
                 //mousewheel
                 pins={pins}
                 setPins={setPins}
@@ -92,6 +92,9 @@ export function Visualizador(props) {
             />
 
             <div className="navigation-container">
+                {/* props.buttonsScenes*/}
+
+                
                 <div className="navigation-item">
                     <button className="semi-transparent-button"><FaCarSide size={50}/></button>
                 </div>
@@ -100,7 +103,7 @@ export function Visualizador(props) {
                 </div>
                 <div className="navigation-item">
                     <button className="semi-transparent-button"><GiSteeringWheel size={50}/></button>
-                </div>
+            </div>
             </div>
 
             <div className="options-container">
@@ -142,7 +145,8 @@ export function Visualizador(props) {
             <div className="reel-container">
                 <button className="reel-btn" onClick={handleClickExtras} >Extras</button>
                 <div className={`reel ${!visibleExtras && "no-visible" } `}>
-                    <ReelImages></ReelImages>
+                    <h3 className="no-extras">No hay extras</h3>
+                    {/*<ReelImages></ReelImages>*/}
                 </div>                
             </div>
 

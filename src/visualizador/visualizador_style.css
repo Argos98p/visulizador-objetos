@@ -129,3 +129,10 @@
     background: rgba(30, 52, 142, 0.5);
     color: rgb(255, 255, 255); 
     transition: all 0.5s ease-in; }
+.no-extras{
+  margin:auto;
+  text-align: center;
+  justify-content: center;
+  vertical-align:middle;
+  color: white;
+}
