@@ -37,7 +37,11 @@
 .visualizador{
   height: 100vh;
 }
-
+._2VqNg{
+  width: auto;
+	margin: auto;
+	height: 100vh;
+}
 
 .navigation-container {
   display: flex;

@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from "react";
-import "./visualizador_style.css";
+
 import {
     FaCarSide,
     FaPlus,
@@ -10,15 +10,23 @@ import {
     FaPause
 } from "react-icons/fa/index.js";
 import {GiSteeringWheel, GiCarDoor} from "react-icons/gi/index.js"
+import "./visualizador_style.css";
 import Tridi from "react-tridi";
 import "react-tridi/dist/index.css";
+
 import LottieControl from "../lottieFiles/lottieAnimation";
 import {ReelImages} from "../ReelImages";
 import { useParams } from 'react-router-dom'
+import "./visualizador_style.css";
 
 
-export function Visualizador() {
+export function Visualizador(props) {
+
+    
+
+    
     const [imageLocation, setImageLocation] = useState("/carro");
+
     const [isAutoPlayRunning, setIsAutoPlayRunning] = useState(false);
     const [pins, setPins] = useState([]);
     const tridiRef = useRef(null);
@@ -53,9 +61,10 @@ export function Visualizador() {
                 maxZoom={3}
                 minZoom={1}
                 onZoom={zoomValueHandler}
-                location={imageLocation}
+                images={props.imagesList}
+                //location={imageLocation}
                 format="png"
-                count="73"
+                count={props.imagesList.length}
                 onFrameChange={frameChangeHandler}
                 autoplaySpeed={70}
                 onAutoplayStart={
@@ -71,11 +80,11 @@ export function Visualizador() {
                     (pin) => (
                         <LottieControl></LottieControl>
                     )
-                }
+                } 
                 inverse
                 //showControlBar
                 showStatusBar
-                mousewheel
+                //mousewheel
                 pins={pins}
                 setPins={setPins}
                 //hintOnStartup
