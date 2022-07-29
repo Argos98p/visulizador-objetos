@@ -13,20 +13,12 @@ import {GiSteeringWheel, GiCarDoor} from "react-icons/gi/index.js"
 import "./visualizador_style.css";
 import Tridi from "react-tridi";
 import "react-tridi/dist/index.css";
-
 import LottieControl from "../lottieFiles/lottieAnimation";
-import {ReelImages} from "../ReelImages";
-import { useParams } from 'react-router-dom'
 import "./visualizador_style.css";
 
 
 export function Visualizador(props) {
-
-    
-
-    
-    const [imageLocation, setImageLocation] = useState("/carro");
-
+    var sceneSelected=props.scenesKeys[0];
     const [isAutoPlayRunning, setIsAutoPlayRunning] = useState(false);
     const [pins, setPins] = useState([]);
     const tridiRef = useRef(null);
@@ -36,37 +28,33 @@ export function Visualizador(props) {
         setVisibleExtras(!visibleExtras)
         console.log(visibleExtras);
     }
-    let { objeto, escena } = useParams();
-    console.log(objeto, escena);
-
-    const frameChangeHandler = (currentFrameIndex) => { // console.log("current frame index", currentFrameIndex);
-    };
+    const frameChangeHandler = (currentFrameIndex) => { };
     const recordStartHandler = (recordingSessionId) => console.log("on record start", {recordingSessionId, pins});
     const recordStopHandler = (recordingSessionId) => console.log("on record stop", {recordingSessionId, pins});
-
     const pinClickHandler = (pin) => {
         console.log("on pin click", pin);
         tridiRef.current.toggleRecording(true, pin.recordingSessionId);
     };
-
     const zoomValueHandler = (valueZoom) => zoomValue = valueZoom;
-
-    
+    //var sceneKeys=props.scenesKeys
+    console.log(props);
 
     return (
         <div className="visualizador">
 
             <Tridi ref={tridiRef}
+               // autoplaySpeed={70}
+               //autoplay={true}
                 zoom={1}
                 maxZoom={3}
                 minZoom={1}
                 onZoom={zoomValueHandler}
-                images={props.imagesList}
+                images={props.imagesFramesScenes[sceneSelected]}
                 //location={imageLocation}
                 format="png"
-                count={props.imagesList.length}
+                count={props.imagesFramesScenes[sceneSelected].length}
                 onFrameChange={frameChangeHandler}
-                autoplaySpeed={70}
+                
                 onAutoplayStart={
                     () => setIsAutoPlayRunning(true)
                 }
@@ -140,7 +128,6 @@ export function Visualizador(props) {
                             () => tridiRef.current.setZoom(zoomValue - 0.1)
                     }><FaMinus/></button>
                 </div>
-
             </div>
             <div className="reel-container">
                 <button className="reel-btn" onClick={handleClickExtras} >Extras</button>
@@ -148,11 +135,7 @@ export function Visualizador(props) {
                     <h3 className="no-extras">No hay extras</h3>
                     {/*<ReelImages></ReelImages>*/}
                 </div>                
-            </div>
-
-            
-
-
+            </div>            
         </div>
     );
 };
