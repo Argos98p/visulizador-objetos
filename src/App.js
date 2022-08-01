@@ -2,7 +2,7 @@ import "./App.css";
 import React, {useEffect, useState, CSSProperties} from "react";
 import "react-tridi/dist/index.css";
 
-import Controller from "./Controller/controller";
+import Controller from "./components/controller";
 
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 

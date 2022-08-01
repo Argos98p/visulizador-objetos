@@ -36,11 +36,25 @@
 
 .visualizador{
   height: 100vh;
+  
 }
 ._2VqNg{
   width: auto;
 	margin: auto;
 	height: 100vh;
+  
+}
+._lqEjs{
+  
+} 
+._2kfM8{
+  cursor: url(https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin.svg
+  ) 22 14.5,url(https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin.png ) 22 14.5,url(	https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin.cur) 22 14.5,grab;
+
+}
+
+.dragging{
+  cursor: url(https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin-drag.png) 16.5 10.5,url(https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin-drag.png) 16.5 10.5,url(	https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin-drag.cur) 
 }
 
 .navigation-container {
@@ -136,3 +150,4 @@
   vertical-align:middle;
   color: white;
 }
+
