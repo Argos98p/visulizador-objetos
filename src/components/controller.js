@@ -20,7 +20,7 @@ function Controller() {
   const [imagesFramesScenes,setImagesFramesScenes]= useState(new Map())
   const [scenesKeys, setScenesKeys]= useState([]);
   
-  var limitFrames = 100;
+  var limitFrames = 190;
 
 
   useEffect(() => {

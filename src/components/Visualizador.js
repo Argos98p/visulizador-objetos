@@ -11,11 +11,32 @@ import "./visualizador_style.css";
 import NavigationObjectButttons from "./NavigationObjectButtons";
 import ReactPlayer from 'react-player'
 import ReelImages from "./ReelImages";
-import { Button } from "reactstrap";
-
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function Visualizador({ scenesKeys, imagesFramesScenes,tipo, id }) {
+  
+  const notifyEdicion = () => toast.info('modo edición', {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    });
+
+    const notifyVisualizacion = () => toast.info('visualización', {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      });
+
+
   var sceneSelectedKey = scenesKeys[0];
   const [isAutoPlayRunning, setIsAutoPlayRunning] = useState(false);
   const [isEditMode,setIsEditMode] = useState(false);
@@ -85,11 +106,49 @@ export function Visualizador({ scenesKeys, imagesFramesScenes,tipo, id }) {
     console.log(pins);
     //console.log("on record start", { recordingSessionId, pins });
   }
+
+  function frameReplicate(){
+    var lastPin= pins[pins.length-1];
+    var move = 0.015;
+    var j=20;
+    var temp=[...pins]
+    for(var i=lastPin.frameId-20;i<=lastPin.frameId+20;i++){
+      var originalX = parseFloat(lastPin.x);
+      var originalY = parseFloat(lastPin.y);  
+
+      
+        var newPin={
+          id:lastPin.id,
+          frameId: i,
+          x:originalX+move*j,
+          y:originalY,
+          recordingSessionId:lastPin.recordingSessionId,
+        }
+        temp.push(newPin)
+      j--;      
+    }
+    setPins(temp)
+  }
+
+  
   
 
   
   return scenesKeys !== undefined ? (
     <div className="visualizador dragging" onWheel={handleWheel}>
+
+      <ToastContainer
+      position="top-center"
+      autoClose={5000}
+      hideProgressBar
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+       />
+  
         {interiorEnabled
         ?<ReactPlayer url='https://www.youtube.com/watch?v=BlrofcGsouI' width="100%" height="100%" loop={true}/>
 
@@ -109,8 +168,17 @@ export function Visualizador({ scenesKeys, imagesFramesScenes,tipo, id }) {
         onFrameChange={frameChangeHandler}
         onAutoplayStart={() => setIsAutoPlayRunning(true)}
         onAutoplayStop={() => setIsAutoPlayRunning(false)}
-        onRecordStart={()=>setIsEditMode(true)}
-        onRecordStop={()=>setIsEditMode(false)}
+        onRecordStart={()=>{
+          setIsEditMode(true); 
+          toast.dismiss();
+          notifyEdicion();
+          }}
+        onRecordStop={()=>{
+          setIsEditMode(false);
+          toast.dismiss(); 
+          notifyVisualizacion();
+          frameReplicate()
+        }}
         onPinClick={pinClickHandler}
         setPins={setPins}
         //renderPin={(pin) => <LottieControl></LottieControl>}
@@ -127,7 +195,7 @@ export function Visualizador({ scenesKeys, imagesFramesScenes,tipo, id }) {
        
         
         hintOnStartup
-        hintText="Drag to view"
+        hintText="Arrastre para mover"
         />
         }
       

@@ -14,7 +14,8 @@ export default function ReelImages ({id})  {
   const [images, setImages] = useState([]);
   const [imagesListSrc, setImagesListSrc]= useState([])
   
-  var uploadExtraURL='http://redpanda.sytes.net:8084/api/objects/addextra?idobjeto=8&archivo=';
+  
+  var uploadExtraURL=`http://redpanda.sytes.net:8084/api/objects/addextra?idobjeto=${id}&archivo=`;
   var getExtrasURL="http://redpanda.sytes.net:8084/api/objects/getextras?idobjeto=";
   var showImages="http://redpanda.sytes.net:8085/api/images/getimage?path=";
 
@@ -25,10 +26,6 @@ export default function ReelImages ({id})  {
     
     setImages([]);
   };
-
-
-
-
 
   const [currentImage, setCurrentImage] = useState(0);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
@@ -44,9 +41,6 @@ export default function ReelImages ({id})  {
     setCurrentImage(0);
     setIsViewerOpen(false);
   };
-
-
-
 
   const getExtras = async() => {
     axios.get(getExtrasURL+id)
