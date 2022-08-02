@@ -1,3 +1,11 @@
 export default function NoEncontrado({idObjeto}){
-    return <h1>Elemento con el id {idObjeto} no encontrado</h1>
+    return (
+        <div>
+            <h2>Elemento con el id {idObjeto} no encontrado</h2>
+            <h1>Su publicidad aqui</h1>
+        </div>
+    );
+    
+    
+    
 }

@@ -21,12 +21,13 @@ export default function OptionButtons({
   var aux
     return (
         <>
-            <div className="option-item">
+        {/*<div className="option-item">
                 <button className= {isEditMode ? "semi-transparent-button activo" : "semi-transparent-button"} 
                     onClick={onAddHotspot}>
                     <FaCrosshairs/>
                 </button>
-            </div>
+            </div> */}
+            
 
             <div className="option-item">
                 <button className="semi-transparent-button" disabled={isEditMode}

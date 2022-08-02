@@ -177,7 +177,7 @@ export function Visualizador({ scenesKeys, imagesFramesScenes,tipo, id }) {
           setIsEditMode(false);
           toast.dismiss(); 
           notifyVisualizacion();
-          frameReplicate()
+          //frameReplicate()
         }}
         onPinClick={pinClickHandler}
         setPins={setPins}
