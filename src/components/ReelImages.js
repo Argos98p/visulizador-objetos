@@ -30,12 +30,12 @@ export default function ReelImages ({id})  {
 
 
 
-  const [currentImage, setCurrentImage] = useState(7);
+  const [currentImage, setCurrentImage] = useState(0);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
  
   const openImageViewer = useCallback((index) => {
     console.log(index);
-    setCurrentImage(7);
+    setCurrentImage(index);
     console.log(currentImage);
     setIsViewerOpen(true);
   }, []);
@@ -60,6 +60,7 @@ export default function ReelImages ({id})  {
         }
         );
         //setImageList(temp)
+        console.log(temp);
         setImagesListSrc(temp)
 
       }else{
@@ -89,7 +90,7 @@ export default function ReelImages ({id})  {
         console.log('imagen cargada');
         setImageList([...imageList])
         getExtras();
-      } else if (res.status == 401) {
+      } else if (res.status === 401) {
         alert("Oops! ");
       }
     }, function (e) {
@@ -131,7 +132,7 @@ export default function ReelImages ({id})  {
 
       {isViewerOpen && (
         <ImageViewer
-          src={ setImagesListSrc }
+          src={ imagesListSrc }
           currentIndex={ currentImage }
           disableScroll={ false }
           closeOnClickOutside={ true }
@@ -195,7 +196,7 @@ export default function ReelImages ({id})  {
               }
             ]}>        
       {imagesListSrc.map((src, index) => (
-        <Carousel.Item key={index} ><img width="100%" src={src} key={index}  onClick={ () => openImageViewer(index)}/> </Carousel.Item>
+        <Carousel.Item key={index} ><img width="100%" className='cursor-pointer' src={src} key={index} alt={'hola'} onClick={ () => openImageViewer(index)}/> </Carousel.Item>
       ))}    
     </Carousel>
       </div>

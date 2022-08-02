@@ -47,6 +47,10 @@
   
 }
 
+.cursor-pointer{
+  cursor: pointer;
+}
+
 ._2kfM8{
   cursor: url(https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin.svg
   ) 22 14.5,url(https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin.png ) 22 14.5,url(	https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin.cur) 22 14.5,grab;
