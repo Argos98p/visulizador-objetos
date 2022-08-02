@@ -1,7 +1,7 @@
 .reel{
   background-color: rgba(0, 0, 0, 0.705);
   position: fixed;
-  height: 15%;
+  height: 25%;
   bottom: 0;
   width: 100%;
   
@@ -9,7 +9,7 @@
 
 .reel-container{
   position: fixed;
-  height: 20%;
+  height: 30%;
   bottom: 0;
 }
 
@@ -28,6 +28,8 @@
     transition: all 0.5s ease-in;
 }
 
+
+
 .no-visible{
   display: none;
 }
@@ -44,14 +46,14 @@
 	height: 100vh;
   
 }
-._lqEjs{
-  
-} 
+
 ._2kfM8{
   cursor: url(https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin.svg
   ) 22 14.5,url(https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin.png ) 22 14.5,url(	https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin.cur) 22 14.5,grab;
 
 }
+
+.button { color: white;  font-size: 16px; background-color: #1070ee; display: block; padding: 5px 10px; border-radius: 100%; cursor: pointer; animation: fadein .5s; animation: pulse 1.1s infinite; }
 
 .dragging{
   cursor: url(https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin-drag.png) 16.5 10.5,url(https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin-drag.png) 16.5 10.5,url(	https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin-drag.cur) 
@@ -129,6 +131,7 @@
     order: 0;
   }
   .semi-transparent-button{
+    cursor: pointer;
       border:none;
       margin: 1px 0.5em ;
       padding: 1em;
@@ -137,12 +140,26 @@
       background-color: rgba(0, 0, 0, 0.781);
   }
 
+  
+
 
   .semi-transparent-button:hover
   { /*background: #fff; */
     background: rgba(30, 52, 142, 0.5);
     color: rgb(255, 255, 255); 
     transition: all 0.5s ease-in; }
+
+    .activo{
+      background: rgba(30, 52, 142, 0.5) ;
+    }
+
+    button:disabled,
+button[disabled], button:disabled:hover{
+  
+  background-color: #cccccc;
+  color: #666666;
+}
+
 .no-extras{
   margin:auto;
   text-align: center;

@@ -58,7 +58,7 @@ function Controller() {
 
 
   return objExiste
-  ?(<Visualizador imagesFramesScenes={imagesFramesScenes} scenesKeys={scenesKeys} tipo="vehiculo"></Visualizador>)
+  ?(<Visualizador imagesFramesScenes={imagesFramesScenes} scenesKeys={scenesKeys} tipo="vehiculo" id={id}></Visualizador>)
   :(<NoEncontrado idObjeto={id} ></NoEncontrado>)
  
 }

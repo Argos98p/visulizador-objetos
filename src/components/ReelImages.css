@@ -1,0 +1,30 @@
+.reel-images-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.upload__image-wrapper{
+    margin: 10px;
+}
+
+.sc-ifAKCX .bqyzQp{
+    margin-bottom: 20px;
+}
+.reel-images-container button{
+    
+    border: none;
+    background-color: rgba(0, 0, 0, 0.541);
+    color: white;
+    cursor: pointer;
+    border-radius: 10%;
+    padding: 5px 15px;
+
+
+}
+
+.reel-images-container button:hover{
+    background-color: rgba(31, 80, 153, 0.541);
+    
+}
