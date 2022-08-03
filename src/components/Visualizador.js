@@ -1,7 +1,4 @@
 import React, { useState, useRef , useEffect} from "react";
-
-
-
 import Tridi from "react-tridi";
 import LottieControl from "../lottieFiles/lottieAnimation";
 import OptionButtons from "./buttonsOptions";
@@ -201,7 +198,7 @@ export function Visualizador({ scenesKeys, imagesFramesScenes,tipo, id }) {
       
 
       {tipo==="vehiculo"
-      ?<NavigationCarButtons onOpenDoors={handleOpenDoors} onCloseDoors={handleCloseDoors} onInterior={handleInterior}></NavigationCarButtons>
+      ?<NavigationCarButtons onOpenDoors={handleOpenDoors} onCloseDoors={handleCloseDoors} imagesFramesScenes={imagesFramesScenes} onInterior={handleInterior}></NavigationCarButtons>
       :<NavigationObjectButttons imagesFramesScenes={imagesFramesScenes}></NavigationObjectButttons>
       }
       
@@ -232,6 +229,6 @@ export function Visualizador({ scenesKeys, imagesFramesScenes,tipo, id }) {
       </div>
     </div>
   ) : (
-    <h1>Cargadno</h1>
+    <h1>Cargando</h1>
   );
 }

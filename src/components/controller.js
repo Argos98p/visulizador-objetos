@@ -15,11 +15,9 @@ function Controller() {
   var urlFrames = `http://redpanda.sytes.net:8085/api/images/getimage?path=`;
 
 
-  const [objExiste, setObjExiste]=useState(false);
-  
+  const [objExiste, setObjExiste]=useState(false);  
   const [imagesFramesScenes,setImagesFramesScenes]= useState(new Map())
-  const [scenesKeys, setScenesKeys]= useState([]);
-  
+  const [scenesKeys, setScenesKeys]= useState([]);  
   var limitFrames = 190;
 
 
@@ -27,23 +25,22 @@ function Controller() {
     axios
       .get(url)
       .then((response) => {
-        if (response.data != null) {
-            
+        if (response.data != null) {            
           response.data.forEach((e) => {            
             var escena = e.split("/")[2];
             var urlFrame = urlFrames + e;
             var framesPaths = [];
             for (var i = 1; i <= limitFrames; i++) {
-              framesPaths.push(urlFrame + `/${i}.jpg`);              
+              framesPaths.push(urlFrame + `/${i}.jpg`);  
+              new Image().src = urlFrame + `/${i}.jpg`;
+              console.log(urlFrame + `/${i}.jpg`);
             }
             var temp = imagesFramesScenes
             temp.set(escena, framesPaths)
             setImagesFramesScenes(temp);
-
             var temp2= scenesKeys
             temp2.push(escena)
-            setScenesKeys(temp2);
-            
+            setScenesKeys(temp2);            
             setObjExiste(true);
           });
         }
@@ -53,10 +50,10 @@ function Controller() {
         console.error("There was an error!", error);
       });
 
-  },);
+  },[]);
 
 
-
+ 
   return objExiste
   ?(<Visualizador imagesFramesScenes={imagesFramesScenes} scenesKeys={scenesKeys} tipo="vehiculo" id={id}></Visualizador>)
   :(<NoEncontrado idObjeto={id} ></NoEncontrado>)
