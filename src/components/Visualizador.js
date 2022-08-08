@@ -10,9 +10,16 @@ import ReactPlayer from 'react-player'
 import ReelImages from "./ReelImages";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-export function Visualizador({ scenesKeys, imagesFramesScenes,tipo, id }) {
+import {completeImageUrl} from '../Api/apiRoutes'
+export function Visualizador({ /*scenesKeys, imagesFramesScenes,*/tipo, id, data}) {
   
+  console.log(data);
+  var idUsuario = data['idusuario'];
+  var nombre = data ['nombre'];
+  const [escenas, setEscenas] = useState(data['escenas']);
+  const [escenaInView, setEscenaInView]=useState(getSceneWithFrames(escenas));
+  const [images, setImages] = useState([]);
+
   const notifyEdicion = () => toast.info('modo edición', {
     position: "top-center",
     autoClose: 3000,
@@ -23,23 +30,53 @@ export function Visualizador({ scenesKeys, imagesFramesScenes,tipo, id }) {
     progress: undefined,
     });
 
-    const notifyVisualizacion = () => toast.info('visualización', {
-      position: "top-center",
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      });
+  const notifyVisualizacion = () => toast.info('visualización', {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    });
+
+    
+  
 
 
-  var sceneSelectedKey = scenesKeys[0];
+  useEffect(() => {
+    var temp=[]
+    var i = 1;
+    escenaInView[1].imagenes.forEach(element => {
+      var splitNombre = element.path.split("ObjetosVirtuales")[1].split('/');
+
+      temp.push(completeImageUrl(`/${splitNombre[1]}/${splitNombre[2]}/${splitNombre[3]}/${i}.jpg`));         
+      i++;
+    });
+    setImages(temp);
+
+    
+  }, [escenaInView])
+  
+    
+  function getSceneWithFrames(escenas){
+    var aux = true   
+    var escenaInicial=undefined;
+    Object.entries(escenas).map(escena =>{
+      
+      if(escena[1].imagenes.length>0 && aux){
+        escenaInicial=escena;
+        aux = false      
+      }
+    });    
+    return escenaInicial;    
+  }
+  
   const [isAutoPlayRunning, setIsAutoPlayRunning] = useState(false);
   const [isEditMode,setIsEditMode] = useState(false);
   const [pins, setPins] = useState([]);
   const [visibleExtras, setVisibleExtras] = useState("false");
-  const [imagesInVisualizador,setImagesInVisualizador]=useState([...imagesFramesScenes.get(sceneSelectedKey)])
+  //const [imagesInVisualizador,setImagesInVisualizador]=useState([...imagesFramesScenes.get(sceneSelectedKey)])
   const [interiorEnabled,setInteriorEnabled]=useState(false);
   const tridiRef = useRef(null);
   var zoomValue = 0;
@@ -83,17 +120,20 @@ export function Visualizador({ scenesKeys, imagesFramesScenes,tipo, id }) {
   function handleWheel(e) {
     e.deltaY > 0 ? handleZoomOut() : handleZoomIn();
   }
+  
   function handleOpenDoors(){
     setInteriorEnabled(false);
-    var temp=[...imagesFramesScenes.get(scenesKeys[0])]
-    setImagesInVisualizador([...temp])
+    //var temp=[...imagesFramesScenes.get(scenesKeys[0])]
+    //setImagesInVisualizador([...temp])
     
   }
+
   function handleCloseDoors(){
     setInteriorEnabled(false);
-    var temp2=[...imagesFramesScenes.get(scenesKeys[1])]
-    setImagesInVisualizador([...temp2]);
+    //var temp2=[...imagesFramesScenes.get(scenesKeys[1])]
+    //setImagesInVisualizador([...temp2]);
   }
+
   function handleInterior(){
     setInteriorEnabled(true);
   }
@@ -103,7 +143,7 @@ export function Visualizador({ scenesKeys, imagesFramesScenes,tipo, id }) {
     console.log(pins);
     //console.log("on record start", { recordingSessionId, pins });
   }
-
+/*
   function frameReplicate(){
     var lastPin= pins[pins.length-1];
     var move = 0.015;
@@ -125,12 +165,69 @@ export function Visualizador({ scenesKeys, imagesFramesScenes,tipo, id }) {
       j--;      
     }
     setPins(temp)
+  }*/
+
+  function getVisualizador(){
+
+    return <Tridi
+    ref={tridiRef}
+    autoplaySpeed={70}
+    //autoplay={true}
+
+    zoom={1}
+    maxZoom={3}
+    minZoom={1}
+    onZoom={zoomValueHandler}
+    images={images}
+    
+    //format="png"
+    count={images.length}
+    onFrameChange={frameChangeHandler}
+    onAutoplayStart={() => setIsAutoPlayRunning(true)}
+    onAutoplayStop={() => setIsAutoPlayRunning(false)}
+    onRecordStart={()=>{
+      setIsEditMode(true); 
+      toast.dismiss();
+      notifyEdicion();
+      }}
+    onRecordStop={()=>{
+      setIsEditMode(false);
+      toast.dismiss(); 
+      notifyVisualizacion();
+      //frameReplicate()
+    }}
+    onPinClick={pinClickHandler}
+    setPins={setPins}
+    //renderPin={(pin) => <LottieControl></LottieControl>}
+    renderPin={(pin) => <label for="input3">
+    <div id="b3" className="button">+</div>
+    
+  </label>}
+
+    //inverse
+    //showControlBar
+    //showStatusBar
+    
+    pins={pins}
+   
+    
+    hintOnStartup
+    hintText="Arrastre para mover"
+    />
   }
 
-  
-  
+  return <div className="visualizador dragging" onWheel={handleWheel}>
+        {getVisualizador()}
+        {tipo==="vehiculo"
+      ?<NavigationCarButtons onOpenDoors={handleOpenDoors} onCloseDoors={handleCloseDoors}  onInterior={handleInterior}></NavigationCarButtons>
+      :<NavigationObjectButttons /*imagesFramesScenes={imagesFramesScenes}*/></NavigationObjectButttons>
+      }
 
+  </div>
   
+ 
+  
+/*
   return scenesKeys !== undefined ? (
     <div className="visualizador dragging" onWheel={handleWheel}>
 
@@ -149,51 +246,7 @@ export function Visualizador({ scenesKeys, imagesFramesScenes,tipo, id }) {
         {interiorEnabled
         ?<ReactPlayer url='https://www.youtube.com/watch?v=BlrofcGsouI' width="100%" height="100%" loop={true}/>
 
-        :<Tridi
-        ref={tridiRef}
-        autoplaySpeed={70}
-        //autoplay={true}
-
-        zoom={1}
-        maxZoom={3}
-        minZoom={1}
-        onZoom={zoomValueHandler}
-        images={imagesInVisualizador}
-        
-        //format="png"
-        count={imagesInVisualizador.length}
-        onFrameChange={frameChangeHandler}
-        onAutoplayStart={() => setIsAutoPlayRunning(true)}
-        onAutoplayStop={() => setIsAutoPlayRunning(false)}
-        onRecordStart={()=>{
-          setIsEditMode(true); 
-          toast.dismiss();
-          notifyEdicion();
-          }}
-        onRecordStop={()=>{
-          setIsEditMode(false);
-          toast.dismiss(); 
-          notifyVisualizacion();
-          //frameReplicate()
-        }}
-        onPinClick={pinClickHandler}
-        setPins={setPins}
-        //renderPin={(pin) => <LottieControl></LottieControl>}
-        renderPin={(pin) => <label for="input3">
-        <div id="b3" className="button">+</div>
-        
-      </label>}
-
-        //inverse
-        //showControlBar
-        //showStatusBar
-        
-        pins={pins}
-       
-        
-        hintOnStartup
-        hintText="Arrastre para mover"
-        />
+        :getVisualizador()
         }
       
 
@@ -222,7 +275,7 @@ export function Visualizador({ scenesKeys, imagesFramesScenes,tipo, id }) {
           Extras
         </button>
         <div className={`reel ${!visibleExtras && "no-visible"} `}>
-          {/* <h3 className="no-extras">No hay extras</h3> */}
+          
           
           <ReelImages id={id}></ReelImages>
         </div>
@@ -230,5 +283,5 @@ export function Visualizador({ scenesKeys, imagesFramesScenes,tipo, id }) {
     </div>
   ) : (
     <h1>Cargando</h1>
-  );
+  );*/
 }

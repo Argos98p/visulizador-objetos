@@ -1,7 +1,7 @@
 //import { useState, useEffect } from "react";
 import {  GiCarDoor } from "react-icons/gi/index.js";
 export default function NavigationObjectButttons({ imagesFramesScenes }) {
-  return (
+  return null /*(
     <div className="navigation-container">
       {Array.from(imagesFramesScenes.keys()).map((e) => 
         <div className="navigation-item">
@@ -12,5 +12,5 @@ export default function NavigationObjectButttons({ imagesFramesScenes }) {
       </div>
       )}
     </div>
-  );
+  );*/
 }
