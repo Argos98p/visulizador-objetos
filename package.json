@@ -37,6 +37,7 @@
     "react-simple-image-viewer": "^1.2.2",
     "react-spinners": "^0.13.3",
     "react-toastify": "^9.0.7",
+    "react-tooltip": "^4.2.21",
     "react-tridi": "^2.1.1",
     "react-tridi-alt": "^2.1.6",
     "reactstrap": "^9.1.2",

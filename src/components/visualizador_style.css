@@ -14,6 +14,10 @@
 }
 
 .reel-btn{
+  position: absolute;
+  top: 1em;
+  left: 1em;
+  z-index: 100;
   background-color: rgba(0, 0, 0, 0.705);
   color: white;
   border: none;
@@ -164,10 +168,25 @@ button[disabled], button:disabled:hover{
 }
 
 .no-extras{
+  
   margin:auto;
   text-align: center;
   justify-content: center;
   vertical-align:middle;
+  color: white;
+}
+
+.emptyEscena{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.texto-blanco{
   color: white;
 }
 

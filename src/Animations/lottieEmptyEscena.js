@@ -1,8 +1,8 @@
 import React from 'react'
 import Lottie from 'react-lottie';
-import * as animationData from './hotspot.json'
+import * as animationData from '../lottieFiles/empty-box.json'
  
-export default class LottieControl extends React.Component {
+export default class LottieEmptyEscenas extends React.Component {
  
   constructor(props) {
     super(props);
@@ -26,8 +26,8 @@ export default class LottieControl extends React.Component {
  
     return <div>
       <Lottie options={defaultOptions}
-              height={30}
-              width={30}
+              height="100%"
+              width="100%"
               isStopped={this.state.isStopped}
               isPaused={this.state.isPaused}/>
       {/*<button style={buttonStyle} onClick={() => this.setState({isStopped: true})}>stop</button>

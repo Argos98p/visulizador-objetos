@@ -138,10 +138,8 @@ export default function ReelImages ({id})  {
       )}
     </div>
 
-
-
-
-
+    
+{/*  COMPONENTE PARA SUBIR EXTRAS
       <ImageUploading
         multiple
         value={images}
@@ -158,16 +156,13 @@ export default function ReelImages ({id})  {
           isDragging,
           dragProps,
         }) => (
-          // write your building UI
+
           <div className="upload__image-wrapper">
             <button
               style={isDragging ? { color: 'red' } : undefined}
               onClick={onImageUpload}
               {...dragProps}
-            >
-
-
-              
+            >              
               Agregar extra
             </button>
             &nbsp;
@@ -175,6 +170,7 @@ export default function ReelImages ({id})  {
           </div>
         )}
       </ImageUploading>
+        */}
       <Carousel cols={6} rows={1} gap={10} loop containerStyle={{height:"100%"}} responsiveLayout={[
               {
                 breakpoint: 1200,

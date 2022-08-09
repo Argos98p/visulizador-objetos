@@ -12,15 +12,14 @@ function Controller() {
     const [imagesLoaded, setImagesLoaded] = useState(true);
     let [color, setColor] = useState("#EBAF26");
 
-    var url = `http://redpanda.sytes.net:8084/api/objects/geturlsimages?idobjeto=${id}`;
-    var urlFrames = `http://redpanda.sytes.net:8085/api/images/getimage?path=`;
+    
 
 
     const [objExiste, setObjExiste] = useState(true);
 
     const [myObjeto, setMyObjeto] = useState(null);
 
-    var limitFrames = 190;
+    
 
     useEffect(() => {
         axios.get(infoObjectUrl(id)).then(response => {
@@ -49,8 +48,5 @@ function Controller() {
 }
 
 
-/*
-    return objExiste
-  ?(<Visualizador data={myObjeto}  tipo="vehiculo" id={id}></Visualizador>)
-  :(<NoEncontrado idObjeto={id} ></NoEncontrado>)*/
+
   export default Controller;
