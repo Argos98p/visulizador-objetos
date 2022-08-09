@@ -180,13 +180,10 @@ export default function ReelImages ({id})  {
                 breakpoint: 990,
                 cols: 4
               },
-              {
-                breakpoint: 720,
-                cols: 4
-              }
+             
             ]}>        
       {imagesListSrc.map((src, index) => (
-        <Carousel.Item key={index} ><img width="100%" className='cursor-pointer' src={src} key={index} alt={'hola'} onClick={ () => openImageViewer(index)}/> </Carousel.Item>
+        <Carousel.Item key={index} ><img width="100%" height="100%" className='cursor-pointer' src={src} key={index} alt={'hola'} onClick={ () => openImageViewer(index)}/> </Carousel.Item>
       ))}    
     </Carousel>
       </div>

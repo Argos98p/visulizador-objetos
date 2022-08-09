@@ -169,9 +169,7 @@ export function Visualizador({tipo,
 
 
   function handleButtonEscena(escena){
-    idEscenaActiva=escena[0];
-    console.log(idEscenaActiva);
-  
+    idEscenaActiva=escena[0];  
     setEscenaInView(escena);
   }
 
@@ -191,6 +189,9 @@ export function Visualizador({tipo,
     
     return (
 
+      <div className="tridi-container">
+
+      
       <Tridi
         ref={tridiRef}
         autoplaySpeed={70}
@@ -235,6 +236,7 @@ export function Visualizador({tipo,
         hintOnStartup
         hintText="Arrastre para mover"
       />
+      </div>
     )}
   }
 
@@ -243,6 +245,7 @@ export function Visualizador({tipo,
       <button className={`reel-btn ${visibleExtras ? "activo":""}`} onClick={handleClickExtras}>
           Extras
         </button>
+
       {getVisualizador()}
       <div className="navigation-container">        
         {Object.entries(escenas).map((escena) => (

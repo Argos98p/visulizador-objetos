@@ -3,23 +3,17 @@ import {useParams} from "react-router-dom";
 import {Visualizador} from "./Visualizador";
 import axios from "axios";
 import NoEncontrado from "./paginaNoEncontrado";
-import {statusEsceneUrl, infoObjectUrl, numberFramesInScene} from "../Api/apiRoutes";
-import {Objeto} from "../model/Objeto";
+import {infoObjectUrl,getExtrasUrl} from "../Api/apiRoutes";
+
 
 
 function Controller() {
     let {id} = useParams();
     const [imagesLoaded, setImagesLoaded] = useState(true);
     let [color, setColor] = useState("#EBAF26");
-
-    
-
-
     const [objExiste, setObjExiste] = useState(true);
-
     const [myObjeto, setMyObjeto] = useState(null);
-
-    
+    const [extras, getExtras] = useState([])
 
     useEffect(() => {
         axios.get(infoObjectUrl(id)).then(response => {
@@ -28,12 +22,17 @@ function Controller() {
         }).then(data => {
             if (data !== "NOT_FOUND") {
                 setMyObjeto(data);
+
+                axios.get(getExtrasUrl(id))
+                .then((response)=>{
+                  console.log(response);
+                });
             } else {
                 setObjExiste(false);
 
             }
         }).catch(error => {
-            console.log(error.response.data.error)
+            console.log(error)
         })
     }, []);
 

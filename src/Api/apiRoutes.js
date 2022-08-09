@@ -14,4 +14,8 @@ function completeImageUrl(path){
     return `http://redpanda.sytes.net:8085/api/images/getimage?path=${path}`;
 }
 
-export {statusEsceneUrl,infoObjectUrl,numberFramesInScene,completeImageUrl}
+function getExtrasUrl(id){
+    return `http://redpanda.sytes.net:8084/api/objects/getextras?idobjeto=${id}`
+}
+
+export {statusEsceneUrl,infoObjectUrl,numberFramesInScene,completeImageUrl,getExtrasUrl}
