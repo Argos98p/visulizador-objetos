@@ -5,19 +5,20 @@ import './ReelImages.css'
 import ImageUploading from 'react-images-uploading';
 import axios from "axios";
 import ImageViewer from 'react-simple-image-viewer';
+import {ImagePath} from '../Api/apiRoutes'
 
 
-
-export default function ReelImages ({id})  {
+export default function ReelImages ({id,extrasImages})  {
 
   const [imageList, setImageList]=useState([])
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState([]); //for upload with 
   const [imagesListSrc, setImagesListSrc]= useState([])
+  const [imagesExtras, setImagesExtras] = useState(extrasImages)
   
   
   var uploadExtraURL=`http://redpanda.sytes.net:8084/api/objects/addextra?idobjeto=${id}&archivo=`;
   var getExtrasURL="http://redpanda.sytes.net:8084/api/objects/getextras?idobjeto=";
-  var showImages="http://redpanda.sytes.net:8085/api/images/getimage?path=";
+
 
 
   const onChange = (imageListUpload, addUpdateIndex) => {
@@ -31,9 +32,8 @@ export default function ReelImages ({id})  {
   const [isViewerOpen, setIsViewerOpen] = useState(false);
  
   const openImageViewer = useCallback((index) => {
-    console.log(index);
+    
     setCurrentImage(index);
-    console.log(currentImage);
     setIsViewerOpen(true);
   }, []);
 
@@ -48,7 +48,7 @@ export default function ReelImages ({id})  {
       if(response.status===200){ 
         let temp= [];
         response.data.forEach((item,index)=>{
-          var srcImage=showImages+item.imagen.path;
+          var srcImage=ImagePath(item.imagen.path);
           temp.push(srcImage)
           //temp.push( <Carousel.Item key={index} ><img width="100%" src={srcImage} key={index}  onClick={ () => openImageViewer(index)}/></Carousel.Item>)
         }
@@ -67,6 +67,8 @@ export default function ReelImages ({id})  {
       setImagesListSrc([]);
     });
   }
+
+
 
   function handleImageClick(){
     console.log('q onda');
@@ -92,15 +94,15 @@ export default function ReelImages ({id})  {
     });
   }
 
-
+  
   useEffect(()=>{
     axios.get(getExtrasURL+id)
     .then((response)=>{      
       if(response.status===200){
         let temp= [];
         response.data.forEach((item,index)=>{
-          
-          var srcImage=showImages+item.imagen.path;
+          console.log(item);
+          var srcImage=ImagePath(item.imagen.path);
           temp.push(srcImage);
           //temp.push( <Carousel.Item key={index} ><img width="100%" src={srcImage} key={index}  onClick={ () => openImageViewer(index)}/> </Carousel.Item>)
         }
@@ -117,6 +119,10 @@ export default function ReelImages ({id})  {
     });
     
   },[]);
+
+ 
+
+  
 
   return (
     <div className='reel-images-container'>

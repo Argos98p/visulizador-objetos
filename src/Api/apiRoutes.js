@@ -18,4 +18,8 @@ function getExtrasUrl(id){
     return `http://redpanda.sytes.net:8084/api/objects/getextras?idobjeto=${id}`
 }
 
-export {statusEsceneUrl,infoObjectUrl,numberFramesInScene,completeImageUrl,getExtrasUrl}
+function ImagePath(pathImage){
+    return `http://redpanda.sytes.net:8085/api/images/getimage?path=${pathImage}`;
+}
+
+export {statusEsceneUrl,infoObjectUrl,numberFramesInScene,completeImageUrl,getExtrasUrl,ImagePath}

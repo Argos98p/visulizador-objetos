@@ -13,7 +13,7 @@ function Controller() {
     let [color, setColor] = useState("#EBAF26");
     const [objExiste, setObjExiste] = useState(true);
     const [myObjeto, setMyObjeto] = useState(null);
-    const [extras, getExtras] = useState([])
+    const [extras, setExtras] = useState([])
 
     useEffect(() => {
         axios.get(infoObjectUrl(id)).then(response => {
@@ -25,7 +25,9 @@ function Controller() {
 
                 axios.get(getExtrasUrl(id))
                 .then((response)=>{
-                  console.log(response);
+                  if(response.data !== []){                      
+                      setExtras(response.data)
+                  }
                 });
             } else {
                 setObjExiste(false);
@@ -39,7 +41,7 @@ function Controller() {
     return myObjeto !== null ? (
         <Visualizador data={myObjeto}
             tipo="vehiculo"
-            id={id}></Visualizador>
+            id={id} extras={extras}></Visualizador>
     ) : (
         <NoEncontrado idObjeto={id}></NoEncontrado>
     )
