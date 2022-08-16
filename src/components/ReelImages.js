@@ -1,14 +1,14 @@
 import React,{useState,useEffect,useCallback} from 'react';
 import Carousel from 'react-grid-carousel';
-import imagenes from "../bd_images.json";
 import './ReelImages.css'
 import ImageUploading from 'react-images-uploading';
 import axios from "axios";
 import ImageViewer from 'react-simple-image-viewer';
 import {ImagePath} from '../Api/apiRoutes'
+const { forwardRef, useRef, useImperativeHandle } = React;
 
 
-export default function ReelImages ({id,extrasImages})  {
+const  ReelImages = forwardRef(({id,extrasImages},ref) => {
 
   const [imageList, setImageList]=useState([])
   const [images, setImages] = useState([]); //for upload with 
@@ -19,12 +19,19 @@ export default function ReelImages ({id,extrasImages})  {
   var uploadExtraURL=`http://redpanda.sytes.net:8084/api/objects/addextra?idobjeto=${id}&archivo=`;
   var getExtrasURL="http://redpanda.sytes.net:8084/api/objects/getextras?idobjeto=";
 
+  useImperativeHandle(ref, () => ({
 
+    getAlert() {
+      setCurrentImage(0);
+      setIsViewerOpen(true);
+
+    }
+
+  }));
 
   const onChange = (imageListUpload, addUpdateIndex) => {
     // data for submit
     uploadExtra(imageListUpload[0].file)
-    
     setImages([]);
   };
 
@@ -74,6 +81,7 @@ export default function ReelImages ({id,extrasImages})  {
     console.log('q onda');
   }
 
+  
   function uploadExtra(imagenFile){
     const payload = new FormData();
     payload.append('extra',imagenFile)
@@ -145,7 +153,7 @@ export default function ReelImages ({id,extrasImages})  {
     </div>
 
     
-{/*  COMPONENTE PARA SUBIR EXTRAS
+ 
       <ImageUploading
         multiple
         value={images}
@@ -176,7 +184,7 @@ export default function ReelImages ({id,extrasImages})  {
           </div>
         )}
       </ImageUploading>
-        */}
+        
       <Carousel cols={6} rows={1} gap={10} loop containerStyle={{height:"100%"}} responsiveLayout={[
               {
                 breakpoint: 1200,
@@ -195,4 +203,6 @@ export default function ReelImages ({id,extrasImages})  {
       </div>
     
   )
-}
+});
+
+export default ReelImages;

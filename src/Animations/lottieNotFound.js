@@ -26,8 +26,8 @@ export default class LottieNotFound extends React.Component {
  
     return <div>
       <Lottie options={defaultOptions}
-              height="60%"
-              width="60%"
+              height="20%"
+              width="20%"
               isStopped={this.state.isStopped}
               isPaused={this.state.isPaused}/>
       {/*<button style={buttonStyle} onClick={() => this.setState({isStopped: true})}>stop</button>

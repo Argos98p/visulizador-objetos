@@ -2,6 +2,7 @@ import Popup from 'reactjs-popup';
 import React, {useEffect, useState, useRef} from 'react';
 import 'reactjs-popup/dist/index.css';
 import './modal.css'
+import {useParams} from "react-router-dom";
 import axios from "axios";
 import Carousel from 'react-grid-carousel';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -10,13 +11,14 @@ import {ImagePath} from '../Api/apiRoutes'
 
 export default function PopupNewHotspot({extras,handleCreateHotspot}) {
 
+    let {id} = useParams();
     var getExtrasURL = "http://redpanda.sytes.net:8084/api/objects/getextras?idobjeto=";
     const [allExtras, setAllExtras] = useState([]);
     const [imageSelected, setImageSelected] = useState(null);
     const inputRef = useRef(null);
 
     useEffect(() => {
-        axios.get(getExtrasURL + "10").then((response) => {
+        axios.get(getExtrasURL + id).then((response) => {
             if (response.status === 200) {
                 let temp = [];
                 console.log(response.data)
@@ -68,7 +70,7 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
                       <div className='lista-extras'>
                           {
                              allExtras.map((item, index) => (                               
-                                 <div className='imagen-modal-container ' >                                   
+                                 <div className='imagen-modal-container ' key={index}>                                   
                                    <figure onClick={(event) => handleClickOnImageModal(event,item)}>
                                    <img className={`imagen-modal  ${
                                      item===imageSelected

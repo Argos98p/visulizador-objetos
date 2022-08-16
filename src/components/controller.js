@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {Visualizador} from "./Visualizador";
 import axios from "axios";
-import NoEncontrado from "./paginaNoEncontrado";
+import NoEncontrado from "./publicidad/paginaNoEncontrado";
 import {infoObjectUrl,getExtrasUrl} from "../Api/apiRoutes";
 
 
@@ -31,6 +31,7 @@ function Controller() {
                 });
             } else {
                 setObjExiste(false);
+                
 
             }
         }).catch(error => {

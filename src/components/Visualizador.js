@@ -4,7 +4,6 @@ import OptionButtons from "./buttonsOptions";
 import "react-tridi/dist/index.css";
 import "./visualizador_style.css";
 import NavigationObjectButttons from "./NavigationObjectButtons";
-import ReactPlayer from "react-player";
 import ReelImages from "./ReelImages";
 import {ToastContainer, toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -15,6 +14,7 @@ import LottieEmptyEscenas from "../Animations/lottieEmptyEscena";
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import PopupNewHotspot from "./popupAddHotspot";
+import ReactTooltip from "react-tooltip";
 
 
 export function Visualizador({tipo, id, data, extras}) {
@@ -29,9 +29,13 @@ export function Visualizador({tipo, id, data, extras}) {
     const [pins, setPins] = useState([]);
     const [visibleExtras, setVisibleExtras] = useState(true);
     const [addHotspotMode, setAddHotspotMode] = useState(false);
+    const [nameHotspot, setNameHotspot] = useState("holis");
+    const [extraSelected, setExtraSelected] = useState(null);
+    const [newHotspot, setNewHotspot] = useState(false)
+
     const tridiRef = useRef(null);
     var zoomValue = 0;
-
+    const childRef = useRef();
     var idEscenaActiva = 0;
 
     const notifyEdicion = () => toast.info("modo edición", {
@@ -58,7 +62,7 @@ export function Visualizador({tipo, id, data, extras}) {
         var temp = [];
         var i = 1;
         escenaInView[1].imagenes.forEach((element) => {
-            var splitNombre = element.path.split("ObjetosVirtuales")[1].split("/");
+            var splitNombre = element.path.split("/");
 
             temp.push(completeImageUrl(`/${
                 splitNombre[1]
@@ -83,11 +87,14 @@ export function Visualizador({tipo, id, data, extras}) {
                 aux = false;
             }
         });
+
         return escenaInicial;
     }
 
 
-    function handleClickExtras() {setVisibleExtras(!visibleExtras)}
+    function handleClickExtras() {
+        setVisibleExtras(!visibleExtras)
+    }
     const frameChangeHandler = (currentFrameIndex) => {};
 
     const recordStartHandler = (recordingSessionId) => console.log("on record start", {recordingSessionId, pins});
@@ -96,7 +103,7 @@ export function Visualizador({tipo, id, data, extras}) {
 
     const pinClickHandler = (pin) => {
         console.log("on pin click", pin);
-        tridiRef.current.toggleRecording(!isEditMode, pin.recordingSessionId);
+        // tridiRef.current.toggleRecording(!isEditMode, pin.recordingSessionId);
     };
 
     const zoomValueHandler = (valueZoom) => (zoomValue = valueZoom);
@@ -119,24 +126,26 @@ export function Visualizador({tipo, id, data, extras}) {
     function handleWheel(e) {
         e.deltaY > 0 ? handleZoomOut() : handleZoomIn();
     }
-    function handleAddHostpot() {
-        //tridiRef.current.toggleRecording(!isEditMode);
+    function handleAddHostpot() { // tridiRef.current.toggleRecording(!isEditMode);
         console.log(pins);
     }
-    /*
+    
   function frameReplicate(){
     var lastPin= pins[pins.length-1];
     var move = 0.015;
     var j=20;
     var temp=[...pins]
+    temp[pins.length-1].nombre=nameHotspot;
+    temp[pins.length-1].extra=extraSelected.idextra;
+
     for(var i=lastPin.frameId-20;i<=lastPin.frameId+20;i++){
       var originalX = parseFloat(lastPin.x);
-      var originalY = parseFloat(lastPin.y);  
-
-      
+      var originalY = parseFloat(lastPin.y);        
         var newPin={
           id:lastPin.id,
           frameId: i,
+          nombre:nameHotspot,
+          extra:extraSelected.idextra,
           x:originalX+move*j,
           y:originalY,
           recordingSessionId:lastPin.recordingSessionId,
@@ -144,8 +153,9 @@ export function Visualizador({tipo, id, data, extras}) {
         temp.push(newPin)
       j--;      
     }
+    setNewHotspot(false);
     setPins(temp)
-  }*/
+  }
 
 
     function handleButtonEscena(escena) {
@@ -153,20 +163,62 @@ export function Visualizador({tipo, id, data, extras}) {
         setEscenaInView(escena);
     }
 
-    function handleCreateHotspot(info, imgExtra){
-        console.log(info);
-        console.log(imgExtra);
+    function handleCreateHotspot(imgExtra, info) {
+        setExtraSelected(imgExtra);
+        setNameHotspot(info);
         tridiRef.current.toggleRecording(true)
         setAddHotspotMode(true);
+        setNewHotspot(true)
     }
 
-    function clickOnTridiContainer(){
-        if(addHotspotMode){
-            console.log(tridiRef.current);
-            tridiRef.current.toggleRecording(false)
+    function clickOnTridiContainer() {
+        if (addHotspotMode) {            
+            tridiRef.current.toggleRecording(false);
+            console.log(pins);
+            // setNameHotspot("");
+            // ReactTooltip.rebuild();
         }
     }
 
+    useEffect(() => {
+        if(pins.length!==0 && newHotspot===true){
+            
+            //var temp= [...pins];
+            //temp[temp.length-1].nombre=nameHotspot;
+            //temp[temp.length-1].extra=extraSelected.idextra;
+            //setPins(temp);
+            console.log('entraaas');
+            frameReplicate();
+            //newPin['nombre']=nameHotspot
+        }
+    }, [pins.length]);
+
+    
+
+
+    function myRenderPin(pin) {
+        return (
+            <>
+                <label>
+                    <div id="b3" onClick={() => childRef.current.getAlert()} className="button-hotspot" data-for='soclose'
+                        data-tip={
+                            pin.nombre
+                    }>
+                        + 
+                    </div>
+                </label>
+
+                <ReactTooltip id="soclose" place="top" effect="solid"
+                    getContent={
+                        (dataTip => dataTip)
+                }></ReactTooltip>
+            </>
+        );
+    }
+    function handleOnLoad(load_success, percentage){
+        console.log(load_success);
+        console.log(percentage);
+    }
 
     function getVisualizador() {
 
@@ -183,10 +235,11 @@ export function Visualizador({tipo, id, data, extras}) {
 
             return (
 
-                <div className="tridi-container" onClick={clickOnTridiContainer}>
+                <div className="tridi-container"
+                    onClick={clickOnTridiContainer}>
                     <Tridi ref={tridiRef}
 
-                        
+
                         autoplaySpeed={70}
                         //autoplay={true}
 
@@ -207,40 +260,38 @@ export function Visualizador({tipo, id, data, extras}) {
                             () => setIsAutoPlayRunning(false)
                         }
                         onRecordStart={
-                            () => {
-                                //setIsEditMode(true);
-                                
+                            recordStartHandler
+                            // setIsEditMode(true);
+                                /*
                                 toast.dismiss();
-                                notifyEdicion();
-                            }
+                                notifyEdicion();*/
+                            
                         }
                         onRecordStop={
-                            () => {
-                                setIsEditMode(false);
+                            
+                                /*setIsEditMode(false);
                                 toast.dismiss();
                                 notifyVisualizacion();
                                 // frameReplicate()
-                            }
+                                console.log(pins);*/
+                                recordStopHandler
+                            
                         }
                         onPinClick={pinClickHandler}
                         setPins={setPins}
-                        //renderPin={(pin) => <LottieControl></LottieControl>}
+                        
                         renderPin={
-                            (pin) => (
-                                <label for="input3">
-                                    <div id="b3" className="button">
-                                        +
-                                    </div>
-                                </label>
-                            )
+                            myRenderPin
                         }
                         //inverse
                         //showControlBar
                         //showStatusBar
 
                         pins={pins}
-                        hintOnStartup
-                        hintText="Arrastre para mover"/>
+                        //hintOnStartup
+                        //hintText="Arrastre para mover"
+                        onLoadChange={handleOnLoad}
+                    />
                 </div>
             )
         }
@@ -268,15 +319,17 @@ export function Visualizador({tipo, id, data, extras}) {
                     } `
                 }>
 
-                    <ReelImages id={id} extrasImages={extras} ></ReelImages>
+                    <ReelImages id={id} ref={childRef}
+                        extrasImages={extras}></ReelImages>
                 </div>
             </div>
             {
             isEditMode ? <div className="add-buttons">
-                
 
-                <PopupNewHotspot extras={extras} handleCreateHotspot={handleCreateHotspot}></PopupNewHotspot>
-                
+
+                <PopupNewHotspot extras={extras}
+                    handleCreateHotspot={handleCreateHotspot}></PopupNewHotspot>
+
                 <button className="button-option">Agregar extra</button>
             </div> : null
         }
@@ -319,7 +372,7 @@ export function Visualizador({tipo, id, data, extras}) {
                     isAutoPlayRunning={isAutoPlayRunning}
                     isEditMode={isEditMode}></OptionButtons>
             </div>
-            
+
 
             {
             tipo === "vehiculo" ? null /*<NavigationCarButtons onOpenDoors={handleOpenDoors} onCloseDoors={handleCloseDoors}  onInterior={handleInterior}></NavigationCarButtons>*/ : null /*<NavigationObjectButttons ></NavigationObjectButttons>*/
