@@ -272,6 +272,7 @@ export function Visualizador({tipo, id, data, extras}) {
                 <div className={`tridi-container `}
                     onClick={clickOnTridiContainer}>
                     {
+                        /*
                     loadStatus === false ? <div className="sweet-loading">
                         <DotLoader color="#3F3F3F"
                             loading={
@@ -281,15 +282,15 @@ export function Visualizador({tipo, id, data, extras}) {
                         <h1>{loadPercentage}
                             %
                         </h1>
-                    </div> : null
+                    </div> : null*/
                 }
 
 
                     <Tridi ref={tridiRef}
-                        className={
+                        className={""/*
                             `${
                                 loadStatus ? "" : 'oculto'
-                            }`
+                            }`*/
                         }
 
 
