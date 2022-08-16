@@ -153,6 +153,8 @@ const  ReelImages = forwardRef(({id,extrasImages},ref) => {
     </div>
 
     
+    {
+      /* 
  
       <ImageUploading
         multiple
@@ -183,7 +185,8 @@ const  ReelImages = forwardRef(({id,extrasImages},ref) => {
             
           </div>
         )}
-      </ImageUploading>
+      </ImageUploading>*/
+    }
         
       <Carousel cols={6} rows={1} gap={10} loop containerStyle={{height:"100%"}} responsiveLayout={[
               {

@@ -22,4 +22,9 @@ function ImagePath(pathImage){
     return `http://redpanda.sytes.net:8085/api/images/getimage?path=${pathImage}`;
 }
 
-export {statusEsceneUrl,infoObjectUrl,numberFramesInScene,completeImageUrl,getExtrasUrl,ImagePath}
+function postAddHotspot(id, nombre_escena, nombre_imagen,x,y){
+    return `http://redpanda.sytes.net:8084/api/objects/addhotspot?idobjeto=${id}&nombre_escena=${nombre_escena}&nombre_imagen=${nombre_imagen}&x=${x}&y=${y}`
+}
+
+
+export {statusEsceneUrl,infoObjectUrl,numberFramesInScene,completeImageUrl,getExtrasUrl,ImagePath,postAddHotspot}

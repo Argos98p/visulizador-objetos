@@ -12,6 +12,17 @@
 .sc-ifAKCX .bqyzQp{
     margin-bottom: 20px;
 }
+
+@media screen and (max-width: 767px){
+.jVJmF {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    grid-template-rows: repeat(1,1fr);
+    grid-gap: 10px;
+
+}
+}
+
 .reel-images-container button{
     
     border: none;

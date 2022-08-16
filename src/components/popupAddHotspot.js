@@ -56,7 +56,7 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
 
     return (<Popup trigger={
             <button
-        className="button-option">Open Modal</button>
+        className="button-option">Hotspot</button>
         }
         modal
         nested>
@@ -67,7 +67,9 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
                     </button>
                     <div className="header"> Añadir hotspot </div>
                     <div className="content-popup">
+                    <div>Seleccione un extra</div>
                       <div className='lista-extras'>
+                        
                           {
                              allExtras.map((item, index) => (                               
                                  <div className='imagen-modal-container ' key={index}>                                   

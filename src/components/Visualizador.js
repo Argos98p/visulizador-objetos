@@ -3,6 +3,7 @@ import Tridi from "react-tridi";
 import OptionButtons from "./buttonsOptions";
 import "react-tridi/dist/index.css";
 import "./visualizador_style.css";
+import axios from "axios";
 import NavigationObjectButttons from "./NavigationObjectButtons";
 import ReelImages from "./ReelImages";
 import {ToastContainer, toast} from "react-toastify";
@@ -10,11 +11,14 @@ import "react-toastify/dist/ReactToastify.css";
 import {completeImageUrl} from "../Api/apiRoutes";
 import ButtonEscena from "./buttonEscena";
 import LottieEmptyEscenas from "../Animations/lottieEmptyEscena";
+import DotLoader from "react-spinners/DotLoader";
 
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import PopupNewHotspot from "./popupAddHotspot";
 import ReactTooltip from "react-tooltip";
+
+import {postAddHotspot} from "../Api/apiRoutes"
 
 
 export function Visualizador({tipo, id, data, extras}) {
@@ -31,7 +35,11 @@ export function Visualizador({tipo, id, data, extras}) {
     const [addHotspotMode, setAddHotspotMode] = useState(false);
     const [nameHotspot, setNameHotspot] = useState("holis");
     const [extraSelected, setExtraSelected] = useState(null);
-    const [newHotspot, setNewHotspot] = useState(false)
+    const [newHotspot, setNewHotspot] = useState(false);
+    const [loadStatus, setLoadStatus] = useState(false);
+    const [loadPercentage, setLoadPercentage] = useState(0);
+    const [currentIndex, setCurrentIndex] = useState(0);
+
 
     const tridiRef = useRef(null);
     var zoomValue = 0;
@@ -87,15 +95,17 @@ export function Visualizador({tipo, id, data, extras}) {
                 aux = false;
             }
         });
-
         return escenaInicial;
     }
 
 
     function handleClickExtras() {
         setVisibleExtras(!visibleExtras)
+        console.log(escenaInView);
     }
-    const frameChangeHandler = (currentFrameIndex) => {};
+    const frameChangeHandler = (currentFrameIndex) => {
+        setCurrentIndex(currentFrameIndex);
+    };
 
     const recordStartHandler = (recordingSessionId) => console.log("on record start", {recordingSessionId, pins});
 
@@ -129,33 +139,60 @@ export function Visualizador({tipo, id, data, extras}) {
     function handleAddHostpot() { // tridiRef.current.toggleRecording(!isEditMode);
         console.log(pins);
     }
-    
-  function frameReplicate(){
-    var lastPin= pins[pins.length-1];
-    var move = 0.015;
-    var j=20;
-    var temp=[...pins]
-    temp[pins.length-1].nombre=nameHotspot;
-    temp[pins.length-1].extra=extraSelected.idextra;
 
-    for(var i=lastPin.frameId-20;i<=lastPin.frameId+20;i++){
-      var originalX = parseFloat(lastPin.x);
-      var originalY = parseFloat(lastPin.y);        
-        var newPin={
-          id:lastPin.id,
-          frameId: i,
-          nombre:nameHotspot,
-          extra:extraSelected.idextra,
-          x:originalX+move*j,
-          y:originalY,
-          recordingSessionId:lastPin.recordingSessionId,
+    function frameReplicate() {
+        var lastPin = pins[pins.length - 1];
+        var move = 0.015;
+        var j = 20;
+        var replicate = 20
+        var temp = [...pins]
+        var moveY = 0.005
+        var k = 20 // increment x axis para frames anteriores
+        var h = 1 // increment x axis para frames posteiriores
+
+        temp[pins.length - 1].nombre = nameHotspot;
+        temp[pins.length - 1].extra = extraSelected.idextra;
+
+        /*
+        axios.post(postAddHotspot(id, escenaInView[1].nombre, currentIndex+".jpg", temp[pins.length - 1].x, temp[pins.length - 1].y)).then(function (response) {
+            console.log(response);
+        }).catch(function (error) {
+            console.log(error);
+        });*/
+
+
+        for (var i = lastPin.frameId - replicate; i <= lastPin.frameId + replicate; i++) {
+            var originalX = parseFloat(lastPin.x);
+            var originalY = parseFloat(lastPin.y);
+
+
+        
+            if (i === lastPin.frameId) {} else {
+                var newPin = {
+                    id: lastPin.id,
+                    frameId: i,
+                    nombre: nameHotspot,
+                    extra: extraSelected.idextra,
+                    x: originalX + move * j,
+                    y: originalY - moveY * k,
+                    recordingSessionId: lastPin.recordingSessionId
+                }
+                temp.push(newPin)
+            } 
+            
+            j--;
+
+            if(i<lastPin.frameId){
+                k--;
+            }else{
+                k++;
+            }
+            
+
         }
-        temp.push(newPin)
-      j--;      
+        setNewHotspot(false);
+        setPins(temp)
     }
-    setNewHotspot(false);
-    setPins(temp)
-  }
 
 
     function handleButtonEscena(escena) {
@@ -172,7 +209,7 @@ export function Visualizador({tipo, id, data, extras}) {
     }
 
     function clickOnTridiContainer() {
-        if (addHotspotMode) {            
+        if (addHotspotMode) {
             tridiRef.current.toggleRecording(false);
             console.log(pins);
             // setNameHotspot("");
@@ -181,30 +218,26 @@ export function Visualizador({tipo, id, data, extras}) {
     }
 
     useEffect(() => {
-        if(pins.length!==0 && newHotspot===true){
-            
-            //var temp= [...pins];
-            //temp[temp.length-1].nombre=nameHotspot;
-            //temp[temp.length-1].extra=extraSelected.idextra;
-            //setPins(temp);
-            console.log('entraaas');
+        if (pins.length !== 0 && newHotspot === true) {
             frameReplicate();
-            //newPin['nombre']=nameHotspot
         }
     }, [pins.length]);
-
-    
 
 
     function myRenderPin(pin) {
         return (
             <>
                 <label>
-                    <div id="b3" onClick={() => childRef.current.getAlert()} className="button-hotspot" data-for='soclose'
+                    <div id="b3"
+                        onClick={
+                            () => childRef.current.getAlert()
+                        }
+                        className="button-hotspot"
+                        data-for='soclose'
                         data-tip={
                             pin.nombre
                     }>
-                        + 
+                        +
                     </div>
                 </label>
 
@@ -215,9 +248,13 @@ export function Visualizador({tipo, id, data, extras}) {
             </>
         );
     }
-    function handleOnLoad(load_success, percentage){
-        console.log(load_success);
-        console.log(percentage);
+    function handleOnLoad(load_success, percentage) {
+        setLoadPercentage(percentage);
+
+        if (percentage > 70) {
+            setLoadStatus(true)
+        }
+
     }
 
     function getVisualizador() {
@@ -228,16 +265,32 @@ export function Visualizador({tipo, id, data, extras}) {
                 <br></br>
                 <LottieEmptyEscenas></LottieEmptyEscenas>
             </div>
-
-
         } else {
-
 
             return (
 
-                <div className="tridi-container"
+                <div className={`tridi-container `}
                     onClick={clickOnTridiContainer}>
+                    {
+                    loadStatus === false ? <div className="sweet-loading">
+                        <DotLoader color="#3F3F3F"
+                            loading={
+                                !loadStatus
+                            }
+                            size={70}/>
+                        <h1>{loadPercentage}
+                            %
+                        </h1>
+                    </div> : null
+                }
+
+
                     <Tridi ref={tridiRef}
+                        className={
+                            `${
+                                loadStatus ? "" : 'oculto'
+                            }`
+                        }
 
 
                         autoplaySpeed={70}
@@ -262,27 +315,23 @@ export function Visualizador({tipo, id, data, extras}) {
                         onRecordStart={
                             recordStartHandler
                             // setIsEditMode(true);
-                                /*
+                            /*
                                 toast.dismiss();
                                 notifyEdicion();*/
-                            
                         }
                         onRecordStop={
-                            
-                                /*setIsEditMode(false);
+
+                            /*setIsEditMode(false);
                                 toast.dismiss();
                                 notifyVisualizacion();
                                 // frameReplicate()
                                 console.log(pins);*/
-                                recordStopHandler
-                            
+                            recordStopHandler
                         }
                         onPinClick={pinClickHandler}
                         setPins={setPins}
-                        
-                        renderPin={
-                            myRenderPin
-                        }
+
+                        renderPin={myRenderPin}
                         //inverse
                         //showControlBar
                         //showStatusBar
@@ -290,8 +339,7 @@ export function Visualizador({tipo, id, data, extras}) {
                         pins={pins}
                         //hintOnStartup
                         //hintText="Arrastre para mover"
-                        onLoadChange={handleOnLoad}
-                    />
+                        onLoadChange={handleOnLoad}/>
                 </div>
             )
         }
@@ -308,7 +356,7 @@ export function Visualizador({tipo, id, data, extras}) {
 
             <div className="top-buttons ">
                 <button className="button-option"
-                    onClick={handleActivateEditMode}>Edit Mode</button>
+                    onClick={handleActivateEditMode}>Añadir recursos</button>
             </div>
 
 
@@ -319,7 +367,8 @@ export function Visualizador({tipo, id, data, extras}) {
                     } `
                 }>
 
-                    <ReelImages id={id} ref={childRef}
+                    <ReelImages id={id}
+                        ref={childRef}
                         extrasImages={extras}></ReelImages>
                 </div>
             </div>
@@ -330,7 +379,7 @@ export function Visualizador({tipo, id, data, extras}) {
                 <PopupNewHotspot extras={extras}
                     handleCreateHotspot={handleCreateHotspot}></PopupNewHotspot>
 
-                <button className="button-option">Agregar extra</button>
+                <button className="button-option" disabled>Agregar extra</button>
             </div> : null
         }
 
@@ -347,6 +396,7 @@ export function Visualizador({tipo, id, data, extras}) {
             {
             getVisualizador()
         }
+
             <div className="navigation-container">
                 {
                 Object.entries(escenas).map((escena) => (
