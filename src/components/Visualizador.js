@@ -374,6 +374,11 @@ export function Visualizador({tipo, id, data, extras}) {
     return (
         <div className="visualizador dragging">
 
+
+            <div className="lista-hotspost">
+                <button>Lista de Hotspots</button>
+            </div>
+
             <div className="top-buttons ">
                 <button className="button-option"
                     onClick={handleActivateEditMode}>Añadir recursos</button>
