@@ -39,3 +39,13 @@
     background-color: rgba(31, 80, 153, 0.541);
     
 }
+
+.btn-eliminar-extra{
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.reel-image-extra-container{
+    position: relative;
+}

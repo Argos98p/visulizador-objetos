@@ -54,6 +54,14 @@
 
   }
 
+
+  .container-lista-extras{
+    display: flex;
+    flex-direction: column;
+    flex-basis: 50%;
+    flex-grow: 0;
+  }
+
   .container-input-hotspot{
     flex-basis: 50%;
     flex-grow: 0;
@@ -62,8 +70,7 @@
 
   .lista-extras{
     max-height: 300px;
-    flex-basis: 50%;
-    flex-grow: 0;
+   
     margin-right: 0.5em;
     overflow-y:auto;
     display: grid;

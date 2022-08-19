@@ -5,10 +5,15 @@ import ImageUploading from 'react-images-uploading';
 import axios from "axios";
 import ImageViewer from 'react-simple-image-viewer';
 import {ImagePath} from '../Api/apiRoutes'
+import {FaTrash} from "react-icons/fa/index.js";
+import {deleteExtra} from "../Api/apiRoutes";
+
+
 const { forwardRef, useRef, useImperativeHandle } = React;
 
 
-const  ReelImages = forwardRef(({id,extrasImages},ref) => {
+
+const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
   const [imageList, setImageList]=useState([])
   const [images, setImages] = useState([]); //for upload with 
@@ -38,8 +43,7 @@ const  ReelImages = forwardRef(({id,extrasImages},ref) => {
   const [currentImage, setCurrentImage] = useState(0);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
  
-  const openImageViewer = useCallback((index) => {
-    
+  const openImageViewer = useCallback((index) => {   
     setCurrentImage(index);
     setIsViewerOpen(true);
   }, []);
@@ -56,14 +60,13 @@ const  ReelImages = forwardRef(({id,extrasImages},ref) => {
         let temp= [];
         response.data.forEach((item,index)=>{
           var srcImage=ImagePath(item.imagen.path);
-          temp.push(srcImage)
+          temp.push([srcImage,item.idextra])
           //temp.push( <Carousel.Item key={index} ><img width="100%" src={srcImage} key={index}  onClick={ () => openImageViewer(index)}/></Carousel.Item>)
         }
         );
         //setImageList(temp)
         console.log(temp);
         setImagesListSrc(temp)
-
       }else{
         console.log('error al recibir las imagenes');
       }
@@ -73,12 +76,6 @@ const  ReelImages = forwardRef(({id,extrasImages},ref) => {
       console.error("Error obteniendo las imagenes:"+e);
       setImagesListSrc([]);
     });
-  }
-
-
-
-  function handleImageClick(){
-    console.log('q onda');
   }
 
   
@@ -111,7 +108,7 @@ const  ReelImages = forwardRef(({id,extrasImages},ref) => {
         response.data.forEach((item,index)=>{
           console.log(item);
           var srcImage=ImagePath(item.imagen.path);
-          temp.push(srcImage);
+          temp.push([srcImage,item.idextra])
           //temp.push( <Carousel.Item key={index} ><img width="100%" src={srcImage} key={index}  onClick={ () => openImageViewer(index)}/> </Carousel.Item>)
         }
         );
@@ -128,6 +125,25 @@ const  ReelImages = forwardRef(({id,extrasImages},ref) => {
     
   },[]);
 
+
+  function onClickDeleteExtra(src){
+    try {
+      axios.post(deleteExtra(id,src[1]))
+    .then((response)=>{
+      if(response.status === 200){
+        console.log(response);
+        getExtras();
+      }else{
+        console.log(response);
+      }
+    })
+    } catch (error) {
+      console.log(error);
+    }
+    
+
+
+  }
  
 
   
@@ -140,7 +156,7 @@ const  ReelImages = forwardRef(({id,extrasImages},ref) => {
 
       {isViewerOpen && (
         <ImageViewer
-          src={ imagesListSrc }
+          src={ imagesListSrc.map((item,index)=>item[0]) }
           currentIndex={ currentImage }
           disableScroll={ false }
           closeOnClickOutside={ true }
@@ -153,8 +169,7 @@ const  ReelImages = forwardRef(({id,extrasImages},ref) => {
     </div>
 
     
-    {
-      /* 
+   
  
       <ImageUploading
         multiple
@@ -185,8 +200,7 @@ const  ReelImages = forwardRef(({id,extrasImages},ref) => {
             
           </div>
         )}
-      </ImageUploading>*/
-    }
+      </ImageUploading>
         
       <Carousel cols={6} rows={1} gap={10} loop containerStyle={{height:"100%"}} responsiveLayout={[
               {
@@ -200,7 +214,19 @@ const  ReelImages = forwardRef(({id,extrasImages},ref) => {
              
             ]}>        
       {imagesListSrc.map((src, index) => (
-        <Carousel.Item key={index} ><img width="100%" height="100%" className='cursor-pointer' src={src} key={index} alt={'hola'} onClick={ () => openImageViewer(index)}/> </Carousel.Item>
+        <Carousel.Item key={index} >
+          
+          <div className='reel-image-extra-container'>
+            {isEditMode
+          ?<button className='btn-eliminar-extra' onClick={()=>onClickDeleteExtra(src)}> <FaTrash/></button>
+          :null
+          }
+          <img width="100%" height="100%" className='cursor-pointer' src={src[0]} key={index} alt={'hola'} onClick={ () => openImageViewer(index)}/> 
+
+          </div>
+
+          </Carousel.Item>
+          
       ))}    
     </Carousel>
       </div>

@@ -78,7 +78,7 @@ export function Visualizador({tipo, id, data, extras}) {
                 splitNombre[2]
             }/${
                 splitNombre[3]
-            }/${i}.jpg`));
+            }_compresos/${i}.jpg`));
             i++;
         });
         setImages(temp);
@@ -116,7 +116,9 @@ export function Visualizador({tipo, id, data, extras}) {
         // tridiRef.current.toggleRecording(!isEditMode, pin.recordingSessionId);
     };
 
-    const zoomValueHandler = (valueZoom) => (zoomValue = valueZoom);
+    const zoomValueHandler = (valorZoom) => {
+        zoomValue = valorZoom;
+    }
 
     function handlePrev() {
         tridiRef.current.prev();
@@ -126,14 +128,29 @@ export function Visualizador({tipo, id, data, extras}) {
     }
     function handleZoomIn() {
         tridiRef.current.setZoom(zoomValue + 0.3);
+        if (zoomValue > 1) {
+            tridiRef.current.toggleMoving(true)
+        }
+        if (zoomValue === 1) {
+            tridiRef.current.toggleMoving(false)
+        }
+
     }
     function handleZoomOut() {
         tridiRef.current.setZoom(zoomValue - 0.1);
+        if (zoomValue > 1) {
+            tridiRef.current.toggleMoving(true)
+        }
+        if (zoomValue === 1) {
+            tridiRef.current.toggleMoving(false)
+        }
+
     }
     function handleAutoPlay() {
         tridiRef.current.toggleAutoplay(!isAutoPlayRunning);
     }
     function handleWheel(e) {
+
         e.deltaY > 0 ? handleZoomOut() : handleZoomIn();
     }
     function handleAddHostpot() { // tridiRef.current.toggleRecording(!isEditMode);
@@ -153,12 +170,12 @@ export function Visualizador({tipo, id, data, extras}) {
         temp[pins.length - 1].nombre = nameHotspot;
         temp[pins.length - 1].extra = extraSelected.idextra;
 
-        /*
+        
         axios.post(postAddHotspot(id, escenaInView[1].nombre, currentIndex+".jpg", temp[pins.length - 1].x, temp[pins.length - 1].y)).then(function (response) {
             console.log(response);
         }).catch(function (error) {
             console.log(error);
-        });*/
+        });
 
 
         for (var i = lastPin.frameId - replicate; i <= lastPin.frameId + replicate; i++) {
@@ -166,7 +183,6 @@ export function Visualizador({tipo, id, data, extras}) {
             var originalY = parseFloat(lastPin.y);
 
 
-        
             if (i === lastPin.frameId) {} else {
                 var newPin = {
                     id: lastPin.id,
@@ -178,16 +194,14 @@ export function Visualizador({tipo, id, data, extras}) {
                     recordingSessionId: lastPin.recordingSessionId
                 }
                 temp.push(newPin)
-            } 
-            
-            j--;
+            } j--;
 
-            if(i<lastPin.frameId){
+            if (i < lastPin.frameId) {
                 k--;
-            }else{
+            } else {
                 k++;
             }
-            
+
 
         }
         setNewHotspot(false);
@@ -201,11 +215,17 @@ export function Visualizador({tipo, id, data, extras}) {
     }
 
     function handleCreateHotspot(imgExtra, info) {
-        setExtraSelected(imgExtra);
-        setNameHotspot(info);
-        tridiRef.current.toggleRecording(true)
-        setAddHotspotMode(true);
-        setNewHotspot(true)
+        console.log(imgExtra);
+        if (info == "" || imgExtra == null) {
+
+        } else {
+            setExtraSelected(imgExtra);
+            setNameHotspot(info);
+            tridiRef.current.toggleRecording(true)
+            setAddHotspotMode(true);
+            setNewHotspot(true)
+        }
+
     }
 
     function clickOnTridiContainer() {
@@ -270,9 +290,9 @@ export function Visualizador({tipo, id, data, extras}) {
             return (
 
                 <div className={`tridi-container `}
+                    onWheel={handleWheel}
                     onClick={clickOnTridiContainer}>
-                    {
-                        /*
+                    {/*
                     loadStatus === false ? <div className="sweet-loading">
                         <DotLoader color="#3F3F3F"
                             loading={
@@ -282,12 +302,12 @@ export function Visualizador({tipo, id, data, extras}) {
                         <h1>{loadPercentage}
                             %
                         </h1>
-                    </div> : null*/
-                }
+                    </div> : null*/}
 
 
                     <Tridi ref={tridiRef}
-                        className={""/*
+                        className={
+                            "" /*
                             `${
                                 loadStatus ? "" : 'oculto'
                             }`*/
@@ -352,8 +372,7 @@ export function Visualizador({tipo, id, data, extras}) {
 
 
     return (
-        <div className="visualizador dragging"
-            onWheel={handleWheel}>
+        <div className="visualizador dragging">
 
             <div className="top-buttons ">
                 <button className="button-option"
@@ -370,7 +389,7 @@ export function Visualizador({tipo, id, data, extras}) {
 
                     <ReelImages id={id}
                         ref={childRef}
-                        extrasImages={extras}></ReelImages>
+                        extrasImages={extras} isEditMode={isEditMode}></ReelImages>
                 </div>
             </div>
             {

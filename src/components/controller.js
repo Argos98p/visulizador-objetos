@@ -22,6 +22,7 @@ function Controller() {
         }).then(data => {
             if (data !== "NOT_FOUND") {
                 setMyObjeto(data);
+                console.log(data);
 
                 axios.get(getExtrasUrl(id))
                 .then((response)=>{

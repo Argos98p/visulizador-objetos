@@ -16,12 +16,13 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
     const [allExtras, setAllExtras] = useState([]);
     const [imageSelected, setImageSelected] = useState(null);
     const inputRef = useRef(null);
+    const [noImageSelected, setNoImageSelected] = useState(false);
+    const [open, setOpen] = useState(false);
 
     useEffect(() => {
         axios.get(getExtrasURL + id).then((response) => {
             if (response.status === 200) {
                 let temp = [];
-                console.log(response.data)
                 setAllExtras(response.data)
                 /*
         response.data.forEach((item,index)=>{
@@ -43,33 +44,74 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
     }, []);
 
     function handleClickOnImageModal(event, item){
+      if(imageSelected==item)
+      {
+        setImageSelected(null)
+      }else{
         setImageSelected(item)
+      }
+      
         
     }
 
-    function handleCrearHotspot(){
-      //console.log(imageSelected);
-      //console.log(inputRef.current.value);
-      handleCreateHotspot(imageSelected,inputRef.current.value)
-      
+    function onCrear(image,input){
+      console.log(imageSelected);
+      console.log(input);
+
+      if(image === null || inputRef.current.value === ""){
+        if (image === null){
+          console.log('as');
+        }
+        if(inputRef.current.value ===""){
+          console.log('is');
+        }
+      }else{
+        console.log('todo okpo');
+            
+        handleCreateHotspot(imageSelected,inputRef.current.value)
+        setOpen(false);
+        setImageSelected(null)
+        inputRef.current.value=""
+      }
+
+      //handleCreateHotspot(imageSelected,inputRef.current.value)
+      //handleCreateHotspot(imageSelected,inputRef.current.value,close)
     }
 
-    return (<Popup trigger={
-            <button
-        className="button-option">Hotspot</button>
-        }
+
+    function onClickHotspotPopup(){
+      setOpen(true)
+    }
+
+    function onCancelHotspotModal(){
+      setOpen(false)
+      if(inputRef.current!==null){
+        inputRef.current.value=""    
+      }
+          
+      setImageSelected(null)
+    }
+
+
+    return (
+      <>
+    <button onClick={onClickHotspotPopup}>Hotspot</button>
+    <Popup 
+    onClose={onCancelHotspotModal}
+    open={open}
         modal
-        nested>
-        {close => (
-                  <div className="modalp">
-                    <button className="close" onClick={close}>
-                      &times;
-                    </button>
+        nested >
+        {
+      }
+
+<div className="modalp">
+                    
                     <div className="header"> Añadir hotspot </div>
                     <div className="content-popup">
-                    <div>Seleccione un extra</div>
+
+                      <div className='container-lista-extras'>
+                      <div>Seleccione un extra</div>
                       <div className='lista-extras'>
-                        
                           {
                              allExtras.map((item, index) => (                               
                                  <div className='imagen-modal-container ' key={index}>                                   
@@ -77,42 +119,49 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
                                    <img className={`imagen-modal  ${
                                      item===imageSelected
                                      ? "image-modal-selected" : ""
-                                   }`} src={ImagePath(item.imagen.path)}  onClick={(event) => handleClickOnImageModal(event,item)} />
+                                   }`} src={ImagePath(item.imagen.path)}  />
                                         <figcaption> 
                                          {item.nombre}
                                         </figcaption>
                                   </figure>
                                  </div>    
                             ))
-                          }             
-                                {                                
-                                
-                                /*
-
-                        <Carousel cols={2} rows={1} gap={10} loop>
-                            <Carousel.Item>
-                            <img width="100%" src="https://picsum.photos/800/600?random=1" />
-                            </Carousel.Item>
-                        </Carousel>
-                                    
-                                    allExtras.map((item, index) => (
-                                    <h1>as</h1>
-                                ))
-                                    */}
-
+                          } 
+                          
+                          
+                      </div>
+                      { imageSelected === null
+                            ? <p>Esta opcion es obligatoria</p>
+                            : null
+                          }
 
 
                       </div>
+                     
+                    
                       <div className='container-input-hotspot'>
+                                    
                           <InputHotspot inputRef={inputRef}></InputHotspot>
+                          
                       </div>
                     </div>
                     <div className="actions">
-                    <button className="button-option" onClick={()=>{handleCreateHotspot(imageSelected,inputRef.current.value); close();}}>Crear</button>                      
+                    <button className="button-option" 
+                    disabled={
+                      (imageSelected === null || inputRef.current.value === "")
+                      ? true
+                      : false
+                    }
+
+                    onClick={()=>{ onCrear(imageSelected,inputRef.current.value) }}
+
+                    
+                    >Crear</button>         
+                    <button onClick={onCancelHotspotModal}>Cancelar</button>             
                     </div>
                   </div>
-                )}
               </Popup>
+              </>
     );
 
 
