@@ -171,11 +171,15 @@ export function Visualizador({tipo, id, data, extras}) {
         temp[pins.length - 1].extra = extraSelected.idextra;
 
         
+
+
+        //Funcion para persistir los hotspots
+        /*
         axios.post(postAddHotspot(id, escenaInView[1].nombre, currentIndex+".jpg", temp[pins.length - 1].x, temp[pins.length - 1].y)).then(function (response) {
             console.log(response);
         }).catch(function (error) {
             console.log(error);
-        });
+        });*/
 
 
         for (var i = lastPin.frameId - replicate; i <= lastPin.frameId + replicate; i++) {
@@ -215,11 +219,17 @@ export function Visualizador({tipo, id, data, extras}) {
     }
 
     function handleCreateHotspot(imgExtra, info) {
+        //FUNCION PARA CONTROLAR SELECCION DE EXTRAS     
         console.log(imgExtra);
-        if (info == "" || imgExtra == null) {
+        if (info == "" /*|| imgExtra == null*/) {
 
         } else {
-            setExtraSelected(imgExtra);
+            //borrar la siguientevariblw 
+            var aux={
+                idextra:1
+            }
+
+            setExtraSelected(aux);
             setNameHotspot(info);
             tridiRef.current.toggleRecording(true)
             setAddHotspotMode(true);
@@ -355,7 +365,7 @@ export function Visualizador({tipo, id, data, extras}) {
                         renderPin={myRenderPin}
                         //inverse
                         //showControlBar
-                        //showStatusBar
+                        showStatusBar
 
                         pins={pins}
                         //hintOnStartup

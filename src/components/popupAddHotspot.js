@@ -15,11 +15,15 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
     var getExtrasURL = "http://redpanda.sytes.net:8084/api/objects/getextras?idobjeto=";
     const [allExtras, setAllExtras] = useState([]);
     const [imageSelected, setImageSelected] = useState(null);
-    const inputRef = useRef(null);
+    const inputRef = useRef();
     const [noImageSelected, setNoImageSelected] = useState(false);
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
+
+      //inputRef.current.value="";
+
+
         axios.get(getExtrasURL + id).then((response) => {
             if (response.status === 200) {
                 let temp = [];
@@ -44,7 +48,7 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
     }, []);
 
     function handleClickOnImageModal(event, item){
-      if(imageSelected==item)
+      if(imageSelected===item)
       {
         setImageSelected(null)
       }else{
@@ -58,7 +62,8 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
       console.log(imageSelected);
       console.log(input);
 
-      if(image === null || inputRef.current.value === ""){
+      //FUNCION PARA CONTROLAR SELECCION DE EXTRAS
+      if(/*image === null || */inputRef.current.value === ""){
         if (image === null){
           console.log('as');
         }
@@ -92,6 +97,8 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
       setImageSelected(null)
     }
 
+   
+
 
     return (
       <>
@@ -103,6 +110,7 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
         nested >
         {
       }
+      
 
 <div className="modalp">
                     
@@ -148,7 +156,8 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
                     <div className="actions">
                     <button className="button-option" 
                     disabled={
-                      (imageSelected === null || inputRef.current.value === "")
+                      //FUNCION PARA CONTROLAR SELECCION DE EXTRAS                     
+                      (/*imageSelected === null ||*/  inputRef.current && inputRef.current.value === "")
                       ? true
                       : false
                     }
