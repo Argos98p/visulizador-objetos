@@ -71,7 +71,7 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
           console.log('is');
         }
       }else{
-        console.log('todo okpo');
+        console.log('todo ok');
             
         handleCreateHotspot(imageSelected,inputRef.current.value)
         setOpen(false);
@@ -102,7 +102,7 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
 
     return (
       <>
-    <button onClick={onClickHotspotPopup}>Hotspot</button>
+    <button className="button-option" onClick={onClickHotspotPopup}>Hotspot</button>
     <Popup 
     onClose={onCancelHotspotModal}
     open={open}

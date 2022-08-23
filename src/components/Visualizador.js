@@ -12,14 +12,15 @@ import {completeImageUrl} from "../Api/apiRoutes";
 import ButtonEscena from "./buttonEscena";
 import LottieEmptyEscenas from "../Animations/lottieEmptyEscena";
 import DotLoader from "react-spinners/DotLoader";
+import ReactPhotoSphereViewer from 'react-photo-sphere-viewer';
 
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import PopupNewHotspot from "./popupAddHotspot";
 import ReactTooltip from "react-tooltip";
-
+import { Pannellum, PannellumVideo } from "pannellum-react";
 import {postAddHotspot} from "../Api/apiRoutes"
-
+import {PanoViewer} from "@egjs/view360";
 
 export function Visualizador({tipo, id, data, extras}) {
     var idUsuario = data["idusuario"];
@@ -39,6 +40,9 @@ export function Visualizador({tipo, id, data, extras}) {
     const [loadStatus, setLoadStatus] = useState(false);
     const [loadPercentage, setLoadPercentage] = useState(0);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [hotspotInit, setHotspotInit] = useState(false);
+    const [hotspotEnd, setHotspotEnd] = useState(false);
+    const [sphereImageInView, setSphereImageInView] = useState(false);
 
 
     const tridiRef = useRef(null);
@@ -107,9 +111,11 @@ export function Visualizador({tipo, id, data, extras}) {
         setCurrentIndex(currentFrameIndex);
     };
 
-    const recordStartHandler = (recordingSessionId) => console.log("on record start", {recordingSessionId, pins});
+    const recordStartHandler = (recordingSessionId) => /*console.log("on record start", {recordingSessionId, pins})*/
+    console.log();
 
-    const recordStopHandler = (recordingSessionId) => console.log("on record stop", {recordingSessionId, pins});
+    const recordStopHandler = (recordingSessionId) => /* console.log("on record stop", {recordingSessionId, pins})*/
+    console.log();
 
     const pinClickHandler = (pin) => {
         console.log("on pin click", pin);
@@ -157,6 +163,42 @@ export function Visualizador({tipo, id, data, extras}) {
         console.log(pins);
     }
 
+
+    function frameReplicateV2() {
+        var init=pins.slice(-2)[0];
+        var end=pins.slice(-2)[1];
+        console.log({init,end});
+        var numFrames=end.frameId - init.frameId;
+        var k= (parseFloat(init.x)-parseFloat(end.x))/numFrames;
+        var desY= (parseFloat(init.y)-parseFloat(end.y))/numFrames;
+        var aux=[...pins]
+
+        
+        var incre=0;
+        for(var i= init.frameId;i < end.frameId; i++){
+            var newPin = {
+                id: i,
+                frameId: i,
+                nombre: nameHotspot,
+                extra: null,
+                x: parseFloat(init.x) - k*incre,
+                y: parseFloat(init.y) -desY*incre,
+                recordingSessionId: null
+            }
+            incre++;
+
+            aux.push(newPin);
+        }
+
+        setPins(aux)
+        setAddHotspotMode(false)
+        setHotspotInit(false);
+        setHotspotEnd(false)
+
+    }
+
+    
+
     function frameReplicate() {
         var lastPin = pins[pins.length - 1];
         var move = 0.015;
@@ -170,10 +212,8 @@ export function Visualizador({tipo, id, data, extras}) {
         temp[pins.length - 1].nombre = nameHotspot;
         temp[pins.length - 1].extra = extraSelected.idextra;
 
-        
 
-
-        //Funcion para persistir los hotspots
+        // Funcion para persistir los hotspots
         /*
         axios.post(postAddHotspot(id, escenaInView[1].nombre, currentIndex+".jpg", temp[pins.length - 1].x, temp[pins.length - 1].y)).then(function (response) {
             console.log(response);
@@ -218,30 +258,36 @@ export function Visualizador({tipo, id, data, extras}) {
         setEscenaInView(escena);
     }
 
-    function handleCreateHotspot(imgExtra, info) {
-        //FUNCION PARA CONTROLAR SELECCION DE EXTRAS     
-        console.log(imgExtra);
-        if (info == "" /*|| imgExtra == null*/) {
+    function handleCreateHotspot(imgExtra, info) { // FUNCION PARA CONTROLAR SELECCION DE EXTRAS
 
-        } else {
-            //borrar la siguientevariblw 
-            var aux={
-                idextra:1
+        if (info == "" /*|| imgExtra == null*/
+        ) {} else { // borrar la siguientevariblw
+            var aux = {
+                idextra: 1
             }
-
             setExtraSelected(aux);
             setNameHotspot(info);
-            tridiRef.current.toggleRecording(true)
+            //tridiRef.current.toggleRecording(true)
             setAddHotspotMode(true);
             setNewHotspot(true)
         }
 
     }
 
+    function handleHotspotInit(){
+        setHotspotInit(true);
+        tridiRef.current.toggleRecording(true)
+    }
+
+    function handleHotspotEnd(){
+        setHotspotEnd(true);
+        tridiRef.current.toggleRecording(true)
+    }
+
     function clickOnTridiContainer() {
         if (addHotspotMode) {
             tridiRef.current.toggleRecording(false);
-            console.log(pins);
+
             // setNameHotspot("");
             // ReactTooltip.rebuild();
         }
@@ -249,7 +295,10 @@ export function Visualizador({tipo, id, data, extras}) {
 
     useEffect(() => {
         if (pins.length !== 0 && newHotspot === true) {
-            frameReplicate();
+            
+            if(hotspotInit && hotspotEnd){
+                frameReplicateV2();
+            }
         }
     }, [pins.length]);
 
@@ -287,6 +336,17 @@ export function Visualizador({tipo, id, data, extras}) {
 
     }
 
+    const photoSphereRef = React.useRef();
+
+  const handleClick = () => {
+    photoSphereRef.current.animate({
+      latitude: 0,
+      longitude: 0,
+      zoom: 55,
+      speed: '10rpm',
+    });
+  }
+
     function getVisualizador() {
 
         if (images.length === 0) {
@@ -314,8 +374,22 @@ export function Visualizador({tipo, id, data, extras}) {
                         </h1>
                     </div> : null*/}
 
-
-                    <Tridi ref={tridiRef}
+                    {
+                        sphereImageInView
+                        ?<Pannellum
+                        width="100%"
+                        height="500px"
+                        image="../360.jpg"
+                        pitch={10}
+                        yaw={180}
+                        hfov={110}
+                        autoLoad
+                        onLoad={() => {
+                            console.log("panorama loaded");
+                        }}
+                    >
+                        </Pannellum>
+                        :<Tridi ref={tridiRef}
                         className={
                             "" /*
                             `${
@@ -371,6 +445,9 @@ export function Visualizador({tipo, id, data, extras}) {
                         //hintOnStartup
                         //hintText="Arrastre para mover"
                         onLoadChange={handleOnLoad}/>
+                    }
+
+                    
                 </div>
             )
         }
@@ -386,13 +463,24 @@ export function Visualizador({tipo, id, data, extras}) {
 
 
             <div className="lista-hotspost">
-                <button>Lista de Hotspots</button>
+                <button className="button-option">Lista de Hotspots</button>
             </div>
 
             <div className="top-buttons ">
                 <button className="button-option"
                     onClick={handleActivateEditMode}>Añadir recursos</button>
             </div>
+
+            <div className="sphere-button">
+                <button className="button-option" onClick={()=>setSphereImageInView(!sphereImageInView)}>360</button>
+            </div>
+
+            {
+            addHotspotMode ? <div className="start-end-hotspot-buttons">
+                <button className="button-option" onClick={handleHotspotInit}>Inicio</button>
+                <button className="button-option" onClick={handleHotspotEnd}>Fin</button>
+            </div> : null
+        }
 
 
             <div className="reel-container">
@@ -404,7 +492,8 @@ export function Visualizador({tipo, id, data, extras}) {
 
                     <ReelImages id={id}
                         ref={childRef}
-                        extrasImages={extras} isEditMode={isEditMode}></ReelImages>
+                        extrasImages={extras}
+                        isEditMode={isEditMode}></ReelImages>
                 </div>
             </div>
             {
