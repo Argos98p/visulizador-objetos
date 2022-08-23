@@ -156,8 +156,11 @@ export function Visualizador({tipo, id, data, extras}) {
         tridiRef.current.toggleAutoplay(!isAutoPlayRunning);
     }
     function handleWheel(e) {
+        if(!sphereImageInView){
+            e.deltaY > 0 ? handleZoomOut() : handleZoomIn();
+        }
 
-        e.deltaY > 0 ? handleZoomOut() : handleZoomIn();
+        
     }
     function handleAddHostpot() { // tridiRef.current.toggleRecording(!isEditMode);
         console.log(pins);
@@ -172,10 +175,11 @@ export function Visualizador({tipo, id, data, extras}) {
         var k= (parseFloat(init.x)-parseFloat(end.x))/numFrames;
         var desY= (parseFloat(init.y)-parseFloat(end.y))/numFrames;
         var aux=[...pins]
-
-        
         var incre=0;
+
+
         for(var i= init.frameId;i < end.frameId; i++){
+            console.log(nameHotspot);
             var newPin = {
                 id: i,
                 frameId: i,
@@ -304,6 +308,7 @@ export function Visualizador({tipo, id, data, extras}) {
 
 
     function myRenderPin(pin) {
+        console.log(pin);
         return (
             <>
                 <label>
@@ -313,16 +318,14 @@ export function Visualizador({tipo, id, data, extras}) {
                         }
                         className="button-hotspot"
                         data-for='soclose'
-                        data-tip={
-                            pin.nombre
-                    }>
+                        data-tip=''>
                         +
                     </div>
                 </label>
 
                 <ReactTooltip id="soclose" place="top" effect="solid"
                     getContent={
-                        (dataTip => dataTip)
+                        ()=>{return pin.nombre}
                 }></ReactTooltip>
             </>
         );
@@ -398,6 +401,20 @@ export function Visualizador({tipo, id, data, extras}) {
                         }
 
 
+                        //imagenes en local
+
+                        location="../ejemplos/normal"
+                        format = "jpg"
+                        count={126}
+
+                        //imagenes desde el sevidor
+
+                        /*
+                        images={images}
+                        count={images.length}
+                        */
+
+
                         autoplaySpeed={70}
                         //autoplay={true}
 
@@ -405,11 +422,9 @@ export function Visualizador({tipo, id, data, extras}) {
                         maxZoom={3}
                         minZoom={1}
                         onZoom={zoomValueHandler}
-                        images={images}
+                        
                         //format="png"
-                        count={
-                            images.length
-                        }
+                        
                         onFrameChange={frameChangeHandler}
                         onAutoplayStart={
                             () => setIsAutoPlayRunning(true)
@@ -522,7 +537,7 @@ export function Visualizador({tipo, id, data, extras}) {
         }
 
             <div className="navigation-container">
-                {
+                {/*
                 Object.entries(escenas).map((escena) => (
 
                     <ButtonEscena key={
@@ -534,7 +549,7 @@ export function Visualizador({tipo, id, data, extras}) {
                             escena[0].toString() === aux.toString() ? true : false
                     }></ButtonEscena>
                 ))
-            } </div>
+                */ } </div>
 
             <div className="options-container">
                 <OptionButtons onAddHotspot={handleAddHostpot}
