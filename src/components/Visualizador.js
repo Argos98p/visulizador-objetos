@@ -12,7 +12,6 @@ import {completeImageUrl} from "../Api/apiRoutes";
 import ButtonEscena from "./buttonEscena";
 import LottieEmptyEscenas from "../Animations/lottieEmptyEscena";
 import DotLoader from "react-spinners/DotLoader";
-import ReactPhotoSphereViewer from 'react-photo-sphere-viewer';
 
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
@@ -43,6 +42,7 @@ export function Visualizador({tipo, id, data, extras}) {
     const [hotspotInit, setHotspotInit] = useState(false);
     const [hotspotEnd, setHotspotEnd] = useState(false);
     const [sphereImageInView, setSphereImageInView] = useState(false);
+    const [numberImages, setNumberImages] = useState(126)
 
 
     const tridiRef = useRef(null);
@@ -168,36 +168,66 @@ export function Visualizador({tipo, id, data, extras}) {
 
 
     function frameReplicateV2() {
+
         var init=pins.slice(-2)[0];
         var end=pins.slice(-2)[1];
-        console.log({init,end});
-        var numFrames=end.frameId - init.frameId;
-        var k= (parseFloat(init.x)-parseFloat(end.x))/numFrames;
-        var desY= (parseFloat(init.y)-parseFloat(end.y))/numFrames;
         var aux=[...pins]
         var incre=0;
-
-
-        for(var i= init.frameId;i < end.frameId; i++){
-            console.log(nameHotspot);
-            var newPin = {
-                id: i,
-                frameId: i,
-                nombre: nameHotspot,
-                extra: null,
-                x: parseFloat(init.x) - k*incre,
-                y: parseFloat(init.y) -desY*incre,
-                recordingSessionId: null
+        if(init.frameId>end.frameId){
+            
+            var n=numberImages-init.frameId+end.frameId;
+            var k=(init.x-end.x)/n
+            var temp = init.frameId+n; 
+            for(var i= init.frameId;i < temp; i++){
+                console.log(nameHotspot);
+                if(i == numberImages){
+                    i=0
+                    temp=end.frameId
+                }
+                var newPin = {
+                    id: i,
+                    frameId: i,
+                    nombre: nameHotspot,
+                    extra: null,
+                    x: parseFloat(init.x) - k*incre,
+                    y: parseFloat(init.y) -desY*incre,
+                    recordingSessionId: null
+                }
+                incre++;
+    
+                aux.push(newPin);
             }
-            incre++;
-
-            aux.push(newPin);
+            setPins(aux)
+            setAddHotspotMode(false)
+            setHotspotInit(false);
+            setHotspotEnd(false)
+        }else{
+            var numFrames=end.frameId - init.frameId;
+            var k= (parseFloat(init.x)-parseFloat(end.x))/numFrames;
+            var desY= (parseFloat(init.y)-parseFloat(end.y))/numFrames;
+            for(var i= init.frameId;i < end.frameId; i++){
+                var newPin = {
+                    id: i,
+                    frameId: i,
+                    nombre: nameHotspot,
+                    extra: null,
+                    x: parseFloat(init.x) - k*incre,
+                    y: parseFloat(init.y) -desY*incre,
+                    recordingSessionId: null
+                }
+                incre++;
+    
+                aux.push(newPin);
+            }
+    
+            setPins(aux)
+            setAddHotspotMode(false)
+            setHotspotInit(false);
+            setHotspotEnd(false)
         }
 
-        setPins(aux)
-        setAddHotspotMode(false)
-        setHotspotInit(false);
-        setHotspotEnd(false)
+
+        
 
     }
 
