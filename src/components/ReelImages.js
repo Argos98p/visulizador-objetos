@@ -106,7 +106,6 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
       if(response.status===200){
         let temp= [];
         response.data.forEach((item,index)=>{
-          console.log(item);
           var srcImage=ImagePath(item.imagen.path);
           temp.push([srcImage,item.idextra])
           //temp.push( <Carousel.Item key={index} ><img width="100%" src={srcImage} key={index}  onClick={ () => openImageViewer(index)}/> </Carousel.Item>)

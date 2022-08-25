@@ -22,12 +22,14 @@ function ImagePath(pathImage){
     return `http://redpanda.sytes.net:8085/api/images/getimage?path=${pathImage}`;
 }
 
-function postAddHotspot(id, nombre_escena, nombre_imagen,x,y){
-    return `http://redpanda.sytes.net:8084/api/objects/addhotspot?idobjeto=${id}&nombre_escena=${nombre_escena}&nombre_imagen=${nombre_imagen}&x=${x}&y=${y}`
+function postAddHotspot(id, nombre_escena, nombre_imagen,x,y,idextra,nombreHotspot,idHotspot){
+    return `http://redpanda.sytes.net:8084/api/objects/addhotspot?idobjeto=${id}&nombre_escena=${nombre_escena}&nombre_imagen=${nombre_imagen}&idhotspot=${idHotspot}&nombreHotspot=${nombreHotspot}&x=${x}&y=${y}&idextra=${idextra}`
 }
 
 function deleteExtra(idObjeto,idExtra){
     return `http://redpanda.sytes.net:8084/api/objects/deleteextra?idobjeto=${idObjeto}&idextra=${idExtra}`;
 }
+
+
 
 export {statusEsceneUrl,infoObjectUrl,numberFramesInScene,completeImageUrl,getExtrasUrl,ImagePath,postAddHotspot,deleteExtra}

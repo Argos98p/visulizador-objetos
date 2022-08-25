@@ -159,22 +159,19 @@ export function Visualizador({tipo, id, data, extras}) {
         if(!sphereImageInView){
             e.deltaY > 0 ? handleZoomOut() : handleZoomIn();
         }
-
         
     }
     function handleAddHostpot() { // tridiRef.current.toggleRecording(!isEditMode);
         console.log(pins);
     }
 
-
     function frameReplicateV2() {
-
         var init=pins.slice(-2)[0];
         var end=pins.slice(-2)[1];
         var aux=[...pins]
         var incre=0;
+        let promises = [];
         if(init.frameId>end.frameId){
-            
             var n=numberImages-init.frameId+end.frameId;
             var k=(init.x-end.x)/n
             var temp = init.frameId+n; 
@@ -194,9 +191,21 @@ export function Visualizador({tipo, id, data, extras}) {
                     recordingSessionId: null
                 }
                 incre++;
-    
                 aux.push(newPin);
+                if(i!==0){
+                    promises.push(
+                        axios.post(
+                            postAddHotspot(id,escenaInView[1].nombre,i+".jpg",newPin.x,newPin.y,extraSelected.idextra,nameHotspot,i)
+                        ).then(
+                            response=>{
+                                console.log(response)
+                            }
+                        )
+                    )
+                }
+                
             }
+            Promise.all(promises).then(()=>console.log("ok"));
             setPins(aux)
             setAddHotspotMode(false)
             setHotspotInit(false);
@@ -216,75 +225,29 @@ export function Visualizador({tipo, id, data, extras}) {
                     recordingSessionId: null
                 }
                 incre++;
-    
                 aux.push(newPin);
-            }
+                if(i!==0){
+                    promises.push(
+                        axios.post(
+                            postAddHotspot(id,escenaInView[1].nombre,i+".jpg",newPin.x,newPin.y,extraSelected.idextra,nameHotspot,i)
+                        ).then(
+                            response=>{
     
+                                console.log(response)
+                            }
+                        )
+                    )
+                }
+                
+            }
+            Promise.all(promises).then(()=>console.log("ok"));
             setPins(aux)
             setAddHotspotMode(false)
             setHotspotInit(false);
             setHotspotEnd(false)
         }
-
-
-        
-
     }
 
-    
-
-    function frameReplicate() {
-        var lastPin = pins[pins.length - 1];
-        var move = 0.015;
-        var j = 20;
-        var replicate = 20
-        var temp = [...pins]
-        var moveY = 0.005
-        var k = 20 // increment x axis para frames anteriores
-        var h = 1 // increment x axis para frames posteiriores
-
-        temp[pins.length - 1].nombre = nameHotspot;
-        temp[pins.length - 1].extra = extraSelected.idextra;
-
-
-        // Funcion para persistir los hotspots
-        /*
-        axios.post(postAddHotspot(id, escenaInView[1].nombre, currentIndex+".jpg", temp[pins.length - 1].x, temp[pins.length - 1].y)).then(function (response) {
-            console.log(response);
-        }).catch(function (error) {
-            console.log(error);
-        });*/
-
-
-        for (var i = lastPin.frameId - replicate; i <= lastPin.frameId + replicate; i++) {
-            var originalX = parseFloat(lastPin.x);
-            var originalY = parseFloat(lastPin.y);
-
-
-            if (i === lastPin.frameId) {} else {
-                var newPin = {
-                    id: lastPin.id,
-                    frameId: i,
-                    nombre: nameHotspot,
-                    extra: extraSelected.idextra,
-                    x: originalX + move * j,
-                    y: originalY - moveY * k,
-                    recordingSessionId: lastPin.recordingSessionId
-                }
-                temp.push(newPin)
-            } j--;
-
-            if (i < lastPin.frameId) {
-                k--;
-            } else {
-                k++;
-            }
-
-
-        }
-        setNewHotspot(false);
-        setPins(temp)
-    }
 
 
     function handleButtonEscena(escena) {
@@ -338,7 +301,7 @@ export function Visualizador({tipo, id, data, extras}) {
 
 
     function myRenderPin(pin) {
-        console.log(pin);
+        
         return (
             <>
                 <label>
@@ -433,16 +396,20 @@ export function Visualizador({tipo, id, data, extras}) {
 
                         //imagenes en local
 
+                        /*
                         location="../ejemplos/normal"
                         format = "jpg"
                         count={126}
+                    */
+
+                        
 
                         //imagenes desde el sevidor
 
-                        /*
+                        
                         images={images}
                         count={images.length}
-                        */
+                        
 
 
                         autoplaySpeed={70}
@@ -567,7 +534,7 @@ export function Visualizador({tipo, id, data, extras}) {
         }
 
             <div className="navigation-container">
-                {/*
+                {
                 Object.entries(escenas).map((escena) => (
 
                     <ButtonEscena key={
@@ -579,7 +546,7 @@ export function Visualizador({tipo, id, data, extras}) {
                             escena[0].toString() === aux.toString() ? true : false
                     }></ButtonEscena>
                 ))
-                */ } </div>
+                 } </div>
 
             <div className="options-container">
                 <OptionButtons onAddHotspot={handleAddHostpot}

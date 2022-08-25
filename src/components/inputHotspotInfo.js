@@ -16,11 +16,8 @@ const InputHotspot = ({inputRef}) => {
     }
 
     return <>
-
     <Form.Label htmlFor="inputPassword5">Ingrese una etiqueta</Form.Label>
-
     <Form.Control ref={inputRef} type="text" required onChange={onChangeInput} autoComplete="off" id="inputPassword5" aria-describedby="passwordHelpBlock"/>
-    
     {
         isEmpty
         ? <Form.Text id="passwordHelpBlock" muted >
