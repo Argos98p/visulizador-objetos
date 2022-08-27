@@ -6,24 +6,19 @@ import NoEncontrado from "./publicidad/paginaNoEncontrado";
 import {infoObjectUrl,getExtrasUrl} from "../Api/apiRoutes";
 
 
-
+//cambiar por una funciona que devuelva solo true o false
 function Controller() {
     let {id} = useParams();
-    const [imagesLoaded, setImagesLoaded] = useState(true);
-    let [color, setColor] = useState("#EBAF26");
-    const [objExiste, setObjExiste] = useState(true);
     const [myObjeto, setMyObjeto] = useState(null);
-    const [extras, setExtras] = useState([])
+    const [extras, setExtras] = useState([]);
 
     useEffect(() => {
         axios.get(infoObjectUrl(id)).then(response => {
-
             return response.data
         }).then(data => {
             if (data !== "NOT_FOUND") {
                 setMyObjeto(data);
                 console.log(data);
-
                 axios.get(getExtrasUrl(id))
                 .then((response)=>{
                   if(response.data !== []){                      
@@ -31,9 +26,7 @@ function Controller() {
                   }
                 });
             } else {
-                setObjExiste(false);
-                
-
+                console.log("hola")
             }
         }).catch(error => {
             console.log(error)
@@ -49,7 +42,5 @@ function Controller() {
     )
 
 }
-
-
 
   export default Controller;

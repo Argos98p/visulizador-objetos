@@ -1,5 +1,5 @@
 import "./App.css";
-import React, {useEffect, useState, CSSProperties} from "react";
+import React, {useState} from "react";
 import "react-tridi/dist/index.css";
 
 import Controller from "./components/Controller";
@@ -19,11 +19,7 @@ function App() {
     }, []);*/
 
 
-    const override = {
-        display: "block",
-        margin: "0 auto",
-        borderColor: "red"
-    };
+
 
  
     return (

@@ -1,29 +1,37 @@
 import React, {useState, useRef, useEffect} from "react";
 import Tridi from "react-tridi";
-import OptionButtons from "./buttonsOptions";
-import "react-tridi/dist/index.css";
-import "./visualizador_style.css";
+import OptionButtons from "./botones/buttonsOptions";
 import axios from "axios";
-import NavigationObjectButttons from "./NavigationObjectButtons";
 import ReelImages from "./ReelImages";
-import {ToastContainer, toast} from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import {completeImageUrl} from "../Api/apiRoutes";
-import ButtonEscena from "./buttonEscena";
+import ButtonEscena from "./botones/buttonEscena";
 import LottieEmptyEscenas from "../Animations/lottieEmptyEscena";
-import DotLoader from "react-spinners/DotLoader";
 
-import Popup from 'reactjs-popup';
-import 'reactjs-popup/dist/index.css';
 import PopupNewHotspot from "./popupAddHotspot";
 import ReactTooltip from "react-tooltip";
-import { Pannellum, PannellumVideo } from "pannellum-react";
+import { Pannellum} from "pannellum-react";
 import {postAddHotspot} from "../Api/apiRoutes"
-import {PanoViewer} from "@egjs/view360";
+import 'reactjs-popup/dist/index.css';
+import "react-tridi/dist/index.css";
+import "./visualizador_style.css";
+//import NavigationObjectButttons from "./NavigationObjectButtons";
+import {toast} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+//import DotLoader from "react-spinners/DotLoader";
+import {infoObjectUrl,getExtrasUrl,getHotspots} from "../Api/apiRoutes";
+
+import {MiObjeto} from "../model/MiObjeto";
 
 export function Visualizador({tipo, id, data, extras}) {
-    var idUsuario = data["idusuario"];
-    var nombre = data["nombre"];
+    //var idUsuario = data["idusuario"];
+    //var nombre = data["nombre"];
+    const [objetoData,setObjetoData] = useState(null);
+    const [escenasAux, setEscenasAux] = useState({});//muestra todas las escenas
+    const [currentEscena, setCurrentEscena] = useState({}); //ver si se cambia por null
+    const [frames, setFrames] = useState([]);
+    const [hotspotsMap, setHotspotsMap] = useState([]);
+
+
     const [aux, setAux] = useState("0");
     const [escenas, setEscenas] = useState(data["escenas"]);
     const [escenaInView, setEscenaInView] = useState(getSceneWithFrames(escenas));
@@ -45,10 +53,80 @@ export function Visualizador({tipo, id, data, extras}) {
     const [numberImages, setNumberImages] = useState(126)
 
 
+
+
     const tridiRef = useRef(null);
     var zoomValue = 0;
     const childRef = useRef();
     var idEscenaActiva = 0;
+
+    // Recibe toda la info del objeto
+    useEffect(() => {
+        axios.get(infoObjectUrl(id)).then(
+            response=>{
+                console.log(response.data);
+                let objeto= new MiObjeto(response.data.escenas,response.data.idusuario,response.data.nombre)
+                setObjetoData(objeto);
+            }
+        )
+
+        /*
+        const fecthInfoObject= async ()=>{
+            const data = await fetch(infoObjectUrl(id));
+            const responseData = await data.json();
+
+            let objeto= new MiObjeto(responseData.escenas,responseData.idusuario,responseData.nombre)
+            setObjetoData(objeto);
+        }
+        fecthInfoObject()
+            .catch(console.error);*/
+
+    }, []);
+
+    useEffect(() => {
+        if(objetoData!== null){
+            let promesas=[];
+            let mapHotspots={};
+
+            for(let escena of objetoData.escenas){
+                promesas.push(
+                    axios.get(getHotspots(id,escena.nombre))
+                        .then(response=>{
+                            mapHotspots[escena.nombre]=response.data;
+                        })
+                )
+            }
+            Promise.all(promesas).then(()=> {
+                setHotspotsMap(mapHotspots);
+                prepararPins(mapHotspots)
+                setEscenasAux(objetoData.escenas);
+                setCurrentEscena(getFirstSceneWithFrames(objetoData.escenas));
+            });
+            //setPins(mapHotspots[currentEscena.nombre]);
+        }
+    }, [objetoData]);
+
+    function prepararPins(fetchedPins){
+
+        for(let escena in fetchedPins){
+            for (let hotspot of fetchedPins[escena]){
+                //let newPin = {...hotspot}
+                hotspot.frameId=hotspot.idHotspot;
+                hotspot.recordingSessionId=null;
+
+                //console.log(hotspot)
+            }
+        }
+
+    }
+
+    useEffect(() => {
+        if(currentEscena.frames!== undefined){
+            setFrames(currentEscena.getSrcPath());
+            setPins(hotspotsMap[currentEscena.nombre])
+        }
+
+    }, [currentEscena]);
 
     const notifyEdicion = () => toast.info("modo edición", {
         position: "top-center",
@@ -71,10 +149,10 @@ export function Visualizador({tipo, id, data, extras}) {
     });
 
     useEffect(() => {
-        var temp = [];
-        var i = 1;
+        let temp = [];
+        let i = 1;
         escenaInView[1].imagenes.forEach((element) => {
-            var splitNombre = element.path.split("/");
+            let splitNombre = element.path.split("/");
 
             temp.push(completeImageUrl(`/${
                 splitNombre[1]
@@ -89,9 +167,18 @@ export function Visualizador({tipo, id, data, extras}) {
         setAux(escenaInView[0].toString())
     }, [escenaInView]);
 
+    function getFirstSceneWithFrames(escenas) {
+        for(let escena of escenas){
+            if(escena.frames.length>1){
+                return escena
+            }
+        }
+        return escenas[0];
+    }
+
     function getSceneWithFrames(escenas) {
-        var aux = true;
-        var escenaInicial = undefined;
+        let aux = true;
+        let escenaInicial = undefined;
         Object.entries(escenas).map((escena) => {
             if (escena[1].imagenes.length > 0 && aux) {
                 escenaInicial = escena;
@@ -166,18 +253,19 @@ export function Visualizador({tipo, id, data, extras}) {
     }
 
     function frameReplicateV2() {
-        var init=pins.slice(-2)[0];
-        var end=pins.slice(-2)[1];
-        var aux=[...pins]
-        var incre=0;
+        let init=pins.slice(-2)[0];
+        let end=pins.slice(-2)[1];
+        let aux=[...pins]
+        let incre=0;
         let promises = [];
         if(init.frameId>end.frameId){
-            var n=numberImages-init.frameId+end.frameId;
-            var k=(init.x-end.x)/n
-            var temp = init.frameId+n; 
-            for(var i= init.frameId;i < temp; i++){
+            let n=numberImages-init.frameId+end.frameId;
+            let k=(init.x-end.x)/n
+            let temp = init.frameId+n;
+            let desY= (parseFloat(init.y)-parseFloat(end.y))/n;
+            for(let i= init.frameId;i < temp; i++){
                 console.log(nameHotspot);
-                if(i == numberImages){
+                if(i === numberImages){
                     i=0
                     temp=end.frameId
                 }
@@ -211,10 +299,10 @@ export function Visualizador({tipo, id, data, extras}) {
             setHotspotInit(false);
             setHotspotEnd(false)
         }else{
-            var numFrames=end.frameId - init.frameId;
-            var k= (parseFloat(init.x)-parseFloat(end.x))/numFrames;
-            var desY= (parseFloat(init.y)-parseFloat(end.y))/numFrames;
-            for(var i= init.frameId;i < end.frameId; i++){
+            let numFrames=end.frameId - init.frameId;
+            let k= (parseFloat(init.x)-parseFloat(end.x))/numFrames;
+            let desY= (parseFloat(init.y)-parseFloat(end.y))/numFrames;
+            for(let i= init.frameId;i < end.frameId; i++){
                 var newPin = {
                     id: i,
                     frameId: i,
@@ -232,7 +320,6 @@ export function Visualizador({tipo, id, data, extras}) {
                             postAddHotspot(id,escenaInView[1].nombre,i+".jpg",newPin.x,newPin.y,extraSelected.idextra,nameHotspot,i)
                         ).then(
                             response=>{
-    
                                 console.log(response)
                             }
                         )
@@ -257,18 +344,16 @@ export function Visualizador({tipo, id, data, extras}) {
 
     function handleCreateHotspot(imgExtra, info) { // FUNCION PARA CONTROLAR SELECCION DE EXTRAS
 
-        if (info == "" /*|| imgExtra == null*/
+        if (info === "" /*|| imgExtra == null*/
         ) {} else { // borrar la siguientevariblw
-            var aux = {
+            let aux = {
                 idextra: 1
             }
             setExtraSelected(aux);
             setNameHotspot(info);
-            //tridiRef.current.toggleRecording(true)
             setAddHotspotMode(true);
             setNewHotspot(true)
         }
-
     }
 
     function handleHotspotInit(){
@@ -284,9 +369,6 @@ export function Visualizador({tipo, id, data, extras}) {
     function clickOnTridiContainer() {
         if (addHotspotMode) {
             tridiRef.current.toggleRecording(false);
-
-            // setNameHotspot("");
-            // ReactTooltip.rebuild();
         }
     }
 
@@ -407,14 +489,13 @@ export function Visualizador({tipo, id, data, extras}) {
                         //imagenes desde el sevidor
 
                         
-                        images={images}
-                        count={images.length}
+                        images={frames}
+                        count={frames.length}
                         
 
 
                         autoplaySpeed={70}
                         //autoplay={true}
-
                         zoom={1}
                         maxZoom={3}
                         minZoom={1}

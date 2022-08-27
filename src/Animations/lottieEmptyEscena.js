@@ -10,11 +10,7 @@ export default class LottieEmptyEscenas extends React.Component {
   }
  
   render() {
-    const buttonStyle = {
-      display: 'inline-block',
-      margin: '-25px -5px'
-    };
- 
+
     const defaultOptions = {
       loop: true,
       autoplay: true, 

@@ -1,37 +1,34 @@
 import React,{useState,useEffect,useCallback} from 'react';
 import Carousel from 'react-grid-carousel';
-import './ReelImages.css'
 import ImageUploading from 'react-images-uploading';
 import axios from "axios";
 import ImageViewer from 'react-simple-image-viewer';
 import {ImagePath} from '../Api/apiRoutes'
 import {FaTrash} from "react-icons/fa/index.js";
-import {deleteExtra} from "../Api/apiRoutes";
+import {deleteExtra,getExtrasUrl,uploadExtraUrl} from "../Api/apiRoutes";
+import './ReelImages.css'
 
 
-const { forwardRef, useRef, useImperativeHandle } = React;
-
-
-
+const { forwardRef, useImperativeHandle } = React;
 const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
   const [imageList, setImageList]=useState([])
   const [images, setImages] = useState([]); //for upload with 
-  const [imagesListSrc, setImagesListSrc]= useState([])
-  const [imagesExtras, setImagesExtras] = useState(extrasImages)
+  const [imagesListSrc, setImagesListSrc]= useState([]);
+  const [imagesExtras, setImagesExtras] = useState(extrasImages);
+  const [currentImage, setCurrentImage] = useState(0);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
   
   
-  var uploadExtraURL=`http://redpanda.sytes.net:8084/api/objects/addextra?idobjeto=${id}&archivo=`;
-  var getExtrasURL="http://redpanda.sytes.net:8084/api/objects/getextras?idobjeto=";
+  //let uploadExtraURL=`http://redpanda.sytes.net:8084/api/objects/addextra?idobjeto=${id}&archivo=`;
+  //let getExtrasURL="http://redpanda.sytes.net:8084/api/objects/getextras?idobjeto=";
 
   useImperativeHandle(ref, () => ({
 
     getAlert() {
       setCurrentImage(0);
       setIsViewerOpen(true);
-
     }
-
   }));
 
   const onChange = (imageListUpload, addUpdateIndex) => {
@@ -40,9 +37,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     setImages([]);
   };
 
-  const [currentImage, setCurrentImage] = useState(0);
-  const [isViewerOpen, setIsViewerOpen] = useState(false);
- 
+
   const openImageViewer = useCallback((index) => {   
     setCurrentImage(index);
     setIsViewerOpen(true);
@@ -54,17 +49,15 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   };
 
   const getExtras = async() => {
-    axios.get(getExtrasURL+id)
+    axios.get(getExtrasUrl(id))
     .then((response)=>{      
       if(response.status===200){ 
         let temp= [];
         response.data.forEach((item,index)=>{
-          var srcImage=ImagePath(item.imagen.path);
+          let srcImage=ImagePath(item.imagen.path);
           temp.push([srcImage,item.idextra])
-          //temp.push( <Carousel.Item key={index} ><img width="100%" src={srcImage} key={index}  onClick={ () => openImageViewer(index)}/></Carousel.Item>)
         }
         );
-        //setImageList(temp)
         console.log(temp);
         setImagesListSrc(temp)
       }else{
@@ -82,8 +75,8 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   function uploadExtra(imagenFile){
     const payload = new FormData();
     payload.append('extra',imagenFile)
-    
-    fetch(uploadExtraURL+imagenFile.name, {      
+
+    fetch(uploadExtraUrl(imagenFile.name), {
       method: "POST",            
       body: payload
     }).then(function (res) {
@@ -101,12 +94,12 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
   
   useEffect(()=>{
-    axios.get(getExtrasURL+id)
+    axios.get(getExtrasUrl(id))
     .then((response)=>{      
       if(response.status===200){
         let temp= [];
         response.data.forEach((item,index)=>{
-          var srcImage=ImagePath(item.imagen.path);
+          let srcImage=ImagePath(item.imagen.path);
           temp.push([srcImage,item.idextra])
           //temp.push( <Carousel.Item key={index} ><img width="100%" src={srcImage} key={index}  onClick={ () => openImageViewer(index)}/> </Carousel.Item>)
         }
@@ -139,13 +132,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     } catch (error) {
       console.log(error);
     }
-    
-
-
   }
- 
-
-  
 
   return (
     <div className='reel-images-container'>
@@ -167,14 +154,10 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
       )}
     </div>
 
-    
-   
- 
       <ImageUploading
         multiple
         value={images}
         onChange={onChange}
-        
         dataURLKey="data_url"
       >
         {({

@@ -1,10 +1,21 @@
-class Escena {
-    constructor(numFrames,estadoEscena,nombre,ruta){
-        this.numFrames = 0;
-        this.estadoEscena = estadoEscena;
-        this.nombre = nombre;
-        this.ruta = ruta;
+export class Escena {
+    constructor(index,nombre) {
+        this.index=index;
+        this.frames=[];
+        this.nombre=nombre;
     }
-}
 
-export {Escena};
+    setFrames(frames){
+        this.frames=frames;
+    }
+
+    getSrcPath(){
+        let srcArray=[]
+        for(let src of this.frames){
+            srcArray.push(src.path);
+        }
+        return srcArray;
+    }
+
+
+}

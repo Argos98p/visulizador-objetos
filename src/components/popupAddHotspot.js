@@ -4,7 +4,6 @@ import 'reactjs-popup/dist/index.css';
 import './modal.css'
 import {useParams} from "react-router-dom";
 import axios from "axios";
-import Carousel from 'react-grid-carousel';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import InputHotspot from './inputHotspotInfo';
 import {ImagePath} from '../Api/apiRoutes'

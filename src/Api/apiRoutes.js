@@ -30,6 +30,14 @@ function deleteExtra(idObjeto,idExtra){
     return `http://redpanda.sytes.net:8084/api/objects/deleteextra?idobjeto=${idObjeto}&idextra=${idExtra}`;
 }
 
+function uploadExtraUrl(id,archivo){
+    return `http://redpanda.sytes.net:8084/api/objects/addextra?idobjeto=${id}&archivo=${archivo}`
+}
+
+function getHotspots(id, nombreEscena){
+    return `http://redpanda.sytes.net:8084/api/objects/gethotspots?idobjeto=${id}&nombre_escena=${nombreEscena}`;
+}
 
 
-export {statusEsceneUrl,infoObjectUrl,numberFramesInScene,completeImageUrl,getExtrasUrl,ImagePath,postAddHotspot,deleteExtra}
+
+export {statusEsceneUrl,uploadExtraUrl,infoObjectUrl,getHotspots,numberFramesInScene,completeImageUrl,getExtrasUrl,ImagePath,postAddHotspot,deleteExtra}

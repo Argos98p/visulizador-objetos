@@ -10,10 +10,7 @@ export default class LottieNotFound extends React.Component {
   }
  
   render() {
-    const buttonStyle = {
-      display: 'inline-block',
-      margin: '-25px -5px'
-    };
+
  
     const defaultOptions = {
       loop: true,

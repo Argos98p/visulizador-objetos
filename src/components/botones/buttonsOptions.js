@@ -7,7 +7,7 @@ import {
     FaPause,
     FaCrosshairs
 } from "react-icons/fa/index.js";
-import "./visualizador_style.css";
+import "../visualizador_style.css";
 export default function OptionButtons({
     onPrev,
     onNext,
