@@ -1,0 +1,36 @@
+.item-hotspots{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    margin: .5em;
+    align-items: center;
+}
+.icon-hotspot{
+    color: #1070ee;
+    font-size: 1.5em;
+    margin-right: 0.8em;
+}
+.icon-name{
+    display: flex;
+    align-items: center;
+    margin-right: 0.5em;
+}
+
+
+.container-lista-hotspots{
+    background-color: rgba(0, 0, 0, 0.705);
+    color: white;
+    border-radius: 0.3em;
+}
+
+.button-delete-hotspot{
+    background-color: transparent;
+    color: white;
+    border: none;
+    font-size: 1.3em;
+}
+.button-delete-hotspot:hover{
+
+    color: #ed1e1e;
+
+}

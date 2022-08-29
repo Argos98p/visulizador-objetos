@@ -7,7 +7,7 @@ import {completeImageUrl} from "../Api/apiRoutes";
 import ButtonEscena from "./botones/buttonEscena";
 import LottieEmptyEscenas from "../Animations/lottieEmptyEscena";
 
-import PopupNewHotspot from "./popupAddHotspot";
+import PopupNewHotspot from "./PopupAddHotspot";
 import ReactTooltip from "react-tooltip";
 import { Pannellum} from "pannellum-react";
 import {postAddHotspot} from "../Api/apiRoutes"
@@ -18,9 +18,10 @@ import "./visualizador_style.css";
 import {toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 //import DotLoader from "react-spinners/DotLoader";
-import {infoObjectUrl,getExtrasUrl,getHotspots} from "../Api/apiRoutes";
+import {infoObjectUrl,getExtrasUrl,getHotspots,deleteHotspot} from "../Api/apiRoutes";
 
 import {MiObjeto} from "../model/MiObjeto";
+import PopupListaHotspot from "./PopupListaHotspots";
 
 export function Visualizador({tipo, id, data, extras}) {
     //var idUsuario = data["idusuario"];
@@ -33,9 +34,7 @@ export function Visualizador({tipo, id, data, extras}) {
 
 
     const [aux, setAux] = useState("0");
-    const [escenas, setEscenas] = useState(data["escenas"]);
-    const [escenaInView, setEscenaInView] = useState(getSceneWithFrames(escenas));
-    const [images, setImages] = useState([]);
+
     const [isAutoPlayRunning, setIsAutoPlayRunning] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [pins, setPins] = useState([]);
@@ -46,11 +45,10 @@ export function Visualizador({tipo, id, data, extras}) {
     const [newHotspot, setNewHotspot] = useState(false);
     const [loadStatus, setLoadStatus] = useState(false);
     const [loadPercentage, setLoadPercentage] = useState(0);
-    const [currentIndex, setCurrentIndex] = useState(0);
+    const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
     const [hotspotInit, setHotspotInit] = useState(false);
     const [hotspotEnd, setHotspotEnd] = useState(false);
     const [sphereImageInView, setSphereImageInView] = useState(false);
-    const [numberImages, setNumberImages] = useState(126)
 
 
 
@@ -65,34 +63,21 @@ export function Visualizador({tipo, id, data, extras}) {
         axios.get(infoObjectUrl(id)).then(
             response=>{
                 console.log(response.data);
-                let objeto= new MiObjeto(response.data.escenas,response.data.idusuario,response.data.nombre)
-                setObjetoData(objeto);
+                setObjetoData(response.data);
             }
         )
-
-        /*
-        const fecthInfoObject= async ()=>{
-            const data = await fetch(infoObjectUrl(id));
-            const responseData = await data.json();
-
-            let objeto= new MiObjeto(responseData.escenas,responseData.idusuario,responseData.nombre)
-            setObjetoData(objeto);
-        }
-        fecthInfoObject()
-            .catch(console.error);*/
-
     }, []);
 
     useEffect(() => {
         if(objetoData!== null){
             let promesas=[];
             let mapHotspots={};
-
-            for(let escena of objetoData.escenas){
+            for(let escena in objetoData.escenas){
+                let nombreEscena=objetoData.escenas[escena].nombre
                 promesas.push(
-                    axios.get(getHotspots(id,escena.nombre))
+                    axios.get(getHotspots(id,nombreEscena))
                         .then(response=>{
-                            mapHotspots[escena.nombre]=response.data;
+                            mapHotspots[nombreEscena]=response.data;
                         })
                 )
             }
@@ -107,26 +92,34 @@ export function Visualizador({tipo, id, data, extras}) {
     }, [objetoData]);
 
     function prepararPins(fetchedPins){
-
         for(let escena in fetchedPins){
             for (let hotspot of fetchedPins[escena]){
-                //let newPin = {...hotspot}
                 hotspot.frameId=hotspot.idHotspot;
                 hotspot.recordingSessionId=null;
-
-                //console.log(hotspot)
             }
         }
 
     }
 
     useEffect(() => {
-        if(currentEscena.frames!== undefined){
-            setFrames(currentEscena.getSrcPath());
-            setPins(hotspotsMap[currentEscena.nombre])
+        if(currentEscena.imagenes!== undefined) {
+            console.log(hotspotsMap[currentEscena.nombre])
+            setFrames(getArraySrcPath(currentEscena));
+            setPins(hotspotsMap[currentEscena.nombre]);
         }
 
     }, [currentEscena]);
+
+    function getArraySrcPath(escena){
+        console.log(escena)
+        let n = escena.imagenes.length;
+        let [aux,id,temp,frames,nameImage]= escena.imagenes[0].path.split("/");
+        let arrayFrames=[]
+        for(let i=1;i<=n;i++){
+            arrayFrames.push(completeImageUrl(`/${id}/${temp}/frames_compresos/${i}.jpg`));
+        }
+        return arrayFrames;
+    }
 
     const notifyEdicion = () => toast.info("modo edición", {
         position: "top-center",
@@ -148,54 +141,24 @@ export function Visualizador({tipo, id, data, extras}) {
         progress: undefined
     });
 
-    useEffect(() => {
-        let temp = [];
-        let i = 1;
-        escenaInView[1].imagenes.forEach((element) => {
-            let splitNombre = element.path.split("/");
 
-            temp.push(completeImageUrl(`/${
-                splitNombre[1]
-            }/${
-                splitNombre[2]
-            }/${
-                splitNombre[3]
-            }_compresos/${i}.jpg`));
-            i++;
-        });
-        setImages(temp);
-        setAux(escenaInView[0].toString())
-    }, [escenaInView]);
 
     function getFirstSceneWithFrames(escenas) {
-        for(let escena of escenas){
-            if(escena.frames.length>1){
-                return escena
+        for(let escena in escenas){
+            if(escenas[escena].imagenes.length>1){
+
+                return escenas[escena];
             }
         }
         return escenas[0];
     }
 
-    function getSceneWithFrames(escenas) {
-        let aux = true;
-        let escenaInicial = undefined;
-        Object.entries(escenas).map((escena) => {
-            if (escena[1].imagenes.length > 0 && aux) {
-                escenaInicial = escena;
-                idEscenaActiva = escena[0];
-                aux = false;
-            }
-        });
-        return escenaInicial;
-    }
-
 
     function handleClickExtras() {
         setVisibleExtras(!visibleExtras)
-        console.log(escenaInView);
     }
     const frameChangeHandler = (currentFrameIndex) => {
-        setCurrentIndex(currentFrameIndex);
+        setCurrentFrameIndex(currentFrameIndex);
     };
 
     const recordStartHandler = (recordingSessionId) => /*console.log("on record start", {recordingSessionId, pins})*/
@@ -259,13 +222,13 @@ export function Visualizador({tipo, id, data, extras}) {
         let incre=0;
         let promises = [];
         if(init.frameId>end.frameId){
-            let n=numberImages-init.frameId+end.frameId;
+            let n=frames.length-init.frameId+end.frameId;
             let k=(init.x-end.x)/n
             let temp = init.frameId+n;
             let desY= (parseFloat(init.y)-parseFloat(end.y))/n;
             for(let i= init.frameId;i < temp; i++){
                 console.log(nameHotspot);
-                if(i === numberImages){
+                if(i === frames.length){
                     i=0
                     temp=end.frameId
                 }
@@ -281,9 +244,10 @@ export function Visualizador({tipo, id, data, extras}) {
                 incre++;
                 aux.push(newPin);
                 if(i!==0){
+                    console.log(newPin.frameId)
                     promises.push(
                         axios.post(
-                            postAddHotspot(id,escenaInView[1].nombre,i+".jpg",newPin.x,newPin.y,extraSelected.idextra,nameHotspot,i)
+                            postAddHotspot(id,currentEscena.nombre,newPin.frameId+".jpg",newPin.x,newPin.y,extraSelected.idextra,nameHotspot,i)
                         ).then(
                             response=>{
                                 console.log(response)
@@ -293,7 +257,7 @@ export function Visualizador({tipo, id, data, extras}) {
                 }
                 
             }
-            Promise.all(promises).then(()=>console.log("ok"));
+            //Promise.all(promises).then(()=>console.log("ok"));
             setPins(aux)
             setAddHotspotMode(false)
             setHotspotInit(false);
@@ -317,7 +281,7 @@ export function Visualizador({tipo, id, data, extras}) {
                 if(i!==0){
                     promises.push(
                         axios.post(
-                            postAddHotspot(id,escenaInView[1].nombre,i+".jpg",newPin.x,newPin.y,extraSelected.idextra,nameHotspot,i)
+                            postAddHotspot(id,currentEscena.nombre,newPin.frameId+".jpg",newPin.x,newPin.y,extraSelected.idextra,nameHotspot,i)
                         ).then(
                             response=>{
                                 console.log(response)
@@ -339,7 +303,7 @@ export function Visualizador({tipo, id, data, extras}) {
 
     function handleButtonEscena(escena) {
         idEscenaActiva = escena[0];
-        setEscenaInView(escena);
+        setCurrentEscena(escena)
     }
 
     function handleCreateHotspot(imgExtra, info) { // FUNCION PARA CONTROLAR SELECCION DE EXTRAS
@@ -374,7 +338,6 @@ export function Visualizador({tipo, id, data, extras}) {
 
     useEffect(() => {
         if (pins.length !== 0 && newHotspot === true) {
-            
             if(hotspotInit && hotspotEnd){
                 frameReplicateV2();
             }
@@ -407,11 +370,9 @@ export function Visualizador({tipo, id, data, extras}) {
     }
     function handleOnLoad(load_success, percentage) {
         setLoadPercentage(percentage);
-
         if (percentage > 70) {
             setLoadStatus(true)
         }
-
     }
 
     const photoSphereRef = React.useRef();
@@ -427,7 +388,7 @@ export function Visualizador({tipo, id, data, extras}) {
 
     function getVisualizador() {
 
-        if (images.length === 0) {
+        if (frames.length === 0) {
             return <div className="emptyEscena ">
                 <h2 className="texto-blanco">Escena vacia</h2>
                 <br></br>
@@ -550,14 +511,50 @@ export function Visualizador({tipo, id, data, extras}) {
         setIsEditMode(!isEditMode)
     }
 
+    function listaHotspost(){
+      function handleDeleteHotspot(nameHotspot){
+          console.log(nameHotspot);
+          let promesas=[];
+          for (let escena in data.escenas){
+              for(let value of data.escenas[escena].imagenes){
+                  for(let hotspot of value.hotspots){
+                      if(hotspot.nombreHotspot === nameHotspot){
+                          promesas.push(
+                              axios.post(deleteHotspot(id,currentEscena.nombre,nameHotspot,value.path.split('/')[4]))
+                                  .then(
+                                      response=>{
+                                          console.log('ok')}
+                                  )
+                          );
+
+                          console.log(deleteHotspot(id,currentEscena.nombre,nameHotspot,value.path.split('/')[4]));
+                      }
+                  }
+
+              }
+              //console.log(data.escenas[escena].imagenes);
+          }
+          console.log(promesas.length)
+          Promise.all(promesas).then(()=>console.log('terminado'));
+
+      }
+
+
+      return isEditMode?
+          <div className="lista-hotspost">
+              <PopupListaHotspot listaHotspots={hotspotsMap} onClickDeleteHotspot={handleDeleteHotspot}></PopupListaHotspot>
+
+      </div>
+          :null
+    }
+
+
 
     return (
         <div className="visualizador dragging">
 
 
-            <div className="lista-hotspost">
-                <button className="button-option">Lista de Hotspots</button>
-            </div>
+            {listaHotspost()}
 
             <div className="top-buttons ">
                 <button className="button-option"
@@ -616,7 +613,7 @@ export function Visualizador({tipo, id, data, extras}) {
 
             <div className="navigation-container">
                 {
-                Object.entries(escenas).map((escena) => (
+                Object.entries(escenasAux).map((escena) => (
 
                     <ButtonEscena key={
                             escena[0]
