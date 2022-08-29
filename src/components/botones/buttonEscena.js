@@ -29,9 +29,6 @@ export default function ButtonEscena({escenaInfo, onClick, activo}){
       {icono}
     </button>
     <ReactTooltip id="soclose" place="top" effect="solid" getContent={(dataTip=>dataTip)}>
-    
     </ReactTooltip>
   </div>
-    
-   
 }

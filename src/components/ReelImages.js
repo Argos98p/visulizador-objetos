@@ -1,4 +1,4 @@
-import React,{useState,useEffect,useCallback} from 'react';
+import React,{useState,useEffect,useCallback,memo} from 'react';
 import Carousel from 'react-grid-carousel';
 import ImageUploading from 'react-images-uploading';
 import axios from "axios";
@@ -9,8 +9,11 @@ import {deleteExtra,getExtrasUrl,uploadExtraUrl} from "../Api/apiRoutes";
 import './ReelImages.css'
 
 
-const { forwardRef, useImperativeHandle } = React;
-const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
+/*const { forwardRef, useImperativeHandle } = React;*/
+
+
+const  ReelImages = /*forwardRef(*/
+    memo(({id,extrasImages, isEditMode}/*,ref*/) => {
 
   const [imageList, setImageList]=useState([])
   const [images, setImages] = useState([]); //for upload with 
@@ -19,9 +22,8 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   const [currentImage, setCurrentImage] = useState(0);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   
-  
-  //let uploadExtraURL=`http://redpanda.sytes.net:8084/api/objects/addextra?idobjeto=${id}&archivo=`;
-  //let getExtrasURL="http://redpanda.sytes.net:8084/api/objects/getextras?idobjeto=";
+
+  /*
 
   useImperativeHandle(ref, () => ({
 
@@ -29,7 +31,8 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
       setCurrentImage(0);
       setIsViewerOpen(true);
     }
-  }));
+  }));*/
+
 
   const onChange = (imageListUpload, addUpdateIndex) => {
     // data for submit
@@ -37,6 +40,10 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     setImages([]);
   };
 
+
+  useEffect(() => {
+    console.log('render reel')
+  }, );
 
   const openImageViewer = useCallback((index) => {   
     setCurrentImage(index);
@@ -64,9 +71,15 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
         console.log('error al recibir las imagenes');
       }
     }
-    )
-    .catch((e)=>{
-      console.error("Error obteniendo las imagenes:"+e);
+    ).catch(error => {
+      if(error.response){
+        console.log(error.response);
+      }else if(error.request){
+        console.log(error.request)
+      }else{
+        console.log('Error ',error.message);
+      }
+      console.error("Error obteniendo las imagenes:"+error);
       setImagesListSrc([]);
     });
   }
@@ -76,7 +89,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     const payload = new FormData();
     payload.append('extra',imagenFile)
 
-    fetch(uploadExtraUrl(imagenFile.name), {
+    fetch(uploadExtraUrl(id,imagenFile.name), {
       method: "POST",            
       body: payload
     }).then(function (res) {
@@ -89,7 +102,16 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
       }
     }, function (e) {
       alert("Error submitting form!"+e);
-    });
+    }).catch(error => {
+      if(error.response){
+        console.log(error.response);
+      }else if(error.request){
+        console.log(error.request)
+      }else{
+        console.log('Error ',error.message);
+      }
+      console.log(error.config);
+    })
   }
 
   
@@ -109,17 +131,24 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
         console.log('error al recibir las imagenes');
       }      
     }
-    )
-    .catch((e)=>{
-      console.error("Error obteniendo las imagenes:"+e);
+    ).catch(error => {
+      if(error.response){
+        console.log(error.response);
+      }else if(error.request){
+        console.log(error.request)
+      }else{
+        console.log('Error ',error.message);
+      }
+      console.error("Error obteniendo las imagenes:"+error);
       setImagesListSrc([]);
-    });
+    })
+
     
   },[]);
 
 
   function onClickDeleteExtra(src){
-    try {
+
       axios.post(deleteExtra(id,src[1]))
     .then((response)=>{
       if(response.status === 200){
@@ -128,10 +157,17 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
       }else{
         console.log(response);
       }
+    }).catch(error => {
+      if(error.response){
+        console.log(error.response);
+      }else if(error.request){
+        console.log(error.request)
+      }else{
+        console.log('Error ',error.message);
+      }
+      console.log(error.config);
     })
-    } catch (error) {
-      console.log(error);
-    }
+
   }
 
   return (
@@ -214,6 +250,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
       </div>
     
   )
-});
+})
+//);
 
 export default ReelImages;

@@ -19,7 +19,6 @@ import {toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 //import DotLoader from "react-spinners/DotLoader";
 import {infoObjectUrl,getExtrasUrl,getHotspots,deleteHotspot} from "../Api/apiRoutes";
-
 import {MiObjeto} from "../model/MiObjeto";
 import PopupListaHotspot from "./PopupListaHotspots";
 
@@ -51,8 +50,6 @@ export function Visualizador({tipo, id, data, extras}) {
     const [sphereImageInView, setSphereImageInView] = useState(false);
 
 
-
-
     const tridiRef = useRef(null);
     var zoomValue = 0;
     const childRef = useRef();
@@ -62,10 +59,18 @@ export function Visualizador({tipo, id, data, extras}) {
     useEffect(() => {
         axios.get(infoObjectUrl(id)).then(
             response=>{
-                console.log(response.data);
                 setObjetoData(response.data);
             }
-        )
+        ).catch(error => {
+            if(error.response){
+                console.log(error.response);
+            }else if(error.request){
+                console.log(error.request)
+            }else{
+                console.log('Error ',error.message);
+            }
+            console.log(error.config);
+        })
     }, []);
 
     useEffect(() => {
@@ -78,7 +83,16 @@ export function Visualizador({tipo, id, data, extras}) {
                     axios.get(getHotspots(id,nombreEscena))
                         .then(response=>{
                             mapHotspots[nombreEscena]=response.data;
-                        })
+                        }).catch(error => {
+                        if(error.response){
+                            console.log(error.response);
+                        }else if(error.request){
+                            console.log(error.request)
+                        }else{
+                            console.log('Error ',error.message);
+                        }
+                        console.log(error.config);
+                    })
                 )
             }
             Promise.all(promesas).then(()=> {
@@ -87,33 +101,37 @@ export function Visualizador({tipo, id, data, extras}) {
                 setEscenasAux(objetoData.escenas);
                 setCurrentEscena(getFirstSceneWithFrames(objetoData.escenas));
             });
-            //setPins(mapHotspots[currentEscena.nombre]);
+
         }
     }, [objetoData]);
 
     function prepararPins(fetchedPins){
         for(let escena in fetchedPins){
             for (let hotspot of fetchedPins[escena]){
-                hotspot.frameId=hotspot.idHotspot;
+                hotspot.frameId=hotspot.idFrame;
+                hotspot.id=hotspot.idHotspot;
                 hotspot.recordingSessionId=null;
             }
         }
-
     }
 
     useEffect(() => {
+        //console.log(currentEscena.nombre)
         if(currentEscena.imagenes!== undefined) {
-            console.log(hotspotsMap[currentEscena.nombre])
+            //console.log(hotspotsMap[currentEscena.nombre])
             setFrames(getArraySrcPath(currentEscena));
             setPins(hotspotsMap[currentEscena.nombre]);
+            setSphereImageInView(false);
+            //setAux(currentEscena.nombre)
         }
-
     }, [currentEscena]);
 
     function getArraySrcPath(escena){
-        console.log(escena)
-        let n = escena.imagenes.length;
-        let [aux,id,temp,frames,nameImage]= escena.imagenes[0].path.split("/");
+        let n = Object.keys(escena.imagenes).length;
+        let [aux,id,temp,frames,nameImage]= [];
+        if(n!==0){
+             [aux,id,temp,frames,nameImage]= escena.imagenes[1].path.split("/");
+        }
         let arrayFrames=[]
         for(let i=1;i<=n;i++){
             arrayFrames.push(completeImageUrl(`/${id}/${temp}/frames_compresos/${i}.jpg`));
@@ -144,15 +162,14 @@ export function Visualizador({tipo, id, data, extras}) {
 
 
     function getFirstSceneWithFrames(escenas) {
+        /*
         for(let escena in escenas){
             if(escenas[escena].imagenes.length>1){
-
                 return escenas[escena];
             }
-        }
-        return escenas[0];
+        }*/
+        return escenas[1];
     }
-
 
     function handleClickExtras() {
         setVisibleExtras(!visibleExtras)
@@ -227,7 +244,6 @@ export function Visualizador({tipo, id, data, extras}) {
             let temp = init.frameId+n;
             let desY= (parseFloat(init.y)-parseFloat(end.y))/n;
             for(let i= init.frameId;i < temp; i++){
-                console.log(nameHotspot);
                 if(i === frames.length){
                     i=0
                     temp=end.frameId
@@ -244,7 +260,6 @@ export function Visualizador({tipo, id, data, extras}) {
                 incre++;
                 aux.push(newPin);
                 if(i!==0){
-                    console.log(newPin.frameId)
                     promises.push(
                         axios.post(
                             postAddHotspot(id,currentEscena.nombre,newPin.frameId+".jpg",newPin.x,newPin.y,extraSelected.idextra,nameHotspot,i)
@@ -252,12 +267,21 @@ export function Visualizador({tipo, id, data, extras}) {
                             response=>{
                                 console.log(response)
                             }
-                        )
+                        ).catch(error => {
+                            if(error.response){
+                                console.log(error.response);
+                            }else if(error.request){
+                                console.log(error.request)
+                            }else{
+                                console.log('Error ',error.message);
+                            }
+                            console.log(error.config);
+                        })
                     )
                 }
                 
             }
-            //Promise.all(promises).then(()=>console.log("ok"));
+            Promise.all(promises).then(()=>console.log("ok"));
             setPins(aux)
             setAddHotspotMode(false)
             setHotspotInit(false);
@@ -286,11 +310,21 @@ export function Visualizador({tipo, id, data, extras}) {
                             response=>{
                                 console.log(response)
                             }
-                        )
+                        ).catch(error => {
+                            if(error.response){
+                                console.log(error.response);
+                            }else if(error.request){
+                                console.log(error.request)
+                            }else{
+                                console.log('Error ',error.message);
+                            }
+                            console.log(error.config);
+                        })
                     )
                 }
                 
             }
+            console.log(promises.length)
             Promise.all(promises).then(()=>console.log("ok"));
             setPins(aux)
             setAddHotspotMode(false)
@@ -303,7 +337,7 @@ export function Visualizador({tipo, id, data, extras}) {
 
     function handleButtonEscena(escena) {
         idEscenaActiva = escena[0];
-        setCurrentEscena(escena)
+        setCurrentEscena(escena[1]);
     }
 
     function handleCreateHotspot(imgExtra, info) { // FUNCION PARA CONTROLAR SELECCION DE EXTRAS
@@ -387,6 +421,7 @@ export function Visualizador({tipo, id, data, extras}) {
   }
 
     function getVisualizador() {
+        console.log('render Tridi')
 
         if (frames.length === 0) {
             return <div className="emptyEscena ">
@@ -395,9 +430,7 @@ export function Visualizador({tipo, id, data, extras}) {
                 <LottieEmptyEscenas></LottieEmptyEscenas>
             </div>
         } else {
-
             return (
-
                 <div className={`tridi-container `}
                     onWheel={handleWheel}
                     onClick={clickOnTridiContainer}>
@@ -524,7 +557,16 @@ export function Visualizador({tipo, id, data, extras}) {
                                   .then(
                                       response=>{
                                           console.log('ok')}
-                                  )
+                                  ).catch(error => {
+                                  if(error.response){
+                                      console.log(error.response);
+                                  }else if(error.request){
+                                      console.log(error.request)
+                                  }else{
+                                      console.log('Error ',error.message);
+                                  }
+                                  console.log(error.config);
+                              })
                           );
 
                           console.log(deleteHotspot(id,currentEscena.nombre,nameHotspot,value.path.split('/')[4]));
@@ -535,7 +577,16 @@ export function Visualizador({tipo, id, data, extras}) {
               //console.log(data.escenas[escena].imagenes);
           }
           console.log(promesas.length)
-          Promise.all(promesas).then(()=>console.log('terminado'));
+          Promise.all(promesas).then(()=>console.log('terminado')).catch(error => {
+              if(error.response){
+                  console.log(error.response);
+              }else if(error.request){
+                  console.log(error.request)
+              }else{
+                  console.log('Error ',error.message);
+              }
+              console.log(error.config);
+          });
 
       }
 
@@ -562,7 +613,11 @@ export function Visualizador({tipo, id, data, extras}) {
             </div>
 
             <div className="sphere-button">
-                <button className="button-option" onClick={()=>setSphereImageInView(!sphereImageInView)}>360</button>
+                <button className= {
+                    `button-option ${
+                        sphereImageInView ? "activo" : ""
+                    }`
+                } onClick={()=>setSphereImageInView(!sphereImageInView)}>360</button>
             </div>
 
             {
@@ -579,9 +634,8 @@ export function Visualizador({tipo, id, data, extras}) {
                         !visibleExtras && "no-visible"
                     } `
                 }>
-
                     <ReelImages id={id}
-                        ref={childRef}
+                        /*ref={childRef}*/
                         extrasImages={extras}
                         isEditMode={isEditMode}></ReelImages>
                 </div>
@@ -610,18 +664,16 @@ export function Visualizador({tipo, id, data, extras}) {
             {
             getVisualizador()
         }
-
             <div className="navigation-container">
                 {
                 Object.entries(escenasAux).map((escena) => (
-
                     <ButtonEscena key={
                             escena[0]
                         }
                         escenaInfo={escena}
                         onClick={handleButtonEscena}
                         activo={
-                            escena[0].toString() === aux.toString() ? true : false
+                            escena[1].nombre === currentEscena.nombre? true : false
                     }></ButtonEscena>
                 ))
                  } </div>
@@ -636,8 +688,6 @@ export function Visualizador({tipo, id, data, extras}) {
                     isAutoPlayRunning={isAutoPlayRunning}
                     isEditMode={isEditMode}></OptionButtons>
             </div>
-
-
             {
             tipo === "vehiculo" ? null /*<NavigationCarButtons onOpenDoors={handleOpenDoors} onCloseDoors={handleCloseDoors}  onInterior={handleInterior}></NavigationCarButtons>*/ : null /*<NavigationObjectButttons ></NavigationObjectButttons>*/
         } </div>

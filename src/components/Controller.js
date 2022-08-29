@@ -14,33 +14,42 @@ function Controller() {
 
     useEffect(() => {
         axios.get(infoObjectUrl(id)).then(response => {
-            return response.data
-        }).then(data => {
-            if (data !== "NOT_FOUND") {
-                setMyObjeto(data);
-                console.log(data);
+            //return response.data
+            if(response.data !== "NOT_FOUND"){
+                setMyObjeto(response.data);
+                console.log(response.data);
                 axios.get(getExtrasUrl(id))
-                .then((response)=>{
-                  if(response.data !== []){                      
-                      setExtras(response.data)
-                  }
-                });
-            } else {
-                console.log("hola")
+                    .then((response)=>{
+                        if(response.data !== []){
+                            setExtras(response.data)
+                        }
+                    });
+            }else{
+                console.log("NOT FOUND");
+                setMyObjeto("NOT_FOUND");
             }
         }).catch(error => {
-            console.log(error)
+            if(error.response){
+                console.log(error.response);
+            }else if(error.request){
+                console.log(error.request)
+            }else{
+                console.log('Error ',error.message);
+            }
+            console.log(error.config);
         })
     }, []);
+
+
+    if(myObjeto==="NOT_FOUND"){
+        return <NoEncontrado idObjeto={id}></NoEncontrado>
+    }
 
     return myObjeto !== null ? (
         <Visualizador data={myObjeto}
             tipo="vehiculo"
             id={id} extras={extras}></Visualizador>
-    ) : (
-        <NoEncontrado idObjeto={id}></NoEncontrado>
-    )
-
+    ) : null
 }
 
   export default Controller;
