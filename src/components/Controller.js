@@ -11,20 +11,28 @@ function Controller() {
     let {id} = useParams();
     const [myObjeto, setMyObjeto] = useState(null);
     const [extras, setExtras] = useState([]);
+    const [noEscenas,setNoEscenas] = useState(false);
 
     useEffect(() => {
         axios.get(infoObjectUrl(id)).then(response => {
             //return response.data
             if(response.data !== "NOT_FOUND"){
-                setMyObjeto(response.data);
-                console.log(response.data);
-                axios.get(getExtrasUrl(id))
-                    .then((response)=>{
-                        if(response.data !== []){
-                            setExtras(response.data)
-                        }
-                    });
-            }else{
+                if(Object.keys(response.data.escenas).length===0){
+                    setNoEscenas(true)
+                }else{
+                    setMyObjeto(response.data);
+                    console.log(response.data);
+                    axios.get(getExtrasUrl(id))
+                        .then((response)=>{
+                            if(response.data !== []){
+                                setExtras(response.data)
+                            }
+                        });
+                }
+
+
+            }
+            else{
                 console.log("NOT FOUND");
                 setMyObjeto("NOT_FOUND");
             }
@@ -43,6 +51,10 @@ function Controller() {
 
     if(myObjeto==="NOT_FOUND"){
         return <NoEncontrado idObjeto={id}></NoEncontrado>
+    }
+
+    if(noEscenas){
+        return <h3>No existen escenas</h3>
     }
 
     return myObjeto !== null ? (

@@ -233,6 +233,7 @@ export function Visualizador({tipo, id, data, extras}) {
     }
 
     function frameReplicateV2() {
+        console.log('entra en replicate')
         let init=pins.slice(-2)[0];
         let end=pins.slice(-2)[1];
         let aux=[...pins]
@@ -628,13 +629,19 @@ export function Visualizador({tipo, id, data, extras}) {
     Modo Edicion
 </button>
             </div>
-            <div className="sphere-button">
-                <button className= {
-                    `button-option ${
-                        sphereImageInView ? "activo" : ""
-                    }`
-                } onClick={()=>setSphereImageInView(!sphereImageInView)}>360</button>
-            </div>
+
+            {/*
+                <div className="sphere-button">
+                    <button className={
+                        `button-option ${
+                            sphereImageInView ? "activo" : ""
+                        }`
+                    } onClick={() => setSphereImageInView(!sphereImageInView)}>360
+                    </button>
+                </div>*/
+            }
+
+
             {
             addHotspotMode ? <div className="start-end-hotspot-buttons">
                 <button className="button-option" onClick={handleHotspotInit}>Inicio</button>
