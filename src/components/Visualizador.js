@@ -423,7 +423,7 @@ export function Visualizador({tipo, id, data, extras}) {
   }
 
     function getVisualizador() {
-        console.log('render Tridi')
+        //console.log('render Tridi')
 
         if (frames.length === 0) {
             return <div className="emptyEscena ">

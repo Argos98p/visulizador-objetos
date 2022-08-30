@@ -38,7 +38,7 @@ const  ReelImages = memo(({id,extrasImages, isEditMode}) => {
 
 
   useEffect(() => {
-    console.log('render reel')
+    //console.log('render reel')
   }, );
 
   const openImageViewer = useCallback((index) => {   
