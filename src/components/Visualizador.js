@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useRef, useEffect, useCallback, useMemo} from "react";
 import Tridi from "react-tridi";
 import OptionButtons from "./botones/buttonsOptions";
 import axios from "axios";
@@ -335,10 +335,12 @@ export function Visualizador({tipo, id, data, extras}) {
 
 
 
-    function handleButtonEscena(escena) {
-        idEscenaActiva = escena[0];
+    const handleButtonEscena=useCallback((escena)=> {
+        //idEscenaActiva = escena[0];
+        console.log(escena)
         setCurrentEscena(escena[1]);
-    }
+    },[currentEscena])
+
 
     function handleCreateHotspot(imgExtra, info) { // FUNCION PARA CONTROLAR SELECCION DE EXTRAS
 
@@ -373,7 +375,7 @@ export function Visualizador({tipo, id, data, extras}) {
     useEffect(() => {
         if (pins.length !== 0 && newHotspot === true) {
             if(hotspotInit && hotspotEnd){
-                frameReplicateV2();
+                //frameReplicateV2();
             }
         }
     }, [pins.length]);
@@ -599,19 +601,31 @@ export function Visualizador({tipo, id, data, extras}) {
           :null
     }
 
-
+    const botonesEscenas=useMemo(()=>
+        <>
+            {
+       Object.entries(escenasAux).map((escena) => (
+            <ButtonEscena key={
+                escena[0]
+            }
+                          escenaInfo={escena}
+                          onClick={handleButtonEscena}
+                activo={
+                     escena[1].nombre === currentEscena.nombre? true : false
+             }
+            ></ButtonEscena>
+        ))}
+        </>
+    ,[escenasAux,handleButtonEscena,currentEscena.nombre]
+)
 
     return (
         <div className="visualizador dragging">
-
-
             {listaHotspost()}
-
             <div className="top-buttons ">
                 <button className="button-option"
                     onClick={handleActivateEditMode}>Añadir recursos</button>
             </div>
-
             <div className="sphere-button">
                 <button className= {
                     `button-option ${
@@ -619,15 +633,12 @@ export function Visualizador({tipo, id, data, extras}) {
                     }`
                 } onClick={()=>setSphereImageInView(!sphereImageInView)}>360</button>
             </div>
-
             {
             addHotspotMode ? <div className="start-end-hotspot-buttons">
                 <button className="button-option" onClick={handleHotspotInit}>Inicio</button>
                 <button className="button-option" onClick={handleHotspotEnd}>Fin</button>
             </div> : null
         }
-
-
             <div className="reel-container">
                 <div className={
                     `reel ${
@@ -642,16 +653,12 @@ export function Visualizador({tipo, id, data, extras}) {
             </div>
             {
             isEditMode ? <div className="add-buttons">
-
-
                 <PopupNewHotspot extras={extras}
                     handleCreateHotspot={handleCreateHotspot}></PopupNewHotspot>
 
                 <button className="button-option" disabled>Agregar extra</button>
             </div> : null
         }
-
-
             <button className={
                     `reel-btn button-option ${
                         visibleExtras ? "activo" : ""
@@ -660,23 +667,14 @@ export function Visualizador({tipo, id, data, extras}) {
                 onClick={handleClickExtras}>
                 Extras
             </button>
-
             {
             getVisualizador()
         }
             <div className="navigation-container">
                 {
-                Object.entries(escenasAux).map((escena) => (
-                    <ButtonEscena key={
-                            escena[0]
-                        }
-                        escenaInfo={escena}
-                        onClick={handleButtonEscena}
-                        activo={
-                            escena[1].nombre === currentEscena.nombre? true : false
-                    }></ButtonEscena>
-                ))
-                 } </div>
+                    botonesEscenas
+                 }
+            </div>
 
             <div className="options-container">
                 <OptionButtons onAddHotspot={handleAddHostpot}

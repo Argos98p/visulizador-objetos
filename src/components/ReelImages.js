@@ -9,11 +9,7 @@ import {deleteExtra,getExtrasUrl,uploadExtraUrl} from "../Api/apiRoutes";
 import './ReelImages.css'
 
 
-/*const { forwardRef, useImperativeHandle } = React;*/
-
-
-const  ReelImages = /*forwardRef(*/
-    memo(({id,extrasImages, isEditMode}/*,ref*/) => {
+const  ReelImages = memo(({id,extrasImages, isEditMode}) => {
 
   const [imageList, setImageList]=useState([])
   const [images, setImages] = useState([]); //for upload with 
