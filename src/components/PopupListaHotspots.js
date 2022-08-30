@@ -41,7 +41,7 @@ export default function PopupListaHotspot({listaHotspots,onClickDeleteHotspot}){
 
     return(
     <>
-        <button className="button-option" onClick={tooglePopup}>Lista de Hotspots</button>
+        <button className="button-option" disabled={true} onClick={tooglePopup}>Lista de Hotspots</button>
         {
             open
                 ? <div className="container-lista-hotspots">

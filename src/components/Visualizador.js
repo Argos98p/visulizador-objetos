@@ -162,13 +162,13 @@ export function Visualizador({tipo, id, data, extras}) {
 
 
     function getFirstSceneWithFrames(escenas) {
-        /*
+
         for(let escena in escenas){
             if(escenas[escena].imagenes.length>1){
                 return escenas[escena];
             }
-        }*/
-        return escenas[1];
+        }
+        return escenas[0];
     }
 
     function handleClickExtras() {
@@ -624,7 +624,9 @@ export function Visualizador({tipo, id, data, extras}) {
             {listaHotspost()}
             <div className="top-buttons ">
                 <button className="button-option"
-                    onClick={handleActivateEditMode}>Añadir recursos</button>
+                    onClick={handleActivateEditMode}>
+    Modo Edicion
+</button>
             </div>
             <div className="sphere-button">
                 <button className= {

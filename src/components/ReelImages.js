@@ -185,36 +185,40 @@ const  ReelImages = memo(({id,extrasImages, isEditMode}) => {
         />
       )}
     </div>
+      {
+        isEditMode
+          ? <ImageUploading
+                multiple
+                value={images}
+                onChange={onChange}
+                dataURLKey="data_url"
+            >
+              {({
+                  imageListUpload,
+                  onImageUpload,
+                  onImageRemoveAll,
+                  onImageUpdate,
+                  onImageRemove,
+                  isDragging,
+                  dragProps,
+                }) => (
 
-      <ImageUploading
-        multiple
-        value={images}
-        onChange={onChange}
-        dataURLKey="data_url"
-      >
-        {({
-          imageListUpload,
-          onImageUpload,
-          onImageRemoveAll,
-          onImageUpdate,
-          onImageRemove,
-          isDragging,
-          dragProps,
-        }) => (
+                  <div className="upload__image-wrapper">
+                    <button
+                        style={isDragging ? { color: 'red' } : undefined}
+                        onClick={onImageUpload}
+                        {...dragProps}
+                    >
+                      Agregar extra
+                    </button>
+                    &nbsp;
 
-          <div className="upload__image-wrapper">
-            <button
-              style={isDragging ? { color: 'red' } : undefined}
-              onClick={onImageUpload}
-              {...dragProps}
-            >              
-              Agregar extra
-            </button>
-            &nbsp;
-            
-          </div>
-        )}
-      </ImageUploading>
+                  </div>
+              )}
+            </ImageUploading>
+          : null
+      }
+
         
       <Carousel cols={6} rows={1} gap={10} loop containerStyle={{height:"100%"}} responsiveLayout={[
               {
