@@ -24,8 +24,9 @@ function ImagePath(pathImage){
     return `${BaseURL}:8085/api/images/getimage?path=${pathImage}`;
 }
 
-function postAddHotspot(id, nombre_escena, nombre_imagen,x,y,idextra,nombreHotspot,idframe){
-    return `${BaseURL}:8084/api/objects/addhotspot?idobjeto=${id}&nombre_escena=${nombre_escena}&nombre_imagen=${nombre_imagen}&idframe=${idframe}&nombreHotspot=${nombreHotspot}&x=${x}&y=${y}&idextra=${idextra}`
+
+function  postAddHotspot(id,nombreEscena){
+    return `${BaseURL}:8084/api/objects/addhotspot?idobjeto=${id}&nombre_escena=${nombreEscena}`;
 }
 
 function deleteExtra(idObjeto,idExtra){
@@ -43,7 +44,6 @@ function getHotspots(id, nombreEscena){
 function deleteHotspot(id, nombreEscena,nombreHotspot,nombreImagen){
     return `${BaseURL}:8084/api/objects/deletehotspot?idobjeto=${id}&nombre_escena=${nombreEscena}&nombreHotspot=${nombreHotspot}&nombre_imagen=${nombreImagen}`
 }
-
 
 
 export {deleteHotspot,statusEsceneUrl,uploadExtraUrl,infoObjectUrl,getHotspots,numberFramesInScene,completeImageUrl,getExtrasUrl,ImagePath,postAddHotspot,deleteExtra}

@@ -53,8 +53,6 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
       }else{
         setImageSelected(item)
       }
-      
-        
     }
 
     function onCrear(image,input){
@@ -101,7 +99,7 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
 
     return (
       <>
-    <button className="button-option" disabled={true} onClick={onClickHotspotPopup}>Hotspot</button>
+    <button className="button-option"  onClick={onClickHotspotPopup}>Hotspot</button>
     <Popup 
     onClose={onCancelHotspotModal}
     open={open}

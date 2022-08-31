@@ -27,9 +27,7 @@ export default class LottieNotFound extends React.Component {
               width="20%"
               isStopped={this.state.isStopped}
               isPaused={this.state.isPaused}/>
-      {/*<button style={buttonStyle} onClick={() => this.setState({isStopped: true})}>stop</button>
-      <button style={buttonStyle} onClick={() => this.setState({isStopped: false})}>play</button>
-<button style={buttonStyle} onClick={() => this.setState({isPaused: !this.state.isPaused})}>pause</button>*/}
+
     </div>
   }
 }

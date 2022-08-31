@@ -26,9 +26,7 @@ export default class LottieEmptyEscenas extends React.Component {
               width="100%"
               isStopped={this.state.isStopped}
               isPaused={this.state.isPaused}/>
-      {/*<button style={buttonStyle} onClick={() => this.setState({isStopped: true})}>stop</button>
-      <button style={buttonStyle} onClick={() => this.setState({isStopped: false})}>play</button>
-<button style={buttonStyle} onClick={() => this.setState({isPaused: !this.state.isPaused})}>pause</button>*/}
+
     </div>
   }
 }

@@ -4,6 +4,7 @@ import {Visualizador} from "./Visualizador";
 import axios from "axios";
 import NoEncontrado from "./publicidad/paginaNoEncontrado";
 import {infoObjectUrl,getExtrasUrl} from "../Api/apiRoutes";
+import LottieServerError from "../Animations/lottieServerError";
 
 
 //cambiar por una funciona que devuelva solo true o false
@@ -21,7 +22,6 @@ function Controller() {
                     setNoEscenas(true)
                 }else{
                     setMyObjeto(response.data);
-                    console.log(response.data);
                     axios.get(getExtrasUrl(id))
                         .then((response)=>{
                             if(response.data !== []){
@@ -39,16 +39,24 @@ function Controller() {
         }).catch(error => {
             if(error.response){
                 console.log(error.response);
+                setMyObjeto("errorGET");
+                //entra aqui cuando el sesrvidor esta caido
             }else if(error.request){
                 console.log(error.request)
+                setMyObjeto("errorGET");
             }else{
                 console.log('Error ',error.message);
+                setMyObjeto("errorGET");
             }
+            setMyObjeto("errorGET");
             console.log(error.config);
         })
     }, []);
 
 
+    if(myObjeto ==="errorGET"){
+        return <LottieServerError/>
+    }
     if(myObjeto==="NOT_FOUND"){
         return <NoEncontrado idObjeto={id}></NoEncontrado>
     }

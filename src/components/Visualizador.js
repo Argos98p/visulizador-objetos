@@ -17,7 +17,7 @@ import "./visualizador_style.css";
 //import NavigationObjectButttons from "./NavigationObjectButtons";
 import {toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-//import DotLoader from "react-spinners/DotLoader";
+import DotLoader from "react-spinners/DotLoader";
 import {infoObjectUrl,getExtrasUrl,getHotspots,deleteHotspot} from "../Api/apiRoutes";
 import {MiObjeto} from "../model/MiObjeto";
 import PopupListaHotspot from "./PopupListaHotspots";
@@ -30,6 +30,8 @@ export function Visualizador({tipo, id, data, extras}) {
     const [currentEscena, setCurrentEscena] = useState({}); //ver si se cambia por null
     const [frames, setFrames] = useState([]);
     const [hotspotsMap, setHotspotsMap] = useState([]);
+    const [updateHotspots, setUpdateHotspots] = useState(false); //variable para que se vuelva a pedir los hotspots
+    const [awaitAddHotspot, setAwaitAddHotspot] = useState(false);
 
 
     const [aux, setAux] = useState("0");
@@ -103,7 +105,48 @@ export function Visualizador({tipo, id, data, extras}) {
             });
 
         }
+
     }, [objetoData]);
+
+
+    useEffect(() => {
+        if(objetoData!== null && updateHotspots===true){
+
+            console.log('recibe nuevamente pins')
+            let promesass=[];
+            let mapHotspots={};
+            for(let escena in objetoData.escenas){
+                let nombreEscena=objetoData.escenas[escena].nombre
+                promesass.push(
+                    axios.get(getHotspots(id,nombreEscena))
+                        .then(response=>{
+                            mapHotspots[nombreEscena]=response.data;
+                        }).catch(error => {
+                        if(error.response){
+                            console.log(error.response);
+                        }else if(error.request){
+                            console.log(error.request)
+                        }else{
+                            console.log('Error ',error.message);
+                        }
+                        console.log(error.config);
+                    })
+                )
+            }
+            Promise.all(promesass).then(()=> {
+                setHotspotsMap(mapHotspots);
+                prepararPins(mapHotspots)
+                setPins(mapHotspots[currentEscena.nombre])
+
+            });
+
+        }
+        return () => {
+            setUpdateHotspots(false)
+        };
+    }, [updateHotspots]);
+
+
 
     function prepararPins(fetchedPins){
         for(let escena in fetchedPins){
@@ -116,9 +159,7 @@ export function Visualizador({tipo, id, data, extras}) {
     }
 
     useEffect(() => {
-        //console.log(currentEscena.nombre)
         if(currentEscena.imagenes!== undefined) {
-            //console.log(hotspotsMap[currentEscena.nombre])
             setFrames(getArraySrcPath(currentEscena));
             setPins(hotspotsMap[currentEscena.nombre]);
             setSphereImageInView(false);
@@ -162,7 +203,6 @@ export function Visualizador({tipo, id, data, extras}) {
 
 
     function getFirstSceneWithFrames(escenas) {
-
         for(let escena in escenas){
             if(escenas[escena].imagenes.length>1){
                 return escenas[escena];
@@ -207,7 +247,6 @@ export function Visualizador({tipo, id, data, extras}) {
         if (zoomValue === 1) {
             tridiRef.current.toggleMoving(false)
         }
-
     }
     function handleZoomOut() {
         tridiRef.current.setZoom(zoomValue - 0.1);
@@ -232,13 +271,18 @@ export function Visualizador({tipo, id, data, extras}) {
         console.log(pins);
     }
 
+    function postNewHotspots(id, nombreEscena,arrayHotspots){
+        return axios.post(postAddHotspot(id,currentEscena.nombre),arrayHotspots);
+    }
+
     function frameReplicateV2() {
         console.log('entra en replicate')
         let init=pins.slice(-2)[0];
         let end=pins.slice(-2)[1];
-        let aux=[...pins]
         let incre=0;
-        let promises = [];
+        let arrayHotspots = [];
+        let newPin={};
+
         if(init.frameId>end.frameId){
             let n=frames.length-init.frameId+end.frameId;
             let k=(init.x-end.x)/n
@@ -249,89 +293,58 @@ export function Visualizador({tipo, id, data, extras}) {
                     i=0
                     temp=end.frameId
                 }
-                var newPin = {
-                    id: i,
-                    frameId: i,
-                    nombre: nameHotspot,
-                    extra: null,
+                newPin = {
+                    idframe:i+1,
+                    nombreHotspot:nameHotspot,
                     x: parseFloat(init.x) - k*incre,
                     y: parseFloat(init.y) -desY*incre,
-                    recordingSessionId: null
+                    idExtra:1
                 }
                 incre++;
-                aux.push(newPin);
+                arrayHotspots.push(newPin);
                 if(i!==0){
-                    promises.push(
-                        axios.post(
-                            postAddHotspot(id,currentEscena.nombre,newPin.frameId+".jpg",newPin.x,newPin.y,extraSelected.idextra,nameHotspot,i)
-                        ).then(
-                            response=>{
-                                console.log(response)
-                            }
-                        ).catch(error => {
-                            if(error.response){
-                                console.log(error.response);
-                            }else if(error.request){
-                                console.log(error.request)
-                            }else{
-                                console.log('Error ',error.message);
-                            }
-                            console.log(error.config);
-                        })
-                    )
                 }
                 
             }
-            Promise.all(promises).then(()=>console.log("ok"));
-            setPins(aux)
-            setAddHotspotMode(false)
-            setHotspotInit(false);
-            setHotspotEnd(false)
+
         }else{
             let numFrames=end.frameId - init.frameId;
             let k= (parseFloat(init.x)-parseFloat(end.x))/numFrames;
             let desY= (parseFloat(init.y)-parseFloat(end.y))/numFrames;
             for(let i= init.frameId;i < end.frameId; i++){
-                var newPin = {
-                    id: i,
-                    frameId: i,
-                    nombre: nameHotspot,
-                    extra: null,
+                newPin = {
+                    idframe:i+1,
+                    nombreHotspot:nameHotspot,
                     x: parseFloat(init.x) - k*incre,
                     y: parseFloat(init.y) -desY*incre,
-                    recordingSessionId: null
+                    idExtra:1
                 }
                 incre++;
-                aux.push(newPin);
+                arrayHotspots.push(newPin);
                 if(i!==0){
-                    promises.push(
-                        axios.post(
-                            postAddHotspot(id,currentEscena.nombre,newPin.frameId+".jpg",newPin.x,newPin.y,extraSelected.idextra,nameHotspot,i)
-                        ).then(
-                            response=>{
-                                console.log(response)
-                            }
-                        ).catch(error => {
-                            if(error.response){
-                                console.log(error.response);
-                            }else if(error.request){
-                                console.log(error.request)
-                            }else{
-                                console.log('Error ',error.message);
-                            }
-                            console.log(error.config);
-                        })
-                    )
                 }
-                
             }
-            console.log(promises.length)
-            Promise.all(promises).then(()=>console.log("ok"));
-            setPins(aux)
-            setAddHotspotMode(false)
-            setHotspotInit(false);
-            setHotspotEnd(false)
+
         }
+
+
+
+        postNewHotspots(id,currentEscena.nombre,arrayHotspots).then(
+            response=>{
+                console.log(response)
+                setAwaitAddHotspot(false);
+                setAddHotspotMode(false)
+                setHotspotInit(false);
+                setHotspotEnd(false)
+                setUpdateHotspots(true);
+                setNewHotspot(false);
+
+            }
+        ).catch(
+            (e)=>console.log(e)
+        )
+
+
     }
 
 
@@ -376,7 +389,8 @@ export function Visualizador({tipo, id, data, extras}) {
     useEffect(() => {
         if (pins.length !== 0 && newHotspot === true) {
             if(hotspotInit && hotspotEnd){
-                //frameReplicateV2();
+                setAwaitAddHotspot(true);
+                frameReplicateV2();
             }
         }
     }, [pins.length]);
@@ -423,9 +437,8 @@ export function Visualizador({tipo, id, data, extras}) {
     });
   }
 
-    function getVisualizador() {
-        //console.log('render Tridi')
-
+    const getVisualizador = useMemo(()=> {
+        console.log('render Tridi')
         if (frames.length === 0) {
             return <div className="emptyEscena ">
                 <h2 className="texto-blanco">Escena vacia</h2>
@@ -434,7 +447,7 @@ export function Visualizador({tipo, id, data, extras}) {
             </div>
         } else {
             return (
-                <div className={`tridi-container `}
+                <div className={`tridi-container`}
                     onWheel={handleWheel}
                     onClick={clickOnTridiContainer}>
                     {/*
@@ -464,7 +477,8 @@ export function Visualizador({tipo, id, data, extras}) {
                         }}
                     >
                         </Pannellum>
-                        :<Tridi ref={tridiRef}
+                        :
+                            <Tridi ref={tridiRef}
                         className={
                             "" /*
                             `${
@@ -481,25 +495,16 @@ export function Visualizador({tipo, id, data, extras}) {
                         count={126}
                     */
 
-                        
+
 
                         //imagenes desde el sevidor
-
-                        
                         images={frames}
                         count={frames.length}
-                        
-
-
                         autoplaySpeed={70}
-                        //autoplay={true}
                         zoom={1}
                         maxZoom={3}
                         minZoom={1}
                         onZoom={zoomValueHandler}
-                        
-                        //format="png"
-                        
                         onFrameChange={frameChangeHandler}
                         onAutoplayStart={
                             () => setIsAutoPlayRunning(true)
@@ -515,7 +520,6 @@ export function Visualizador({tipo, id, data, extras}) {
                                 notifyEdicion();*/
                         }
                         onRecordStop={
-
                             /*setIsEditMode(false);
                                 toast.dismiss();
                                 notifyVisualizacion();
@@ -525,24 +529,18 @@ export function Visualizador({tipo, id, data, extras}) {
                         }
                         onPinClick={pinClickHandler}
                         setPins={setPins}
-
                         renderPin={myRenderPin}
-                        //inverse
-                        //showControlBar
                         showStatusBar
-
                         pins={pins}
                         //hintOnStartup
                         //hintText="Arrastre para mover"
                         onLoadChange={handleOnLoad}/>
                     }
-
-                    
                 </div>
             )
         }
-    }
-
+    },[frames, handleWheel, pins,zoomValueHandler]
+)
     function handleActivateEditMode() {
         setIsEditMode(!isEditMode)
     }
@@ -552,6 +550,7 @@ export function Visualizador({tipo, id, data, extras}) {
           console.log(nameHotspot);
           let promesas=[];
           for (let escena in data.escenas){
+              /*
               for(let value of data.escenas[escena].imagenes){
                   for(let hotspot of value.hotspots){
                       if(hotspot.nombreHotspot === nameHotspot){
@@ -577,8 +576,9 @@ export function Visualizador({tipo, id, data, extras}) {
                   }
 
               }
-              //console.log(data.escenas[escena].imagenes);
+*/
           }
+          /*
           console.log(promesas.length)
           Promise.all(promesas).then(()=>console.log('terminado')).catch(error => {
               if(error.response){
@@ -589,7 +589,7 @@ export function Visualizador({tipo, id, data, extras}) {
                   console.log('Error ',error.message);
               }
               console.log(error.config);
-          });
+          });*/
 
       }
 
@@ -612,7 +612,7 @@ export function Visualizador({tipo, id, data, extras}) {
                           escenaInfo={escena}
                           onClick={handleButtonEscena}
                 activo={
-                     escena[1].nombre === currentEscena.nombre? true : false
+                     escena[1].nombre === currentEscena.nombre
              }
             ></ButtonEscena>
         ))}
@@ -677,13 +677,19 @@ export function Visualizador({tipo, id, data, extras}) {
                 Extras
             </button>
             {
-            getVisualizador()
+            getVisualizador
         }
             <div className="navigation-container">
                 {
                     botonesEscenas
                  }
             </div>
+
+            {
+                awaitAddHotspot
+                    ?  <div className="await-hotspot"><DotLoader color="#16A085 "></DotLoader> </div>
+                    : null
+            }
 
             <div className="options-container">
                 <OptionButtons onAddHotspot={handleAddHostpot}
@@ -715,12 +721,7 @@ export function Visualizador({tipo, id, data, extras}) {
       draggable
       pauseOnHover
        />
-  
-        {interiorEnabled
-        ?<ReactPlayer url='https://www.youtube.com/watch?v=BlrofcGsouI' width="100%" height="100%" loop={true}/>
 
-        :getVisualizador()
-        }
       
 
       {tipo==="vehiculo"

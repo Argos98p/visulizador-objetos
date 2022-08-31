@@ -21,6 +21,13 @@
   display: none;
 }
 
+.center-animation{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
 
 .lista-hotspost{
   position: absolute;
@@ -28,6 +35,18 @@
   right: 10px;
   z-index: 900;
 }
+
+.await-hotspot{
+
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  z-index: 900;
+  color: white;
+}
+
 
 .start-end-hotspot-buttons{
   width: 100%;
