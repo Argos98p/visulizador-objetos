@@ -5,46 +5,19 @@ import './modal.css'
 import {useParams} from "react-router-dom";
 import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import InputHotspot from './inputHotspotInfo';
 import {ImagePath} from '../Api/apiRoutes'
+import Form from 'react-bootstrap/Form';
 
 export default function PopupNewHotspot({extras,handleCreateHotspot}) {
 
     let {id} = useParams();
-    var getExtrasURL = "http://redpanda.sytes.net:8084/api/objects/getextras?idobjeto=";
     const [allExtras, setAllExtras] = useState([]);
     const [imageSelected, setImageSelected] = useState(null);
-    const inputRef = useRef();
     const [noImageSelected, setNoImageSelected] = useState(false);
     const [open, setOpen] = useState(false);
+    const [isEmpty, setIsEmpty] = useState(true);
+    const [nameValue, setNameValue] = useState("");
 
-    useEffect(() => {
-
-      //inputRef.current.value="";
-
-
-        axios.get(getExtrasURL + id).then((response) => {
-            if (response.status === 200) {
-                let temp = [];
-                setAllExtras(response.data)
-                /*
-        response.data.forEach((item,index)=>{
-          
-          var srcImage=showImages+item.imagen.path;
-          temp.push(srcImage);
-          //temp.push( <Carousel.Item key={index} ><img width="100%" src={srcImage} key={index}  onClick={ () => openImageViewer(index)}/> </Carousel.Item>)
-        }
-        );
-        setImagesListSrc(temp)*/
-            } else {
-                console.log('error al recibir las imagenes');
-            }
-        }).catch((e) => {
-            console.error("Error obteniendo las imagenes:" + e);
-            /*setImagesListSrc([]);*/
-        });
-
-    }, []);
 
     function handleClickOnImageModal(event, item){
       if(imageSelected===item)
@@ -60,20 +33,20 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
       console.log(input);
 
       //FUNCION PARA CONTROLAR SELECCION DE EXTRAS
-      if(/*image === null || */inputRef.current.value === ""){
+      if(image === null || nameValue === ""){
         if (image === null){
-          console.log('as');
+          console.log('la imagen es nula');
         }
-        if(inputRef.current.value ===""){
-          console.log('is');
+        if(nameValue ===""){
+          console.log('El nombre esta en blanco');
         }
       }else{
         console.log('todo ok');
             
-        handleCreateHotspot(imageSelected,inputRef.current.value)
+        handleCreateHotspot(imageSelected,nameValue)
         setOpen(false);
         setImageSelected(null)
-        inputRef.current.value=""
+        setNameValue("")
       }
 
       //handleCreateHotspot(imageSelected,inputRef.current.value)
@@ -87,13 +60,13 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
 
     function onCancelHotspotModal(){
       setOpen(false)
-      if(inputRef.current!==null){
-        inputRef.current.value=""    
-      }
-          
+      setNameValue("");
       setImageSelected(null)
     }
 
+    function onChangeInput(nombreHotspot){
+        setNameValue(nombreHotspot.target.value)
+    }
    
 
 
@@ -110,7 +83,6 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
       
 
 <div className="modalp">
-                    
                     <div className="header"> Añadir hotspot </div>
                     <div className="content-popup">
 
@@ -118,7 +90,7 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
                       <div>Seleccione un extra</div>
                       <div className='lista-extras'>
                           {
-                             allExtras.map((item, index) => (                               
+                             extras.map((item, index) => (
                                  <div className='imagen-modal-container ' key={index}>                                   
                                    <figure onClick={(event) => handleClickOnImageModal(event,item)}>
                                    <img className={`imagen-modal  ${
@@ -140,26 +112,37 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
                             : null
                           }
 
-
                       </div>
-                     
-                    
+
                       <div className='container-input-hotspot'>
-                                    
-                          <InputHotspot inputRef={inputRef}></InputHotspot>
+
+                          <Form.Label htmlFor="inputPassword5">Ingrese una etiqueta</Form.Label>
+                          <Form.Control  type="text" required onChange={onChangeInput} autoComplete="off" id="inputPassword5" aria-describedby="passwordHelpBlock"/>
+                          {
+                              isEmpty
+                                  ? <Form.Text id="passwordHelpBlock" muted >
+
+                                      Este campo es obligatorio
+                                  </Form.Text>
+                                  : null
+                          }
+                          <br></br>
+                          <Form.Text id="passwordHelpBlock" muted>
+                              Se permite un maximo de 20 caracteres
+                          </Form.Text>
                           
                       </div>
                     </div>
+
+
                     <div className="actions">
                     <button className="button-option" 
                     disabled={
                       //FUNCION PARA CONTROLAR SELECCION DE EXTRAS                     
-                      (/*imageSelected === null ||*/  inputRef.current && inputRef.current.value === "")
-                      ? true
-                      : false
+                      !!(imageSelected === null ||  nameValue === "")
                     }
 
-                    onClick={()=>{ onCrear(imageSelected,inputRef.current.value) }}
+                    onClick={()=>{ onCrear(imageSelected,nameValue) }}
 
                     
                     >Crear</button>         

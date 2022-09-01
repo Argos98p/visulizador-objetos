@@ -1,8 +1,9 @@
-import React, {useState} from "react";
+import React, {memo, useState} from "react";
 import Popup from "reactjs-popup";
 import {FaCrosshairs, FaTrash} from "react-icons/fa/index.js";
 import "./PopupListaHotspotsStyle.css"
-export default function PopupListaHotspot({listaHotspots,onClickDeleteHotspot}){
+
+    const PopupListaHotspot =memo(({listaHotspots,onClickDeleteHotspot})=>{
 
     const [open, setOpen] = useState(false);
 
@@ -15,13 +16,14 @@ export default function PopupListaHotspot({listaHotspots,onClickDeleteHotspot}){
     }
 
     function handleListaHotspots(){
-        if(listaHotspots!==null || listaHotspots !== undefined){
+        if(listaHotspots.length===0){
+            return (<h6>No se encontron hotspots</h6>);
+        }
+        if(listaHotspots){
             let nombresHotspots=[]
-           for (let escena in listaHotspots){
-               //console.log(listaHotspots[escena])
-               const unique = [...new Set(listaHotspots[escena].map(item => item.nombreHotspot))];
-               nombresHotspots=nombresHotspots.concat(unique);
-           }
+            const unique = [...new Set(listaHotspots.map(item => item.nombreHotspot))];
+            nombresHotspots=nombresHotspots.concat(unique);
+            console.log(nombresHotspots)
             return nombresHotspots.map((item) => {
                 return (
                     <div key={item} className="item-hotspots">
@@ -34,6 +36,8 @@ export default function PopupListaHotspot({listaHotspots,onClickDeleteHotspot}){
 
                 );
             });
+
+            //return null
 
         }
         return (<h1>No se encontron hotspots</h1>);
@@ -52,4 +56,5 @@ export default function PopupListaHotspot({listaHotspots,onClickDeleteHotspot}){
 
     </>);
 
-}
+})
+export default PopupListaHotspot;

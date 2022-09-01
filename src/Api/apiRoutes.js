@@ -38,11 +38,11 @@ function uploadExtraUrl(id,archivo){
 }
 
 function getHotspots(id, nombreEscena){
-    return `${BaseURL}:8084/api/objects/gethotspots?idobjeto=${id}&nombre_escena=${nombreEscena}`;
+    return `${BaseURL}:8084/api/objects/gethotspots?idobjeto=${id}&nombre_escena=${nombreEscena}`
 }
 
-function deleteHotspot(id, nombreEscena,nombreHotspot,nombreImagen){
-    return `${BaseURL}:8084/api/objects/deletehotspot?idobjeto=${id}&nombre_escena=${nombreEscena}&nombreHotspot=${nombreHotspot}&nombre_imagen=${nombreImagen}`
+function deleteHotspot(id, nombreEscena,nombreHotspot){
+    return `${BaseURL}:8084/api/objects/deletehotspot?idobjeto=${id}&nombre_escena=${nombreEscena}&nombreHotspot=${nombreHotspot}`
 }
 
 

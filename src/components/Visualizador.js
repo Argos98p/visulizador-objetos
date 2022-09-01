@@ -545,60 +545,43 @@ export function Visualizador({tipo, id, data, extras}) {
         setIsEditMode(!isEditMode)
     }
 
+    function handleDeleteHotspot(nameHotspot) {
+        setAwaitAddHotspot(true);
+        let arrayFramesId = [];
+
+        for (let frame in currentEscena.imagenes) {
+            for (let value in currentEscena.imagenes[frame].hotspots) {
+                let tempHotspot = currentEscena.imagenes[frame].hotspots[value]
+                if (tempHotspot.nombreHotspot === nameHotspot) {
+                    arrayFramesId.push(currentEscena.imagenes[frame].path.split('/')[4].split('.')[0]);
+                }
+            }
+        }
+
+        axios.post(deleteHotspot(id,currentEscena.nombre,nameHotspot),arrayFramesId)
+            .then((response)=>{
+                console.log(response);
+                setUpdateHotspots(true);
+                setAwaitAddHotspot(false);
+            })
+            .catch(error => {
+                if(error.response){
+                    console.log(error.response);
+                }else if(error.request){
+                    console.log(error.request)
+                }else{
+                    console.log('Error ',error.message);
+                }
+                console.log(error.config);
+            });
+
+    }
     function listaHotspost(){
-      function handleDeleteHotspot(nameHotspot){
-          console.log(nameHotspot);
-          let promesas=[];
-          for (let escena in data.escenas){
-              /*
-              for(let value of data.escenas[escena].imagenes){
-                  for(let hotspot of value.hotspots){
-                      if(hotspot.nombreHotspot === nameHotspot){
-                          promesas.push(
-                              axios.post(deleteHotspot(id,currentEscena.nombre,nameHotspot,value.path.split('/')[4]))
-                                  .then(
-                                      response=>{
-                                          console.log('ok')}
-                                  ).catch(error => {
-                                  if(error.response){
-                                      console.log(error.response);
-                                  }else if(error.request){
-                                      console.log(error.request)
-                                  }else{
-                                      console.log('Error ',error.message);
-                                  }
-                                  console.log(error.config);
-                              })
-                          );
-
-                          console.log(deleteHotspot(id,currentEscena.nombre,nameHotspot,value.path.split('/')[4]));
-                      }
-                  }
-
-              }
-*/
-          }
-          /*
-          console.log(promesas.length)
-          Promise.all(promesas).then(()=>console.log('terminado')).catch(error => {
-              if(error.response){
-                  console.log(error.response);
-              }else if(error.request){
-                  console.log(error.request)
-              }else{
-                  console.log('Error ',error.message);
-              }
-              console.log(error.config);
-          });*/
-
-      }
-
 
       return isEditMode?
           <div className="lista-hotspost">
-              <PopupListaHotspot listaHotspots={hotspotsMap} onClickDeleteHotspot={handleDeleteHotspot}></PopupListaHotspot>
-
-      </div>
+              <PopupListaHotspot listaHotspots={hotspotsMap[currentEscena.nombre]} onClickDeleteHotspot={handleDeleteHotspot}></PopupListaHotspot>
+            </div>
           :null
     }
 
