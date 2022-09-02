@@ -14,17 +14,15 @@ import {postAddHotspot} from "../Api/apiRoutes"
 import 'reactjs-popup/dist/index.css';
 import "react-tridi/dist/index.css";
 import "./visualizador_style.css";
-//import NavigationObjectButttons from "./NavigationObjectButtons";
 import {toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import DotLoader from "react-spinners/DotLoader";
 import {infoObjectUrl,getExtrasUrl,getHotspots,deleteHotspot} from "../Api/apiRoutes";
-import {MiObjeto} from "../model/MiObjeto";
+
 import PopupListaHotspot from "./PopupListaHotspots";
 
 export function Visualizador({tipo, id, data, extras}) {
-    //var idUsuario = data["idusuario"];
-    //var nombre = data["nombre"];
+
     const [objetoData,setObjetoData] = useState(null);
     const [escenasAux, setEscenasAux] = useState({});//muestra todas las escenas
     const [currentEscena, setCurrentEscena] = useState({}); //ver si se cambia por null
@@ -34,7 +32,7 @@ export function Visualizador({tipo, id, data, extras}) {
     const [awaitAddHotspot, setAwaitAddHotspot] = useState(false);
 
 
-    const [aux, setAux] = useState("0");
+    //const [aux, setAux] = useState("0");
 
     const [isAutoPlayRunning, setIsAutoPlayRunning] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -51,6 +49,7 @@ export function Visualizador({tipo, id, data, extras}) {
     const [hotspotEnd, setHotspotEnd] = useState(false);
     const [sphereImageInView, setSphereImageInView] = useState(false);
 
+    const extraInViewRef = useRef();
 
     const tridiRef = useRef(null);
     var zoomValue = 0;
@@ -225,8 +224,8 @@ export function Visualizador({tipo, id, data, extras}) {
     console.log();
 
     const pinClickHandler = (pin) => {
-        console.log("on pin click", pin);
-        // tridiRef.current.toggleRecording(!isEditMode, pin.recordingSessionId);
+        setVisibleExtras(true);
+        extraInViewRef.current.onExtra(pin.idExtra);
     };
 
     const zoomValueHandler = (valorZoom) => {
@@ -298,7 +297,7 @@ export function Visualizador({tipo, id, data, extras}) {
                     nombreHotspot:nameHotspot,
                     x: parseFloat(init.x) - k*incre,
                     y: parseFloat(init.y) -desY*incre,
-                    idExtra:1
+                    idExtra:extraSelected.idextra
                 }
                 incre++;
                 arrayHotspots.push(newPin);
@@ -317,7 +316,7 @@ export function Visualizador({tipo, id, data, extras}) {
                     nombreHotspot:nameHotspot,
                     x: parseFloat(init.x) - k*incre,
                     y: parseFloat(init.y) -desY*incre,
-                    idExtra:1
+                    idExtra:extraSelected.idextra
                 }
                 incre++;
                 arrayHotspots.push(newPin);
@@ -326,8 +325,6 @@ export function Visualizador({tipo, id, data, extras}) {
             }
 
         }
-
-
 
         postNewHotspots(id,currentEscena.nombre,arrayHotspots).then(
             response=>{
@@ -343,11 +340,7 @@ export function Visualizador({tipo, id, data, extras}) {
         ).catch(
             (e)=>console.log(e)
         )
-
-
     }
-
-
 
     const handleButtonEscena=useCallback((escena)=> {
         //idEscenaActiva = escena[0];
@@ -356,17 +349,18 @@ export function Visualizador({tipo, id, data, extras}) {
     },[currentEscena])
 
 
-    function handleCreateHotspot(imgExtra, info) { // FUNCION PARA CONTROLAR SELECCION DE EXTRAS
+    function handleCreateHotspot(imgExtra, info) {
+        // FUNCION PARA CONTROLAR SELECCION DE EXTRAS
 
-        if (info === "" /*|| imgExtra == null*/
-        ) {} else { // borrar la siguientevariblw
-            let aux = {
-                idextra: 1
-            }
-            setExtraSelected(aux);
+        if (info === "" || imgExtra == null
+        ) {
+            console.log('Informacion erronea')
+        } else {
+            console.log(imgExtra)
+            setExtraSelected(imgExtra);
             setNameHotspot(info);
             setAddHotspotMode(true);
-            setNewHotspot(true)
+            setNewHotspot(true);
         }
     }
 
@@ -402,16 +396,13 @@ export function Visualizador({tipo, id, data, extras}) {
             <>
                 <label>
                     <div id="b3"
-                        onClick={
-                            () => childRef.current.getAlert()
-                        }
+
                         className="button-hotspot"
                         data-for='soclose'
                         data-tip=''>
                         +
                     </div>
                 </label>
-
                 <ReactTooltip id="soclose" place="top" effect="solid"
                     getContent={
                         ()=>{return pin.nombre}
@@ -638,7 +629,7 @@ export function Visualizador({tipo, id, data, extras}) {
                     } `
                 }>
                     <ReelImages id={id}
-                        /*ref={childRef}*/
+                        ref={extraInViewRef}
                         extrasImages={extras}
                         isEditMode={isEditMode}></ReelImages>
                 </div>

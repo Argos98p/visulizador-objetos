@@ -1,4 +1,4 @@
-import React,{useState,useEffect,useCallback,memo} from 'react';
+import React, {useState, useEffect, useCallback, memo, forwardRef, useImperativeHandle} from 'react';
 import Carousel from 'react-grid-carousel';
 import ImageUploading from 'react-images-uploading';
 import axios from "axios";
@@ -9,7 +9,7 @@ import {deleteExtra,getExtrasUrl,uploadExtraUrl} from "../Api/apiRoutes";
 import './ReelImages.css'
 
 
-const  ReelImages = memo(({id,extrasImages, isEditMode}) => {
+const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
   const [imageList, setImageList]=useState([])
   const [images, setImages] = useState([]); //for upload with 
@@ -19,27 +19,33 @@ const  ReelImages = memo(({id,extrasImages, isEditMode}) => {
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   
 
-  /*
 
   useImperativeHandle(ref, () => ({
 
-    getAlert() {
-      setCurrentImage(0);
+    onExtra(extraId) {
+      console.log(extraId)
+      setCurrentImage(searchExtraById(extraId));
       setIsViewerOpen(true);
     }
-  }));*/
+  }));
 
+  const searchExtraById=(idExtra)=>{
+
+    //mejorar esta funcion
+    for(let i = 0 ; imagesListSrc.length;i++){
+      if(imagesListSrc[i][1]===idExtra){
+        return i;
+      }
+    }
+    return 0;
+
+  }
 
   const onChange = (imageListUpload, addUpdateIndex) => {
-    // data for submit
     uploadExtra(imageListUpload[0].file)
     setImages([]);
   };
 
-
-  useEffect(() => {
-    //console.log('render reel')
-  }, );
 
   const openImageViewer = useCallback((index) => {   
     setCurrentImage(index);
@@ -170,8 +176,6 @@ const  ReelImages = memo(({id,extrasImages, isEditMode}) => {
     <div className='reel-images-container'>
 
 <div>
-     
-
       {isViewerOpen && (
         <ImageViewer
           src={ imagesListSrc.map((item,index)=>item[0]) }
@@ -239,7 +243,7 @@ const  ReelImages = memo(({id,extrasImages, isEditMode}) => {
           ?<button className='btn-eliminar-extra' onClick={()=>onClickDeleteExtra(src)}> <FaTrash/></button>
           :null
           }
-          <img width="100%" height="100%" className='cursor-pointer' src={src[0]} key={index} alt={'hola'} onClick={ () => openImageViewer(index)}/> 
+          <img className='cursor-pointer imgReel' src={src[0]} key={index} alt={'hola'} onClick={ () => openImageViewer(index)}/>
 
           </div>
 
