@@ -13,7 +13,7 @@
   position: fixed;
   height: 25%;
   bottom: 0;
-  width: 100%;
+  width: 100vw;
 }
 
 .oculto{
@@ -61,6 +61,7 @@
 
 .reel-container{
   position: fixed;
+  width: 100vw;
   height: 30%;
   bottom: 0;
   z-index: 999;

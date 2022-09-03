@@ -1,3 +1,5 @@
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import React, {useState, useEffect, useCallback, memo, forwardRef, useImperativeHandle} from 'react';
 import Carousel from 'react-grid-carousel';
 import ImageUploading from 'react-images-uploading';
@@ -7,7 +9,7 @@ import {ImagePath} from '../Api/apiRoutes'
 import {FaTrash} from "react-icons/fa/index.js";
 import {deleteExtra,getExtrasUrl,uploadExtraUrl} from "../Api/apiRoutes";
 import './ReelImages.css'
-
+import Slider from "react-slick";
 
 const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
@@ -17,7 +19,47 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   const [imagesExtras, setImagesExtras] = useState(extrasImages);
   const [currentImage, setCurrentImage] = useState(0);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
-  
+  var settings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 2,
+    draggable:false,
+    arrows:true,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 3,
+          infinite: true,
+          dots: true,swipeToSlide: true,
+          draggable:false
+        }
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 2,
+          initialSlide: 2,
+          swipeToSlide: true,
+          draggable:false
+          
+        }
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          swipeToSlide: true,
+          draggable:false
+        }
+      }
+    ]
+  };
 
 
   useImperativeHandle(ref, () => ({
@@ -172,6 +214,37 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
   }
 
+
+  function ImagesReel(){
+
+    return (
+    <Slider {...settings}>
+
+
+      {imagesListSrc.map((src, index) => (
+
+
+<div className="auxx" key={index} >
+  
+  <div className='reel-image-extra-container'>
+    {isEditMode
+  ?<button className='btn-eliminar-extra' onClick={()=>onClickDeleteExtra(src)}> <FaTrash/></button>
+  :null
+  }
+  <img className='cursor-pointer imgReel' src={src[0]} key={index} alt={'hola'} onClick={ () => openImageViewer(index)}/>
+
+  </div>
+
+  </div>
+  
+))}    
+
+
+   
+    </Slider>);
+
+  }
+
   return (
     <div className='reel-images-container'>
 
@@ -223,6 +296,12 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
           : null
       }
 
+
+{
+  ImagesReel()
+}
+
+{/*
         
       <Carousel cols={6} rows={1} gap={10} loop containerStyle={{height:"100%"}} responsiveLayout={[
               {
@@ -233,9 +312,12 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
                 breakpoint: 990,
                 cols: 4
               },
+              
              
             ]}>        
       {imagesListSrc.map((src, index) => (
+
+
         <Carousel.Item key={index} >
           
           <div className='reel-image-extra-container'>
@@ -250,7 +332,10 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
           </Carousel.Item>
           
       ))}    
-    </Carousel>
+        </Carousel>*/}
+
+
+
       </div>
     
   )
