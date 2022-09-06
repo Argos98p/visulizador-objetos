@@ -20,69 +20,60 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   const [currentImage, setCurrentImage] = useState(0);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   var settings = {
-    dots: false,
-    infinite: true,
+    dots: true,
+    infinite: false,
     speed: 500,
     slidesToShow: 4,
     slidesToScroll: 1,
     draggable:false,
-    arrows:true,
+
     responsive: [
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 4,
-          slidesToScroll: 1,
-          infinite: true,
-          dots: true,swipeToSlide: true,
-          draggable:false
-        }
-      },
-      {
-        breakpoint: 600,
-        settings: {
           slidesToShow: 3,
-          slidesToScroll: 1,
-          initialSlide: 2,
-          swipeToSlide: true,
-          draggable:false
 
         }
       },
       {
-        breakpoint: 480,
+        breakpoint: 800,
+        settings: {
+          slidesToShow: 2,
+        }
+      },
+      {
+        breakpoint: 616,
         settings: {
           slidesToShow: 1,
-          slidesToScroll: 1,
-          swipeToSlide: true,
-          draggable:false
         }
-      }
+      },
+
     ]
+
   };
-
-
   useEffect(()=>{
     console.log("render reel");
   });
   useImperativeHandle(ref, () => ({
 
     onExtra(extraId) {
-      console.log(extraId)
-      setCurrentImage(searchExtraById(extraId));
-      setIsViewerOpen(true);
+        setCurrentImage(searchExtraById(extraId));
+        setIsViewerOpen(true);
     }
   }));
 
   const searchExtraById=(idExtra)=>{
 
-    //mejorar esta funcion
-    for(let i = 0 ; imagesListSrc.length;i++){
-      if(imagesListSrc[i][1]===idExtra){
+
+    for(let i = 0 ; i<imagesListSrc.length;i++){
+
+      let aux=imagesListSrc[i]
+
+      if(  aux[1]===idExtra){
         return i;
       }
     }
-    return 0;
+    return null;
 
   }
 
@@ -222,38 +213,31 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
     console.log(imagesListSrc)
 
+    if (imagesListSrc.length === 0){
+      return (
+          <Slider key="0" />
+      )
+    }
+
     return <Slider {...settings}>
-
-    </Slider>
-
-    return (
-    <Slider {...settings}>
-
 
       {imagesListSrc.map((src, index) => (
 
 
-<div className="auxx" key={index} >
 
-  <div className='reel-image-extra-container'>
-    {isEditMode
-  ?<button className='btn-eliminar-extra' onClick={()=>onClickDeleteExtra(src)}> <FaTrash/></button>
-  :null
-  }
-  <h2>hola</h2>
-    {/*<img className='cursor-pointer imgReel' src={src[0]} key={index} alt={'hola'}
-          onClick={() => openImageViewer(index)}/>*/}
+          <div className='reel-image-extra-container' key={index}>
+              {isEditMode
+                  ?<button className='btn-eliminar-extra' onClick={()=>onClickDeleteExtra(src)}> <FaTrash/></button>
+                  :null
+              }
+              <img className='cursor-pointer imgReel' src={src[0]} key={index} alt={'hola'}
+          onClick={() => openImageViewer(index)}/>
 
-  </div>
+            </div>
 
-  </div>
-
-))}
-
-
+      ))}
 
     </Slider>
-    );
 
   }
 

@@ -112,6 +112,16 @@ export function Visualizador({tipo, id,data, extras}) {
 
 
     useEffect(() => {
+        setTimeout(()=>{
+            setLoadPercentage(100);
+            setLoadStatus(true);
+
+        },5000)
+
+    }, []);
+
+
+    useEffect(() => {
         if(objetoData!== null && updateHotspots===true){
 
             console.log('recibe nuevamente pins')
@@ -421,7 +431,6 @@ export function Visualizador({tipo, id,data, extras}) {
     }
 
     const getVisualizador = ()=> {
-        console.log('render Tridi')
         if (frames.length === 0) {
             return <div className="emptyEscena ">
                 <h2 className="texto-blanco">Escena vacia</h2>
@@ -440,19 +449,19 @@ export function Visualizador({tipo, id,data, extras}) {
                                 !loadStatus
                             }
                             size={70}/>
-                        <h1>{loadPercentage}
+                        {/*<h1>{loadPercentage}
                             %
-                        </h1>
+                        </h1>*/}
                     </div> : null
                     }
 
                     {
                             <Tridi ref={tridiRef}
                         className={
-                            "" /*
+
                             `${
                                 loadStatus ? "" : 'oculto'
-                            }`*/
+                            }`
                         }
                         images={frames}
                         autoplaySpeed={70}
@@ -499,7 +508,7 @@ export function Visualizador({tipo, id,data, extras}) {
             for (let value in currentEscena.imagenes[frame].hotspots) {
                 let tempHotspot = currentEscena.imagenes[frame].hotspots[value]
                 if (tempHotspot.nombreHotspot === nameHotspot) {
-                    arrayFramesId.push(currentEscena.imagenes[frame].path.split('/')[4].split('.')[0]);
+                    arrayFramesId.push(currentEscena.imagenes[frame].path.split('/')[3].split('.')[0]);
                 }
             }
         }
@@ -519,9 +528,12 @@ export function Visualizador({tipo, id,data, extras}) {
                     console.log('Error ',error.message);
                 }
                 console.log(error.config);
+                setUpdateHotspots(true);
+                setAwaitAddHotspot(false);
             });
-
     }
+
+
     function listaHotspost(){
 
       return isEditMode?
@@ -582,7 +594,7 @@ export function Visualizador({tipo, id,data, extras}) {
 
             {
             isEditMode ? <div className="add-buttons">
-                <PopupNewHotspot extras={extras}
+                <PopupNewHotspot id={id} /*extras={extras}*/
                     handleCreateHotspot={handleCreateHotspot}></PopupNewHotspot>
 
                 <button className="button-option" disabled>Agregar extra</button>
@@ -626,56 +638,5 @@ export function Visualizador({tipo, id,data, extras}) {
         } </div>
     );
 
-    /*
-  return scenesKeys !== undefined ? (
-    <div className="visualizador dragging" onWheel={handleWheel}>
 
-      <ToastContainer
-      position="top-center"
-      autoClose={5000}
-      hideProgressBar
-      newestOnTop={false}
-      closeOnClick
-      rtl={false}
-      pauseOnFocusLoss
-      draggable
-      pauseOnHover
-       />
-
-      
-
-      {tipo==="vehiculo"
-      ?<NavigationCarButtons onOpenDoors={handleOpenDoors} onCloseDoors={handleCloseDoors} imagesFramesScenes={imagesFramesScenes} onInterior={handleInterior}></NavigationCarButtons>
-      :<NavigationObjectButttons imagesFramesScenes={imagesFramesScenes}></NavigationObjectButttons>
-      }
-      
-
-
-      <div className="options-container">
-        <OptionButtons
-        onAddHotspot={handleAddHostpot}
-          onPrev={handlePrev}
-          onNext={handleNext}
-          onZoomIn={handleZoomIn}
-          onZoomOut={handleZoomOut}
-          onAutoPlay={handleAutoPlay}
-          isAutoPlayRunning={isAutoPlayRunning}
-          isEditMode={isEditMode}
-        ></OptionButtons>
-      </div>
-
-      <div className="reel-container">
-        <button className="reel-btn" onClick={handleClickExtras}>
-          Extras
-        </button>
-        <div className={`reel ${!visibleExtras && "no-visible"} `}>
-          
-          
-          <ReelImages id={id}></ReelImages>
-        </div>
-      </div>
-    </div>
-  ) : (
-    <h1>Cargando</h1>
-  );*/
 }

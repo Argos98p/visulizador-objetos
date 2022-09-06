@@ -1,22 +1,47 @@
 import Popup from 'reactjs-popup';
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, memo} from 'react';
 import 'reactjs-popup/dist/index.css';
-import '../modal.css'
-import {useParams} from "react-router-dom";
+import '../modal.css';
 import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {ImagePath} from '../../Api/apiRoutes'
+import {ImagePath, getExtrasUrl} from '../../Api/apiRoutes'
 import Form from 'react-bootstrap/Form';
 
-export default function PopupNewHotspot({extras,handleCreateHotspot}) {
+const  PopupNewHotspot =({id, /*extras,*/handleCreateHotspot}) =>{
 
-    let {id} = useParams();
-    const [allExtras, setAllExtras] = useState([]);
     const [imageSelected, setImageSelected] = useState(null);
     const [noImageSelected, setNoImageSelected] = useState(false);
     const [open, setOpen] = useState(false);
     const [isEmpty, setIsEmpty] = useState(true);
     const [nameValue, setNameValue] = useState("");
+
+    const [extras, setExtras] = useState([])
+        useEffect(() => {
+
+            console.log('render tirir')
+
+            axios.get(getExtrasUrl(id))
+                .then((response)=>{
+                        if(response.status===200){
+                            console.log(response.data)
+                            setExtras(response.data)
+                        }else{
+                            console.log('error al recibir las imagenes');
+                        }
+                    }
+                ).catch(error => {
+                if(error.response){
+                    console.log(error.response);
+                }else if(error.request){
+                    console.log(error.request)
+                }else{
+                    console.log('Error ',error.message);
+                }
+                console.error("Error obteniendo las imagenes:"+error);
+                setExtras([]);
+            });
+        }, []);
+
 
 
     function handleClickOnImageModal(event, item){
@@ -27,6 +52,8 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
         setImageSelected(item)
       }
     }
+
+
 
     function onCrear(image,input){
       console.log(imageSelected);
@@ -42,7 +69,7 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
         }
       }else{
         console.log('todo ok');
-            
+
         handleCreateHotspot(imageSelected,nameValue)
         setOpen(false);
         setImageSelected(null)
@@ -67,20 +94,20 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
     function onChangeInput(nombreHotspot){
         setNameValue(nombreHotspot.target.value)
     }
-   
+
 
 
     return (
       <>
     <button className="button-option"  onClick={onClickHotspotPopup}>Hotspot</button>
-    <Popup 
+    <Popup
     onClose={onCancelHotspotModal}
     open={open}
         modal
         nested >
         {
       }
-      
+
 
 <div className="modalp">
                     <div className="header"> Añadir hotspot </div>
@@ -91,21 +118,21 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
                       <div className='lista-extras'>
                           {
                              extras.map((item, index) => (
-                                 <div className='imagen-modal-container ' key={index}>                                   
+                                 <div className='imagen-modal-container ' key={index}>
                                    <figure onClick={(event) => handleClickOnImageModal(event,item)}>
                                    <img className={`imagen-modal  ${
                                      item===imageSelected
                                      ? "image-modal-selected" : ""
                                    }`} src={ImagePath(item.imagen.path)}  />
-                                        <figcaption> 
+                                        <figcaption>
                                          {item.nombre}
                                         </figcaption>
                                   </figure>
-                                 </div>    
+                                 </div>
                             ))
-                          } 
-                          
-                          
+                          }
+
+
                       </div>
                       { imageSelected === null
                             ? <p>Esta opcion es obligatoria</p>
@@ -130,23 +157,23 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
                           <Form.Text id="passwordHelpBlock" muted>
                               Se permite un maximo de 20 caracteres
                           </Form.Text>
-                          
+
                       </div>
                     </div>
 
 
                     <div className="actions">
-                    <button className="button-option" 
+                    <button className="button-option"
                     disabled={
-                      //FUNCION PARA CONTROLAR SELECCION DE EXTRAS                     
+                      //FUNCION PARA CONTROLAR SELECCION DE EXTRAS
                       !!(imageSelected === null ||  nameValue === "")
                     }
 
                     onClick={()=>{ onCrear(imageSelected,nameValue) }}
 
-                    
-                    >Crear</button>         
-                    <button onClick={onCancelHotspotModal}>Cancelar</button>             
+
+                    >Crear</button>
+                    <button onClick={onCancelHotspotModal}>Cancelar</button>
                     </div>
                   </div>
               </Popup>
@@ -155,3 +182,5 @@ export default function PopupNewHotspot({extras,handleCreateHotspot}) {
 
 
     }
+
+export default PopupNewHotspot

@@ -10,11 +10,6 @@
 max-height: 100%;
 }
 
-/*
-.slick-cloned{
-    display: none;
-    border: #ed1e1e;
-}*/
 
 .extra-vacio{
     display: flex;
@@ -75,6 +70,12 @@ max-height: 100%;
 .sc-ifAKCX .bqyzQp{
 height: 100%;
 }*/
+
+
+.slick-track > .slick-slide:first-child {
+    opacity: 1 !important;
+}
+
 
 
 .reel-image-extra-container{

@@ -1,4 +1,4 @@
-import React, {memo, useState} from "react";
+import React, {memo, useState,useEffect} from "react";
 import Popup from "reactjs-popup";
 import {FaCrosshairs, FaTrash} from "react-icons/fa/index.js";
 import "./PopupListaHotspotsStyle.css"
@@ -7,9 +7,16 @@ import "./PopupListaHotspotsStyle.css"
 
     const [open, setOpen] = useState(false);
 
+        useEffect(() => {
+            console.log('render lista')
+        }, );
+
+
     function tooglePopup(){
         setOpen(!open)
     }
+
+
 
     function handleDeleteHotspot(itemObject){
         onClickDeleteHotspot(itemObject.item);
@@ -23,7 +30,7 @@ import "./PopupListaHotspotsStyle.css"
             let nombresHotspots=[]
             const unique = [...new Set(listaHotspots.map(item => item.nombreHotspot))];
             nombresHotspots=nombresHotspots.concat(unique);
-            console.log(nombresHotspots)
+            //console.log(nombresHotspots)
             return nombresHotspots.map((item) => {
                 return (
                     <div key={item} className="item-hotspots">
