@@ -1,4 +1,4 @@
-let BaseURL="http://redpanda.sytes.net";
+let BaseURL="http://173.255.114.112";
 
 function statusEsceneUrl(id,escenaNombre){
     return `${BaseURL}:8084/api/objects/getstatusescene?idobjeto=${id}&nombre_escena=${escenaNombre}`

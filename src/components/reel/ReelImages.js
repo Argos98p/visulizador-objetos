@@ -5,9 +5,9 @@ import Carousel from 'react-grid-carousel';
 import ImageUploading from 'react-images-uploading';
 import axios from "axios";
 import ImageViewer from 'react-simple-image-viewer';
-import {ImagePath} from '../Api/apiRoutes'
+import {ImagePath} from '../../Api/apiRoutes'
 import {FaTrash} from "react-icons/fa/index.js";
-import {deleteExtra,getExtrasUrl,uploadExtraUrl} from "../Api/apiRoutes";
+import {deleteExtra,getExtrasUrl,uploadExtraUrl} from "../../Api/apiRoutes";
 import './ReelImages.css'
 import Slider from "react-slick";
 
@@ -24,7 +24,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     infinite: true,
     speed: 500,
     slidesToShow: 4,
-    slidesToScroll: 2,
+    slidesToScroll: 1,
     draggable:false,
     arrows:true,
     responsive: [
@@ -32,7 +32,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
         breakpoint: 1024,
         settings: {
           slidesToShow: 4,
-          slidesToScroll: 3,
+          slidesToScroll: 1,
           infinite: true,
           dots: true,swipeToSlide: true,
           draggable:false
@@ -42,11 +42,11 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
         breakpoint: 600,
         settings: {
           slidesToShow: 3,
-          slidesToScroll: 2,
+          slidesToScroll: 1,
           initialSlide: 2,
           swipeToSlide: true,
           draggable:false
-          
+
         }
       },
       {
@@ -62,6 +62,9 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   };
 
 
+  useEffect(()=>{
+    console.log("render reel");
+  });
   useImperativeHandle(ref, () => ({
 
     onExtra(extraId) {
@@ -89,7 +92,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   };
 
 
-  const openImageViewer = useCallback((index) => {   
+  const openImageViewer = useCallback((index) => {
     setCurrentImage(index);
     setIsViewerOpen(true);
   }, []);
@@ -101,8 +104,8 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
   const getExtras = async() => {
     axios.get(getExtrasUrl(id))
-    .then((response)=>{      
-      if(response.status===200){ 
+    .then((response)=>{
+      if(response.status===200){
         let temp= [];
         response.data.forEach((item,index)=>{
           let srcImage=ImagePath(item.imagen.path);
@@ -128,13 +131,13 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     });
   }
 
-  
+
   function uploadExtra(imagenFile){
     const payload = new FormData();
     payload.append('extra',imagenFile)
 
     fetch(uploadExtraUrl(id,imagenFile.name), {
-      method: "POST",            
+      method: "POST",
       body: payload
     }).then(function (res) {
       if (res.ok) {
@@ -158,10 +161,10 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     })
   }
 
-  
+
   useEffect(()=>{
     axios.get(getExtrasUrl(id))
-    .then((response)=>{      
+    .then((response)=>{
       if(response.status===200){
         let temp= [];
         response.data.forEach((item,index)=>{
@@ -173,7 +176,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
         setImagesListSrc(temp)
       }else{
         console.log('error al recibir las imagenes');
-      }      
+      }
     }
     ).catch(error => {
       if(error.response){
@@ -187,8 +190,8 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
       setImagesListSrc([]);
     })
 
-    
-  },[]);
+
+  },[id]);
 
 
   function onClickDeleteExtra(src){
@@ -217,6 +220,12 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
   function ImagesReel(){
 
+    console.log(imagesListSrc)
+
+    return <Slider {...settings}>
+
+    </Slider>
+
     return (
     <Slider {...settings}>
 
@@ -225,28 +234,34 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
 
 <div className="auxx" key={index} >
-  
+
   <div className='reel-image-extra-container'>
     {isEditMode
   ?<button className='btn-eliminar-extra' onClick={()=>onClickDeleteExtra(src)}> <FaTrash/></button>
   :null
   }
-  <img className='cursor-pointer imgReel' src={src[0]} key={index} alt={'hola'} onClick={ () => openImageViewer(index)}/>
+  <h2>hola</h2>
+    {/*<img className='cursor-pointer imgReel' src={src[0]} key={index} alt={'hola'}
+          onClick={() => openImageViewer(index)}/>*/}
 
   </div>
 
   </div>
-  
-))}    
+
+))}
 
 
-   
-    </Slider>);
+
+    </Slider>
+    );
 
   }
 
   return (
     <div className='reel-images-container'>
+      {
+          imagesListSrc.length===0 && <div className="extra-vacio"><h4>No hay extras</h4></div>
+      }
 
 <div>
       {isViewerOpen && (
@@ -302,7 +317,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 }
 
 {/*
-        
+
       <Carousel cols={6} rows={1} gap={10} loop containerStyle={{height:"100%"}} responsiveLayout={[
               {
                 breakpoint: 1200,
@@ -312,14 +327,14 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
                 breakpoint: 990,
                 cols: 4
               },
-              
-             
-            ]}>        
+
+
+            ]}>
       {imagesListSrc.map((src, index) => (
 
 
         <Carousel.Item key={index} >
-          
+
           <div className='reel-image-extra-container'>
             {isEditMode
           ?<button className='btn-eliminar-extra' onClick={()=>onClickDeleteExtra(src)}> <FaTrash/></button>
@@ -330,16 +345,16 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
           </div>
 
           </Carousel.Item>
-          
-      ))}    
+
+      ))}
         </Carousel>*/}
 
 
 
       </div>
-    
+
   )
 })
 //);
 
-export default ReelImages;
+export default memo(ReelImages);

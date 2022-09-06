@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import Card from 'react-bootstrap/Card';
-import {ImagePath} from '../Api/apiRoutes'
+import {ImagePath} from '../../Api/apiRoutes'
 import './cardExtra.css'
 
 export default function CardExtra({item}) {

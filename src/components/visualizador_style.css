@@ -1,11 +1,8 @@
-
 *{
-  
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-    user-select: none; 
-
+    user-select: none;
 }
 
 .reel{
@@ -14,6 +11,7 @@
   height: 25%;
   bottom: 0;
   width: 100vw;
+  z-index: 999;
 }
 
 .oculto{
@@ -75,6 +73,7 @@
   padding: 8px;
   cursor: pointer;
   margin-right: 5px;
+  font-size: 13px;
 }
 
 .button-option:hover{
@@ -190,7 +189,7 @@
   animation: pulse 1.1s infinite; }
 
 .dragging{
-  cursor: url(https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin-drag.png) 16.5 10.5,url(https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin-drag.png) 16.5 10.5,url(	https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin-drag.cur) 
+  cursor: url("https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin-drag.png") 16.5 10.5,url("https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin-drag.png") 16.5 10.5,url(	https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin-drag.cur)
 }
 
 .navigation-container {
@@ -272,6 +271,7 @@
       color: white;
       border-radius: 0.5em;
       background-color: rgba(0, 0, 0, 0.781);
+    font-size: 13px;
   }
 
   .sphere-button{

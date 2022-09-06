@@ -1,11 +1,11 @@
 import Popup from 'reactjs-popup';
 import React, {useEffect, useState, useRef} from 'react';
 import 'reactjs-popup/dist/index.css';
-import './modal.css'
+import '../modal.css'
 import {useParams} from "react-router-dom";
 import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {ImagePath} from '../Api/apiRoutes'
+import {ImagePath} from '../../Api/apiRoutes'
 import Form from 'react-bootstrap/Form';
 
 export default function PopupNewHotspot({extras,handleCreateHotspot}) {

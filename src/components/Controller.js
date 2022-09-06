@@ -20,6 +20,7 @@ function Controller() {
             if(response.data !== "NOT_FOUND"){
                 if(Object.keys(response.data.escenas).length===0){
                     setNoEscenas(true)
+                    console.log(id)
                 }else{
                     setMyObjeto(response.data);
                     axios.get(getExtrasUrl(id))

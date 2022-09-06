@@ -2,12 +2,12 @@ import React, {useState, useRef, useEffect, useCallback, useMemo} from "react";
 import Tridi from "react-tridi";
 import OptionButtons from "./botones/buttonsOptions";
 import axios from "axios";
-import ReelImages from "./ReelImages";
+import ReelImages from "./reel/ReelImages";
 import {completeImageUrl} from "../Api/apiRoutes";
 import ButtonEscena from "./botones/buttonEscena";
 import LottieEmptyEscenas from "../Animations/lottieEmptyEscena";
 
-import PopupNewHotspot from "./PopupAddHotspot";
+import PopupNewHotspot from "./popup/PopupAddHotspot";
 import ReactTooltip from "react-tooltip";
 import { Pannellum} from "pannellum-react";
 import {postAddHotspot} from "../Api/apiRoutes"
@@ -19,9 +19,10 @@ import "react-toastify/dist/ReactToastify.css";
 import DotLoader from "react-spinners/DotLoader";
 import {infoObjectUrl,getExtrasUrl,getHotspots,deleteHotspot} from "../Api/apiRoutes";
 
-import PopupListaHotspot from "./PopupListaHotspots";
+import PopupListaHotspot from "./popup/PopupListaHotspots";
 
-export function Visualizador({tipo, id, data, extras}) {
+export function Visualizador({tipo, id,data, extras}) {
+
 
     const [objetoData,setObjetoData] = useState(null);
     const [escenasAux, setEscenasAux] = useState({});//muestra todas las escenas
@@ -48,12 +49,14 @@ export function Visualizador({tipo, id, data, extras}) {
     const [hotspotInit, setHotspotInit] = useState(false);
     const [hotspotEnd, setHotspotEnd] = useState(false);
     const [sphereImageInView, setSphereImageInView] = useState(false);
+    const [countForLoadBug, setCountForLoadBug] = useState(0);
+
 
     const extraInViewRef = useRef();
 
     const tridiRef = useRef(null);
     var zoomValue = 0;
-    const childRef = useRef();
+
     var idEscenaActiva = 0;
 
     // Recibe toda la info del objeto
@@ -138,7 +141,6 @@ export function Visualizador({tipo, id, data, extras}) {
                 setPins(mapHotspots[currentEscena.nombre])
 
             });
-
         }
         return () => {
             setUpdateHotspots(false)
@@ -167,14 +169,15 @@ export function Visualizador({tipo, id, data, extras}) {
     }, [currentEscena]);
 
     function getArraySrcPath(escena){
+
         let n = Object.keys(escena.imagenes).length;
-        let [aux,id,temp,frames,nameImage]= [];
+        let [aux,escenaNumber,temp,frames,nameImage]= [];
         if(n!==0){
-             [aux,id,temp,frames,nameImage]= escena.imagenes[1].path.split("/");
+             [aux,escenaNumber,temp,frames,nameImage]= escena.imagenes[1].path.split("/");
         }
         let arrayFrames=[]
         for(let i=1;i<=n;i++){
-            arrayFrames.push(completeImageUrl(`/${id}/${temp}/frames_compresos/${i}.jpg`));
+            arrayFrames.push(completeImageUrl(`/${id}/${escenaNumber}/frames_compresos/${i}.jpg`));
         }
         return arrayFrames;
     }
@@ -343,8 +346,6 @@ export function Visualizador({tipo, id, data, extras}) {
     }
 
     const handleButtonEscena=useCallback((escena)=> {
-        //idEscenaActiva = escena[0];
-        console.log(escena)
         setCurrentEscena(escena[1]);
     },[currentEscena])
 
@@ -411,24 +412,15 @@ export function Visualizador({tipo, id, data, extras}) {
         );
     }
     function handleOnLoad(load_success, percentage) {
+        console.log(load_success,percentage)
         setLoadPercentage(percentage);
-        if (percentage > 70) {
+        if (percentage === 100) {
             setLoadStatus(true)
         }
+
     }
 
-    const photoSphereRef = React.useRef();
-
-  const handleClick = () => {
-    photoSphereRef.current.animate({
-      latitude: 0,
-      longitude: 0,
-      zoom: 55,
-      speed: '10rpm',
-    });
-  }
-
-    const getVisualizador = useMemo(()=> {
+    const getVisualizador = ()=> {
         console.log('render Tridi')
         if (frames.length === 0) {
             return <div className="emptyEscena ">
@@ -441,7 +433,7 @@ export function Visualizador({tipo, id, data, extras}) {
                 <div className={`tridi-container`}
                     onWheel={handleWheel}
                     onClick={clickOnTridiContainer}>
-                    {/*
+                    {
                     loadStatus === false ? <div className="sweet-loading">
                         <DotLoader color="#3F3F3F"
                             loading={
@@ -451,24 +443,10 @@ export function Visualizador({tipo, id, data, extras}) {
                         <h1>{loadPercentage}
                             %
                         </h1>
-                    </div> : null*/}
+                    </div> : null
+                    }
 
                     {
-                        sphereImageInView
-                        ?<Pannellum
-                        width="100%"
-                        height="500px"
-                        image="../360.jpg"
-                        pitch={10}
-                        yaw={180}
-                        hfov={110}
-                        autoLoad
-                        onLoad={() => {
-                            console.log("panorama loaded");
-                        }}
-                    >
-                        </Pannellum>
-                        :
                             <Tridi ref={tridiRef}
                         className={
                             "" /*
@@ -476,21 +454,7 @@ export function Visualizador({tipo, id, data, extras}) {
                                 loadStatus ? "" : 'oculto'
                             }`*/
                         }
-
-
-                        //imagenes en local
-
-                        /*
-                        location="../ejemplos/normal"
-                        format = "jpg"
-                        count={126}
-                    */
-
-
-
-                        //imagenes desde el sevidor
                         images={frames}
-                        count={frames.length}
                         autoplaySpeed={70}
                         zoom={1}
                         maxZoom={3}
@@ -505,17 +469,8 @@ export function Visualizador({tipo, id, data, extras}) {
                         }
                         onRecordStart={
                             recordStartHandler
-                            // setIsEditMode(true);
-                            /*
-                                toast.dismiss();
-                                notifyEdicion();*/
                         }
                         onRecordStop={
-                            /*setIsEditMode(false);
-                                toast.dismiss();
-                                notifyVisualizacion();
-                                // frameReplicate()
-                                console.log(pins);*/
                             recordStopHandler
                         }
                         onPinClick={pinClickHandler}
@@ -525,13 +480,13 @@ export function Visualizador({tipo, id, data, extras}) {
                         pins={pins}
                         //hintOnStartup
                         //hintText="Arrastre para mover"
-                        onLoadChange={handleOnLoad}/>
+                        //onLoadChange={(e,y)=>console.log(e,y)}
+                        />
                     }
                 </div>
             )
         }
-    },[frames, handleWheel, pins,zoomValueHandler]
-)
+    }
     function handleActivateEditMode() {
         setIsEditMode(!isEditMode)
     }
@@ -604,16 +559,7 @@ export function Visualizador({tipo, id, data, extras}) {
 </button>
             </div>
 
-            {/*
-                <div className="sphere-button">
-                    <button className={
-                        `button-option ${
-                            sphereImageInView ? "activo" : ""
-                        }`
-                    } onClick={() => setSphereImageInView(!sphereImageInView)}>360
-                    </button>
-                </div>*/
-            }
+
 
 
             {
@@ -622,7 +568,7 @@ export function Visualizador({tipo, id, data, extras}) {
                 <button className="button-option" onClick={handleHotspotEnd}>Fin</button>
             </div> : null
         }
-            <div className="reel-container">
+
                 <div className={
                     `reel ${
                         !visibleExtras && "no-visible"
@@ -633,7 +579,7 @@ export function Visualizador({tipo, id, data, extras}) {
                         extrasImages={extras}
                         isEditMode={isEditMode}></ReelImages>
                 </div>
-            </div>
+
             {
             isEditMode ? <div className="add-buttons">
                 <PopupNewHotspot extras={extras}
@@ -651,7 +597,7 @@ export function Visualizador({tipo, id, data, extras}) {
                 Extras
             </button>
             {
-            getVisualizador
+            getVisualizador()
         }
             <div className="navigation-container">
                 {

@@ -5,9 +5,6 @@ import {useEffect,memo} from "react";
 
 const ButtonEscena = memo(({escenaInfo, onClick , activo})=>{
 
-    useEffect(() => {
-        console.log('render buttonEscena')
-    }, );
 
     let icono =null;
 
