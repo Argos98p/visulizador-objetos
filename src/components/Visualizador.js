@@ -30,7 +30,7 @@ export function Visualizador({tipo, id,data, extras}) {
     const [frames, setFrames] = useState([]);
     const [hotspotsMap, setHotspotsMap] = useState([]);
     const [updateHotspots, setUpdateHotspots] = useState(false); //variable para que se vuelva a pedir los hotspots
-    const [awaitAddHotspot, setAwaitAddHotspot] = useState(false);
+    const [awaitAddHotspot, setAwaitAddHotspot] = useState(false); //varaible para saber si los hotspots ya se cargaron en el server
 
 
     //const [aux, setAux] = useState("0");
@@ -39,7 +39,7 @@ export function Visualizador({tipo, id,data, extras}) {
     const [isEditMode, setIsEditMode] = useState(false);
     const [pins, setPins] = useState([]);
     const [visibleExtras, setVisibleExtras] = useState(true);
-    const [addHotspotMode, setAddHotspotMode] = useState(false);
+    const [addHotspotMode, setAddHotspotMode] = useState(false); //variable para definir cuando con el click se agrega un nuevo hotspot  y para mostrar inicio y fin
     const [nameHotspot, setNameHotspot] = useState("holis");
     const [extraSelected, setExtraSelected] = useState(null);
     const [newHotspot, setNewHotspot] = useState(false);
@@ -105,9 +105,7 @@ export function Visualizador({tipo, id,data, extras}) {
                 setEscenasAux(objetoData.escenas);
                 setCurrentEscena(getFirstSceneWithFrames(objetoData.escenas));
             });
-
         }
-
     }, [objetoData]);
 
 
@@ -115,9 +113,7 @@ export function Visualizador({tipo, id,data, extras}) {
         setTimeout(()=>{
             setLoadPercentage(100);
             setLoadStatus(true);
-
         },5000)
-
     }, []);
 
 
@@ -279,13 +275,65 @@ export function Visualizador({tipo, id,data, extras}) {
         }
         
     }
+
+    /*
     function handleAddHostpot() { // tridiRef.current.toggleRecording(!isEditMode);
         console.log(pins);
+    }*/
+
+
+
+
+    const handleButtonEscena=useCallback((escena)=> {
+        setCurrentEscena(escena[1]);
+    },[currentEscena])
+
+
+    /****** Inicio ---- HOTSPOTS UNA REFERENCIA ******/
+
+    const handleCreateHotspot=(info, imgExtra)=>{
+        if (info === "" || imgExtra == null
+        ) {
+            console.log('Informacion erronea')
+        } else {
+            console.log(imgExtra)
+            setExtraSelected(imgExtra);
+            setNameHotspot(info);
+            setAddHotspotMode(true);
+            //setNewHotspot(true);
+        }
     }
 
+    function clickOnTridiContainer() {
+        if (addHotspotMode) {
+            tridiRef.current.toggleRecording(false);
+        }
+    }
+
+    const frameReplicateOneReferen=()=>{
+
+    }
+
+    useEffect(() => {
+        if (pins.length !== 0 && newHotspot === true) {
+            if(hotspotInit && hotspotEnd){
+                setAwaitAddHotspot(true);
+                //frameReplicateV2();
+                console.log(pins[pins.length-1])
+            }
+        }
+    }, [pins.length]);
+
+    /****** Fin ---- HOTSPOTS UNA REFERENCIA ******/
+
+
+/****** Inicio ---- FUNCIONALIDAD PARA AGREGAR HOTSPOTS******/
+
+/*
     function postNewHotspots(id, nombreEscena,arrayHotspots){
         return axios.post(postAddHotspot(id,currentEscena.nombre),arrayHotspots);
     }
+
 
     function frameReplicateV2() {
         console.log('entra en replicate')
@@ -316,7 +364,7 @@ export function Visualizador({tipo, id,data, extras}) {
                 arrayHotspots.push(newPin);
                 if(i!==0){
                 }
-                
+
             }
 
         }else{
@@ -355,9 +403,6 @@ export function Visualizador({tipo, id,data, extras}) {
         )
     }
 
-    const handleButtonEscena=useCallback((escena)=> {
-        setCurrentEscena(escena[1]);
-    },[currentEscena])
 
 
     function handleCreateHotspot(imgExtra, info) {
@@ -377,12 +422,12 @@ export function Visualizador({tipo, id,data, extras}) {
 
     function handleHotspotInit(){
         setHotspotInit(true);
-        tridiRef.current.toggleRecording(true)
+        tridiRef.current.toggleRecording(true);
     }
 
     function handleHotspotEnd(){
         setHotspotEnd(true);
-        tridiRef.current.toggleRecording(true)
+        tridiRef.current.toggleRecording(true);
     }
 
     function clickOnTridiContainer() {
@@ -401,33 +446,36 @@ export function Visualizador({tipo, id,data, extras}) {
     }, [pins.length]);
 
 
+
+
+*/
+    /****** Fin ---- FUNCIONALIDAD PARA AGREGAR HOTSPOTS******/
     function myRenderPin(pin) {
-        
+
         return (
             <>
                 <label>
                     <div id="b3"
-
-                        className="button-hotspot"
-                        data-for='soclose'
-                        data-tip=''>
+                         className="button-hotspot"
+                         data-for='soclose'
+                         data-tip=''>
                         +
                     </div>
                 </label>
                 <ReactTooltip id="soclose" place="top" effect="solid"
-                    getContent={
-                        ()=>{return pin.nombre}
-                }></ReactTooltip>
+                              getContent={
+                                  ()=>{return pin.nombre}
+                              }></ReactTooltip>
             </>
         );
     }
+
     function handleOnLoad(load_success, percentage) {
         console.log(load_success,percentage)
         setLoadPercentage(percentage);
         if (percentage === 100) {
             setLoadStatus(true)
         }
-
     }
 
     const getVisualizador = ()=> {
@@ -454,7 +502,6 @@ export function Visualizador({tipo, id,data, extras}) {
                         </h1>*/}
                     </div> : null
                     }
-
                     {
                             <Tridi ref={tridiRef}
                         className={
@@ -574,11 +621,11 @@ export function Visualizador({tipo, id,data, extras}) {
 
 
 
-            {
+            {/*
             addHotspotMode ? <div className="start-end-hotspot-buttons">
                 <button className="button-option" onClick={handleHotspotInit}>Inicio</button>
                 <button className="button-option" onClick={handleHotspotEnd}>Fin</button>
-            </div> : null
+            </div> : null*/
         }
 
                 <div className={
@@ -624,7 +671,7 @@ export function Visualizador({tipo, id,data, extras}) {
             }
 
             <div className="options-container">
-                <OptionButtons onAddHotspot={handleAddHostpot}
+                <OptionButtons /*onAddHotspot={handleAddHostpot}*/
                     onPrev={handlePrev}
                     onNext={handleNext}
                     onZoomIn={handleZoomIn}

@@ -20,7 +20,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   const [currentImage, setCurrentImage] = useState(0);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   var settings = {
-    dots: true,
+    dots: false,
     infinite: false,
     speed: 500,
     slidesToShow: 4,
