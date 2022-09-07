@@ -42,7 +42,7 @@ export function Visualizador({tipo, id,data, extras}) {
     const [addHotspotMode, setAddHotspotMode] = useState(false); //variable para definir cuando con el click se agrega un nuevo hotspot  y para mostrar inicio y fin
     const [nameHotspot, setNameHotspot] = useState("holis");
     const [extraSelected, setExtraSelected] = useState(null);
-    const [newHotspot, setNewHotspot] = useState(false);
+    const [newHotspot, setNewHotspot] = useState(false); // para el use effect que usa pins.legth
     const [loadStatus, setLoadStatus] = useState(false);
     const [loadPercentage, setLoadPercentage] = useState(0);
     const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
@@ -291,16 +291,16 @@ export function Visualizador({tipo, id,data, extras}) {
 
     /****** Inicio ---- HOTSPOTS UNA REFERENCIA ******/
 
-    const handleCreateHotspot=(info, imgExtra)=>{
+    const handleCreateHotspot=(imgExtra,info)=>{
         if (info === "" || imgExtra == null
         ) {
             console.log('Informacion erronea')
         } else {
-            console.log(imgExtra)
+            tridiRef.current.toggleRecording(true)
             setExtraSelected(imgExtra);
             setNameHotspot(info);
             setAddHotspotMode(true);
-            //setNewHotspot(true);
+            setNewHotspot(true);
         }
     }
 
@@ -310,19 +310,57 @@ export function Visualizador({tipo, id,data, extras}) {
         }
     }
 
-    const frameReplicateOneReferen=()=>{
+    const frameReplicateOneReference=()=>{
+            let lastPin= pins[pins.length-1];
+            let move = 0.015;
+            let j=20;
+            let arrayHotspots=[];
+
+        let originalX = parseFloat(lastPin.x);
+        let originalY = lastPin.y;
+
+            for(let i=lastPin.frameId-20;i<=lastPin.frameId+20;i++){
+                let newPin={
+                    idframe:i+1,
+                    nombreHotspot:nameHotspot,
+                    idExtra:extraSelected.idextra,
+                    x:originalX+move*j,
+                    y:parseFloat(originalY),
+                }
+                arrayHotspots.push(newPin)
+                j--;
+            }
+
+        console.log(arrayHotspots)
+        postNewHotspots(id,currentEscena.nombre,arrayHotspots).then(
+            response=>{
+                console.log(response)
+                setAwaitAddHotspot(false);
+                setAddHotspotMode(false)
+                setUpdateHotspots(true);
+                setNewHotspot(false);
+
+            }
+        ).catch(
+            (e)=>{
+                console.log(e)
+        setAwaitAddHotspot(false);
+            }
+        )
 
     }
 
     useEffect(() => {
+
         if (pins.length !== 0 && newHotspot === true) {
-            if(hotspotInit && hotspotEnd){
                 setAwaitAddHotspot(true);
-                //frameReplicateV2();
-                console.log(pins[pins.length-1])
-            }
+                frameReplicateOneReference(pins[pins.length-1]);
         }
     }, [pins.length]);
+
+    function postNewHotspots(id, nombreEscena,arrayHotspots){
+        return axios.post(postAddHotspot(id,currentEscena.nombre),arrayHotspots);
+    }
 
     /****** Fin ---- HOTSPOTS UNA REFERENCIA ******/
 
