@@ -42,16 +42,20 @@
   }
   
   .popup-content{
-    max-height: 80%;
+    max-height: 90%;
     background-color: #111111;
     border: none;
-    width: 80%;
+    width: 90%;
   }
 
   .content-popup{
     display: flex;
+    flex-direction: column;
+  }
+  .buttons-type-hotspots{
+    display: flex;
     flex-direction: row;
-
+    justify-content: space-around;
   }
 
 

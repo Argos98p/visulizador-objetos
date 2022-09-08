@@ -679,7 +679,7 @@ export function Visualizador({tipo, id,data, extras}) {
 
             {
             isEditMode ? <div className="add-buttons">
-                <PopupNewHotspot id={id} /*extras={extras}*/
+                <PopupNewHotspot id={id} extras={extras}
                     handleCreateHotspot={handleCreateHotspot}></PopupNewHotspot>
 
                 <button className="button-option" disabled>Agregar extra</button>

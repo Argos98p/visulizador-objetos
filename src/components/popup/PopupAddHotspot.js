@@ -6,20 +6,23 @@ import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {ImagePath, getExtrasUrl} from '../../Api/apiRoutes'
 import Form from 'react-bootstrap/Form';
+import AddYoutubeVideo from "./AddYoutubeVideo";
+import AddVinculateExtra from "./AddVinculateExtra";
+import AddPdf from "./AddPdf";
 
-const  PopupNewHotspot =({id, /*extras,*/handleCreateHotspot}) =>{
+const  PopupNewHotspot =({id, extras,handleCreateHotspot}) =>{
 
     const [imageSelected, setImageSelected] = useState(null);
     const [noImageSelected, setNoImageSelected] = useState(false);
     const [open, setOpen] = useState(false);
     const [isEmpty, setIsEmpty] = useState(true);
     const [nameValue, setNameValue] = useState("");
+    const [extraType, setExtraType] = useState("video_youtube");
 
-    const [extras, setExtras] = useState([])
+    //const [extras, setExtras] = useState([])
+    /*
         useEffect(() => {
-
             console.log('render tirir')
-
             axios.get(getExtrasUrl(id))
                 .then((response)=>{
                         if(response.status===200){
@@ -41,7 +44,7 @@ const  PopupNewHotspot =({id, /*extras,*/handleCreateHotspot}) =>{
                 setExtras([]);
             });
         }, []);
-
+*/
 
 
     function handleClickOnImageModal(event, item){
@@ -75,9 +78,6 @@ const  PopupNewHotspot =({id, /*extras,*/handleCreateHotspot}) =>{
         setImageSelected(null)
         setNameValue("")
       }
-
-      //handleCreateHotspot(imageSelected,inputRef.current.value)
-      //handleCreateHotspot(imageSelected,inputRef.current.value,close)
     }
 
 
@@ -95,6 +95,17 @@ const  PopupNewHotspot =({id, /*extras,*/handleCreateHotspot}) =>{
         setNameValue(nombreHotspot.target.value)
     }
 
+    const loadPopupContent=()=>{
+        if(extraType==="video_youtube"){
+            return <AddYoutubeVideo></AddYoutubeVideo>
+        }
+        if(extraType==="vincular_extra"){
+            return <AddVinculateExtra extras={extras}></AddVinculateExtra>;
+        }
+        if(extraType==="pdf"){
+            return  <AddPdf></AddPdf>
+        }
+    }
 
 
     return (
@@ -111,12 +122,21 @@ const  PopupNewHotspot =({id, /*extras,*/handleCreateHotspot}) =>{
 
 <div className="modalp">
                     <div className="header"> Añadir hotspot </div>
+                    Seleccione el tipo de extra
                     <div className="content-popup">
+                        <div className="buttons-type-hotspots">
+                            <button className="button-option" onClick={()=>setExtraType("vincular_extra")}>Vincular con extra</button>
+                            <button className="button-option" onClick={()=>setExtraType("video_youtube")}>Video de Youtube</button>
+                            <button className="button-option" onClick={()=>setExtraType("pdf")}>PDF</button>
+                        </div>
 
-                      <div className='container-lista-extras'>
-                      <div>Seleccione un extra</div>
-                      <div className='lista-extras'>
+                        {loadPopupContent()}
+
+                        {<div className='container-lista-extras'>
+                            {/*<div>Seleccione un extra</div>*/}
+                            {/* <div className='lista-extras'>
                           {
+
                              extras.map((item, index) => (
                                  <div className='imagen-modal-container ' key={index}>
                                    <figure onClick={(event) => handleClickOnImageModal(event,item)}>
@@ -132,23 +152,23 @@ const  PopupNewHotspot =({id, /*extras,*/handleCreateHotspot}) =>{
                             ))
                           }
 
+                      </div>*/}
 
-                      </div>
-                      { imageSelected === null
+
+                      { /*imageSelected === null
                             ? <p>Esta opcion es obligatoria</p>
                             : null
-                          }
+                          */}
 
-                      </div>
+    </div>}
 
-                      <div className='container-input-hotspot'>
 
+                        {/*<div className='container-input-hotspot'>
                           <Form.Label htmlFor="inputPassword5">Ingrese una etiqueta</Form.Label>
                           <Form.Control  type="text" required onChange={onChangeInput} autoComplete="off" id="inputPassword5" aria-describedby="passwordHelpBlock"/>
                           {
                               isEmpty
                                   ? <Form.Text id="passwordHelpBlock" muted >
-
                                       Este campo es obligatorio
                                   </Form.Text>
                                   : null
@@ -157,8 +177,7 @@ const  PopupNewHotspot =({id, /*extras,*/handleCreateHotspot}) =>{
                           <Form.Text id="passwordHelpBlock" muted>
                               Se permite un maximo de 20 caracteres
                           </Form.Text>
-
-                      </div>
+                      </div>*/}
                     </div>
 
 
@@ -170,8 +189,6 @@ const  PopupNewHotspot =({id, /*extras,*/handleCreateHotspot}) =>{
                     }
 
                     onClick={()=>{ onCrear(imageSelected,nameValue) }}
-
-
                     >Crear</button>
                     <button onClick={onCancelHotspotModal}>Cancelar</button>
                     </div>
@@ -179,8 +196,6 @@ const  PopupNewHotspot =({id, /*extras,*/handleCreateHotspot}) =>{
               </Popup>
               </>
     );
-
-
     }
 
 export default PopupNewHotspot

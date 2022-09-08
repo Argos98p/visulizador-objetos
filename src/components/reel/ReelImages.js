@@ -211,8 +211,6 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
   function ImagesReel(){
 
-    console.log(imagesListSrc)
-
     if (imagesListSrc.length === 0){
       return (
           <Slider key="0" />
