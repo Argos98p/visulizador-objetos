@@ -51,6 +51,7 @@ export function Visualizador({tipo, id,data, extras}) {
     const [sphereImageInView, setSphereImageInView] = useState(false);
     const [countForLoadBug, setCountForLoadBug] = useState(0);
 
+    const extraContainerRef=useRef();
 
     const extraInViewRef = useRef();
 
@@ -220,7 +221,8 @@ export function Visualizador({tipo, id,data, extras}) {
     }
 
     function handleClickExtras() {
-        setVisibleExtras(!visibleExtras)
+        extraContainerRef.current.classList.toogle("no-visible")
+        //setVisibleExtras(!visibleExtras)
     }
     const frameChangeHandler = (currentFrameIndex) => {
         setCurrentFrameIndex(currentFrameIndex);
@@ -666,7 +668,7 @@ export function Visualizador({tipo, id,data, extras}) {
             </div> : null*/
         }
 
-                <div className={
+                <div ref={extraContainerRef} className={
                     `reel ${
                         !visibleExtras && "no-visible"
                     } `

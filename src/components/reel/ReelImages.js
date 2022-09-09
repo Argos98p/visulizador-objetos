@@ -63,10 +63,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   }));
 
   const searchExtraById=(idExtra)=>{
-
-
     for(let i = 0 ; i<imagesListSrc.length;i++){
-
       let aux=imagesListSrc[i]
 
       if(  aux[1]===idExtra){
@@ -74,7 +71,6 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
       }
     }
     return null;
-
   }
 
   const onChange = (imageListUpload, addUpdateIndex) => {
