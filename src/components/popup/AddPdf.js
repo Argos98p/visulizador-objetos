@@ -1,5 +1,6 @@
 import React, {useCallback, useMemo} from 'react'
 import {useDropzone} from 'react-dropzone'
+import {getActiveElement} from "@testing-library/user-event/dist/utils";
 const baseStyle = {
     marginTop:'10px',
     marginBottom:'10px',
@@ -30,7 +31,13 @@ const rejectStyle = {
     borderColor: '#ff1744'
 };
 
-function AddPdf() {
+function AddPdf({addPdfVis}) {
+
+
+    const onDrop = useCallback(acceptedFiles => {
+        console.log(acceptedFiles)
+    }, [])
+
     const {acceptedFiles, getRootProps, getInputProps} = useDropzone(
         {useFsAccessApi: false,maxFiles:1,accept: { "application/pdf": [] }
     });
@@ -44,6 +51,7 @@ function AddPdf() {
         ...baseStyle,
     }
 
+    addPdfVis(acceptedFiles);
     return (
 
         <section className="container"><aside>
@@ -52,7 +60,7 @@ function AddPdf() {
         </aside>
             <div {...getRootProps({style})}>
                 <input {...getInputProps()} />
-                <p>Arrastre o toque para seleccionar una imagen</p>
+                <p>Arrastre o toque para seleccionar un pdf</p>
             </div>
 
         </section>

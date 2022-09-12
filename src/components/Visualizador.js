@@ -1,23 +1,20 @@
-import React, {useState, useRef, useEffect, useCallback, useMemo} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import Tridi from "react-tridi";
 import OptionButtons from "./botones/buttonsOptions";
 import axios from "axios";
 import ReelImages from "./reel/ReelImages";
-import {completeImageUrl} from "../Api/apiRoutes";
+import {completeImageUrl, deleteHotspot,addExtraPdf, getHotspots, infoObjectUrl, postAddHotspot} from "../Api/apiRoutes";
 import ButtonEscena from "./botones/buttonEscena";
 import LottieEmptyEscenas from "../Animations/lottieEmptyEscena";
 
 import PopupNewHotspot from "./popup/PopupAddHotspot";
 import ReactTooltip from "react-tooltip";
-import { Pannellum} from "pannellum-react";
-import {postAddHotspot} from "../Api/apiRoutes"
 import 'reactjs-popup/dist/index.css';
 import "react-tridi/dist/index.css";
 import "./visualizador_style.css";
-import {toast} from "react-toastify";
+import {toast, ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import DotLoader from "react-spinners/DotLoader";
-import {infoObjectUrl,getExtrasUrl,getHotspots,deleteHotspot} from "../Api/apiRoutes";
 
 import PopupListaHotspot from "./popup/PopupListaHotspots";
 
@@ -31,10 +28,7 @@ export function Visualizador({tipo, id,data, extras}) {
     const [hotspotsMap, setHotspotsMap] = useState([]);
     const [updateHotspots, setUpdateHotspots] = useState(false); //variable para que se vuelva a pedir los hotspots
     const [awaitAddHotspot, setAwaitAddHotspot] = useState(false); //varaible para saber si los hotspots ya se cargaron en el server
-
-
     //const [aux, setAux] = useState("0");
-
     const [isAutoPlayRunning, setIsAutoPlayRunning] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [pins, setPins] = useState([]);
@@ -50,7 +44,7 @@ export function Visualizador({tipo, id,data, extras}) {
     const [hotspotEnd, setHotspotEnd] = useState(false);
     const [sphereImageInView, setSphereImageInView] = useState(false);
     const [countForLoadBug, setCountForLoadBug] = useState(0);
-
+    const [showInfoObject, setShowInfoObject] = useState(false);
     const extraContainerRef=useRef();
 
     const extraInViewRef = useRef();
@@ -114,7 +108,8 @@ export function Visualizador({tipo, id,data, extras}) {
         setTimeout(()=>{
             setLoadPercentage(100);
             setLoadStatus(true);
-        },5000)
+        },5000);
+        return(setLoadStatus(false))
     }, []);
 
 
@@ -167,12 +162,22 @@ export function Visualizador({tipo, id,data, extras}) {
     }
 
     useEffect(() => {
+        let timer1 = setTimeout(()=>{},10)
+
         if(currentEscena.imagenes!== undefined) {
+            setLoadStatus(false)
+            timer1=setTimeout(() => setLoadStatus(true), 3000);
+
             setFrames(getArraySrcPath(currentEscena));
             setPins(hotspotsMap[currentEscena.nombre]);
             setSphereImageInView(false);
             //setAux(currentEscena.nombre)
+
         }
+        return () => {
+            clearTimeout(timer1);
+        };
+
     }, [currentEscena]);
 
     function getArraySrcPath(escena){
@@ -210,7 +215,6 @@ export function Visualizador({tipo, id,data, extras}) {
     });
 
 
-
     function getFirstSceneWithFrames(escenas) {
         for(let escena in escenas){
             if(escenas[escena].imagenes.length>1){
@@ -238,11 +242,9 @@ export function Visualizador({tipo, id,data, extras}) {
         setVisibleExtras(true);
         extraInViewRef.current.onExtra(pin.idExtra);
     };
-
     const zoomValueHandler = (valorZoom) => {
         zoomValue = valorZoom;
     }
-
     function handlePrev() {
         tridiRef.current.prev();
     }
@@ -277,13 +279,6 @@ export function Visualizador({tipo, id,data, extras}) {
         }
         
     }
-
-    /*
-    function handleAddHostpot() { // tridiRef.current.toggleRecording(!isEditMode);
-        console.log(pins);
-    }*/
-
-
 
 
     const handleButtonEscena=useCallback((escena)=> {
@@ -648,12 +643,70 @@ export function Visualizador({tipo, id,data, extras}) {
     ,[escenasAux,handleButtonEscena,currentEscena.nombre]
 )
 
+    const botonInfoObject=()=>{
+
+        const infoObject=()=>{
+            if(objetoData!== null){
+                let info=objetoData.info.split(',')
+                return <div className="info-object-data">{info.map(item => item)}</div>
+            }
+            //return (<div></div>);
+        }
+        const showInfoObjectToast = () => {
+            toast.info(infoObject, {
+                position: toast.POSITION.TOP_CENTER,
+                className:'toast-message',
+                autoClose: false
+            });
+        };
+        return <>
+            <button className="button-option button-info-object" onClick={showInfoObjectToast}>Informacion </button>
+            <ToastContainer autoClose={false}/>
+        </>
+    }
+const botonCompartir=()=>{
+    const notify = () => toast("Enlace copiado al portapales");
+        return <button className="btn-share button-option"
+                       onClick={() => {navigator.clipboard.writeText(`http://redpanda.sytes.net:9093/visualizador/${id}`);notify()}}>Compartir</button>
+}
+
+    const addPdfVis=(file)=>{
+        console.log(file)
+
+    }
+    const handleCreateHotpotsExtra=(type,file=null)=>{
+
+        if(type==="pdf"){
+            let bodyFormData = new FormData();
+            bodyFormData.append('extra', file);
+            axios({
+                method: "post",
+                url: addExtraPdf(id,file.name),
+                data: bodyFormData,
+                headers: { "Content-Type": "multipart/form-data" },
+            })
+                .then(function (response) {
+                    //handle success
+                    console.log(response);
+                })
+                .catch(function (response) {
+                    //handle error
+                    console.log(response);
+                });
+        }
+    }
+
     return (
         <div className="visualizador dragging">
+            <ToastContainer />
+
             {listaHotspost()}
             <div className="top-buttons ">
+                {botonCompartir()}
+                {botonInfoObject()}
                 <button className="button-option"
                     onClick={handleActivateEditMode}>
+
     Modo Edicion
 </button>
             </div>
@@ -681,10 +734,10 @@ export function Visualizador({tipo, id,data, extras}) {
 
             {
             isEditMode ? <div className="add-buttons">
-                <PopupNewHotspot id={id} extras={extras}
+                <PopupNewHotspot id={id} extras={extras} addPdfVis={addPdfVis} handleCreateHotpotsExtra={handleCreateHotpotsExtra}
                     handleCreateHotspot={handleCreateHotspot}></PopupNewHotspot>
 
-                <button className="button-option" disabled>Agregar extra</button>
+                {/*<button className="button-option" disabled>Agregar extra</button>*/}
             </div> : null
         }
             <button className={

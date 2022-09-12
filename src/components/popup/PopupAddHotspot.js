@@ -9,8 +9,9 @@ import Form from 'react-bootstrap/Form';
 import AddYoutubeVideo from "./AddYoutubeVideo";
 import AddVinculateExtra from "./AddVinculateExtra";
 import AddPdf from "./AddPdf";
+import Dropzone from "react-dropzone";
 
-const  PopupNewHotspot =({id, extras,handleCreateHotspot}) =>{
+const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExtra,addPdfVis}) =>{
 
     const [imageSelected, setImageSelected] = useState(null);
     const [noImageSelected, setNoImageSelected] = useState(false);
@@ -18,6 +19,7 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot}) =>{
     const [isEmpty, setIsEmpty] = useState(true);
     const [nameValue, setNameValue] = useState("");
     const [extraType, setExtraType] = useState("video_youtube");
+    const [acceptedFiles,setAcceptedFiles] = useState([])
 
     //const [extras, setExtras] = useState([])
     /*
@@ -46,7 +48,6 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot}) =>{
         }, []);
 */
 
-
     function handleClickOnImageModal(event, item){
       if(imageSelected===item)
       {
@@ -57,7 +58,22 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot}) =>{
     }
 
 
+    function onCrear(){
 
+        if(extraType==="video_youtube"){
+            console.log('vidio')
+            handleCreateHotpotsExtra('youtube',acceptedFiles[0]);
+        }else if(extraType ==="vincular_extra"){
+            console.log('extra')
+            handleCreateHotpotsExtra();
+
+        }else if(extraType ==="pdf"){
+            console.log('pdf')
+            handleCreateHotpotsExtra("pdf",acceptedFiles[0]);
+        }
+    }
+
+/*
     function onCrear(image,input){
       console.log(imageSelected);
       console.log(input);
@@ -79,7 +95,7 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot}) =>{
         setNameValue("")
       }
     }
-
+*/
 
     function onClickHotspotPopup(){
       setOpen(true)
@@ -95,15 +111,56 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot}) =>{
         setNameValue(nombreHotspot.target.value)
     }
 
+
+
     const loadPopupContent=()=>{
         if(extraType==="video_youtube"){
-            return <AddYoutubeVideo></AddYoutubeVideo>
+            return <AddYoutubeVideo addPdfVis={addPdfVis}></AddYoutubeVideo>
         }
         if(extraType==="vincular_extra"){
             return <AddVinculateExtra extras={extras}></AddVinculateExtra>;
         }
         if(extraType==="pdf"){
-            return  <AddPdf></AddPdf>
+            let baseStyle = {
+                marginTop:'10px',
+                marginBottom:'10px',
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                padding: '20px',
+                borderWidth: 2,
+                borderRadius: 2,
+                borderColor: '#eeeeee',
+                borderStyle: 'dashed',
+                backgroundColor: '#343535',
+                color: '#bdbdbd',
+                outline: 'none',
+                transition: 'border .24s ease-in-out'
+            };
+            const style = {
+                ...baseStyle,
+            }
+
+            return <Dropzone onDrop={acceptedFiles => setAcceptedFiles(acceptedFiles)} >
+
+                {({getRootProps, getInputProps}) => (
+                    <section>
+                        <aside>
+                            {acceptedFiles.map(file => (
+                            <li key={file.path}>
+                                {file.path} - {file.size} bytes
+                            </li>))}
+                        </aside>
+
+                        <div {...getRootProps({style})}>
+                            <input {...getInputProps()} />
+                            <p>Drag 'n' drop some files here, or click to select files</p>
+                        </div>
+                    </section>
+                )}
+            </Dropzone>
+           /* return  <AddPdf></AddPdf>*/
         }
     }
 
@@ -183,12 +240,12 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot}) =>{
 
                     <div className="actions">
                     <button className="button-option"
-                    disabled={
+                    disabled={false/*
                       //FUNCION PARA CONTROLAR SELECCION DE EXTRAS
-                      !!(imageSelected === null ||  nameValue === "")
+                      !!(imageSelected === null ||  nameValue === "")*/
                     }
 
-                    onClick={()=>{ onCrear(imageSelected,nameValue) }}
+                    onClick={()=>{ onCrear() }}
                     >Crear</button>
                     <button onClick={onCancelHotspotModal}>Cancelar</button>
                     </div>

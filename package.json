@@ -1,5 +1,5 @@
 {
-  "name": "visualizador2",
+  "name": "visualizador-vehiculos",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -16,7 +16,6 @@
     "image-hover": "^0.8.0",
     "imagehover.css": "^2.0.0",
     "lottie-react": "^2.3.1",
-    "pannellum-react": "^1.2.4",
     "react": "^18.2.0",
     "react-bootstrap": "^2.5.0",
     "react-dom": "^18.2.0",
