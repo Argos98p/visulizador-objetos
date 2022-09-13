@@ -20,6 +20,11 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
     const [nameValue, setNameValue] = useState("");
     const [extraType, setExtraType] = useState("video_youtube");
     const [acceptedFiles,setAcceptedFiles] = useState([])
+    const [linkYoutube, setLinkYoutube] = useState("");
+    const [extrasOnlyImages, setExtrasOnlyImages]= useState(extras.filter(extra => extra.hasOwnProperty("imagen")))
+
+
+
 
     //const [extras, setExtras] = useState([])
     /*
@@ -61,15 +66,15 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
     function onCrear(){
 
         if(extraType==="video_youtube"){
-            console.log('vidio')
-            handleCreateHotpotsExtra('youtube',acceptedFiles[0]);
+            handleCreateHotpotsExtra('video_youtube',null,linkYoutube);
+            setOpen(false)
         }else if(extraType ==="vincular_extra"){
-            console.log('extra')
-            handleCreateHotpotsExtra();
-
+            handleCreateHotpotsExtra("vincular_extra",null,null,imageSelected);
+            setOpen(false)
         }else if(extraType ==="pdf"){
-            console.log('pdf')
+
             handleCreateHotpotsExtra("pdf",acceptedFiles[0]);
+            setOpen(false)
         }
     }
 
@@ -111,14 +116,41 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
         setNameValue(nombreHotspot.target.value)
     }
 
+    const onHandleInputYoutube=(linkYoutube)=>{
+        setLinkYoutube(linkYoutube);
+    }
 
 
     const loadPopupContent=()=>{
         if(extraType==="video_youtube"){
-            return <AddYoutubeVideo addPdfVis={addPdfVis}></AddYoutubeVideo>
+            return <AddYoutubeVideo onHandleInputYoutube={onHandleInputYoutube} addPdfVis={addPdfVis}></AddYoutubeVideo>
         }
         if(extraType==="vincular_extra"){
-            return <AddVinculateExtra extras={extras}></AddVinculateExtra>;
+
+
+
+            return(
+                <div className='container-lista-extras'>
+                    <div className='lista-extras'>
+                        {
+                            extrasOnlyImages.map((item, index) => (
+                                <div className='imagen-modal-container ' key={index}>
+                                    <figure onClick={(event) => handleClickOnImageModal(event,item)}>
+                                        <img className={`imagen-modal  ${
+                                            item===imageSelected
+                                                ? "image-modal-selected" : ""
+                                        }`} src={ImagePath(item.imagen.path)}  />
+                                        <figcaption>
+                                            {item.nombre}
+                                        </figcaption>
+                                    </figure>
+                                </div>
+                            ))
+                        }
+                    </div>
+                </div>
+            );
+
         }
         if(extraType==="pdf"){
             let baseStyle = {
@@ -220,21 +252,7 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
     </div>}
 
 
-                        {/*<div className='container-input-hotspot'>
-                          <Form.Label htmlFor="inputPassword5">Ingrese una etiqueta</Form.Label>
-                          <Form.Control  type="text" required onChange={onChangeInput} autoComplete="off" id="inputPassword5" aria-describedby="passwordHelpBlock"/>
-                          {
-                              isEmpty
-                                  ? <Form.Text id="passwordHelpBlock" muted >
-                                      Este campo es obligatorio
-                                  </Form.Text>
-                                  : null
-                          }
-                          <br></br>
-                          <Form.Text id="passwordHelpBlock" muted>
-                              Se permite un maximo de 20 caracteres
-                          </Form.Text>
-                      </div>*/}
+
                     </div>
 
 

@@ -3,7 +3,15 @@ import Tridi from "react-tridi";
 import OptionButtons from "./botones/buttonsOptions";
 import axios from "axios";
 import ReelImages from "./reel/ReelImages";
-import {completeImageUrl, deleteHotspot,addExtraPdf, getHotspots, infoObjectUrl, postAddHotspot} from "../Api/apiRoutes";
+import {
+    completeImageUrl,
+    deleteHotspot,
+    addExtraPdf,
+    getHotspots,
+    infoObjectUrl,
+    postAddHotspot,
+    addLinkYoutube
+} from "../Api/apiRoutes";
 import ButtonEscena from "./botones/buttonEscena";
 import LottieEmptyEscenas from "../Animations/lottieEmptyEscena";
 
@@ -309,24 +317,100 @@ export function Visualizador({tipo, id,data, extras}) {
 
     const frameReplicateOneReference=()=>{
             let lastPin= pins[pins.length-1];
-            let move = 0.015;
+            let move = 0.014;
             let j=20;
+            let aux=20;
             let arrayHotspots=[];
 
         let originalX = parseFloat(lastPin.x);
         let originalY = lastPin.y;
 
+        if(lastPin.frameId -j > 0  && lastPin.frameId + j <=frames.length){
             for(let i=lastPin.frameId-20;i<=lastPin.frameId+20;i++){
                 let newPin={
                     idframe:i+1,
                     nombreHotspot:nameHotspot,
                     idExtra:extraSelected.idextra,
-                    x:originalX+move*j,
+                    x:originalX+move*aux,
                     y:parseFloat(originalY),
                 }
                 arrayHotspots.push(newPin)
-                j--;
+                aux--;
             }
+        }else if(lastPin.frameId - j < 0 ){
+            let k=1;
+            for(let i=lastPin.frameId;i<=j+lastPin.frameId;i++){
+                let newPin={
+                    idframe:i,
+                    nombreHotspot:nameHotspot,
+                    idExtra:extraSelected.idextra,
+                    x:originalX+move*k,
+                    y:parseFloat(originalY),
+                }
+                arrayHotspots.push(newPin)
+                k++;
+            }
+            k=-20;
+            let h= lastPin.frameId -j +frames.length
+            for(let i = lastPin.frameId -j;i<lastPin.frameId;i++){
+                if(h===frames.length){
+                    h=0;
+                }
+                if(h!==0){
+                    let newPin={
+                        idframe:h,
+                        nombreHotspot:nameHotspot,
+                        idExtra:extraSelected.idextra,
+                        x:originalX+move*k,
+                        y:parseFloat(originalY),
+                    }
+                    arrayHotspots.push(newPin)
+                }
+
+                h++;
+                k++;
+
+            }
+
+        }
+        else if(lastPin.frameId+j >frames.length){
+            let k=-20;
+            for(let i=lastPin.frameId-j;i<lastPin.frameId;i++){
+                let newPin={
+                    idframe:i+1,
+                    nombreHotspot:nameHotspot,
+                    idExtra:extraSelected.idextra,
+                    x:originalX+move*k,
+                    y:parseFloat(originalY),
+                }
+                arrayHotspots.push(newPin)
+                k++;
+            }
+            k=1
+            let h= lastPin.frameId +1;
+            for(let i = lastPin.frameId ;i<lastPin.frameId+j;i++){
+                if(h===frames.length){
+                    h=0;
+                }
+                if(h!==0){
+                    let newPin={
+                        idframe:h,
+                        nombreHotspot:nameHotspot,
+                        idExtra:extraSelected.idextra,
+                        x:originalX+move*k,
+                        y:parseFloat(originalY),
+                    }
+                    arrayHotspots.push(newPin)
+                }
+
+                h++;
+                k++;
+
+            }
+
+        }
+
+
 
         console.log(arrayHotspots)
         postNewHotspots(id,currentEscena.nombre,arrayHotspots).then(
@@ -486,26 +570,32 @@ export function Visualizador({tipo, id,data, extras}) {
 */
     /****** Fin ---- FUNCIONALIDAD PARA AGREGAR HOTSPOTS******/
     function myRenderPin(pin) {
-
+        ReactTooltip.rebuild()
         return (
             <>
-                <label>
+                <div data-tip={"test"} data-for='test'>
+
+                <label  >
                     <div id="b3"
+
                          className="button-hotspot"
-                         data-for='soclose'
-                         data-tip=''>
+                         >
                         +
                     </div>
+
                 </label>
-                <ReactTooltip id="soclose" place="top" effect="solid"
-                              getContent={
-                                  ()=>{return pin.nombre}
-                              }></ReactTooltip>
+                <ReactTooltip id="test" place="top" effect="solid" getContent={(dataTip=>dataTip)}>
+                </ReactTooltip>
+                </div>
             </>
         );
     }
 
-    function handleOnLoad(load_success, percentage) {
+
+    useEffect(() => {
+        ReactTooltip.rebuild();
+    });
+        function handleOnLoad(load_success, percentage) {
         console.log(load_success,percentage)
         setLoadPercentage(percentage);
         if (percentage === 100) {
@@ -575,6 +665,7 @@ export function Visualizador({tipo, id,data, extras}) {
                         />
                     }
                 </div>
+
             )
         }
     }
@@ -614,8 +705,6 @@ export function Visualizador({tipo, id,data, extras}) {
                 setAwaitAddHotspot(false);
             });
     }
-
-
     function listaHotspost(){
 
       return isEditMode?
@@ -650,7 +739,6 @@ export function Visualizador({tipo, id,data, extras}) {
                 let info=objetoData.info.split(',')
                 return <div className="info-object-data">{info.map(item => item)}</div>
             }
-            //return (<div></div>);
         }
         const showInfoObjectToast = () => {
             toast.info(infoObject, {
@@ -674,7 +762,7 @@ const botonCompartir=()=>{
         console.log(file)
 
     }
-    const handleCreateHotpotsExtra=(type,file=null)=>{
+    const handleCreateHotpotsExtra=(type,file=null,linkYoutube="",extra=null)=>{
 
         if(type==="pdf"){
             let bodyFormData = new FormData();
@@ -687,12 +775,33 @@ const botonCompartir=()=>{
             })
                 .then(function (response) {
                     //handle success
-                    console.log(response);
+
                 })
                 .catch(function (response) {
                     //handle error
                     console.log(response);
                 });
+        }
+        else if(type==="video_youtube"){
+            console.log(linkYoutube)
+            axios.post(addLinkYoutube(id, 'test', linkYoutube))
+                .then(res => {
+                if(res.status===200){
+
+                }
+                })
+                .catch(function (response) {
+                //handle error
+                console.log(response);
+            });
+        }
+        else if(type==="vincular_extra"){
+            console.log(extra);
+            tridiRef.current.toggleRecording(true)
+            setExtraSelected(extra);
+            setNameHotspot('test');
+            setAddHotspotMode(true);
+            setNewHotspot(true);
         }
     }
 
@@ -737,7 +846,6 @@ const botonCompartir=()=>{
                 <PopupNewHotspot id={id} extras={extras} addPdfVis={addPdfVis} handleCreateHotpotsExtra={handleCreateHotpotsExtra}
                     handleCreateHotspot={handleCreateHotspot}></PopupNewHotspot>
 
-                {/*<button className="button-option" disabled>Agregar extra</button>*/}
             </div> : null
         }
             <button className={

@@ -1,17 +1,14 @@
 import Form from 'react-bootstrap/Form';
 import React from "react";
 
-const AddYoutubeVideo= ()=>{
+const AddYoutubeVideo= ({onHandleInputYoutube})=>{
 
     return (
         <>
-        <Form.Label htmlFor="inputPassword5">Ingrese una etiqueta</Form.Label>
-    <Form.Control  type="text"  aria-describedby="passwordHelpBlock"/>
-
-
-    <Form.Text id="passwordHelpBlock" muted>
-        Se permite un maximo de 20 caracteres
-    </Form.Text>
+            <label>
+                Ingrese un link de youtube<br/>
+                <input type="text" onChange={(e)=>onHandleInputYoutube(e.target.value)} name="video-youtube"/>
+            </label>
         </>
     );
 }
