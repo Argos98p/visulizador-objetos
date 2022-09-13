@@ -318,7 +318,7 @@ export function Visualizador({tipo, id,data, extras}) {
     const frameReplicateOneReference=()=>{
             let lastPin= pins[pins.length-1];
             let move = 0.014;
-            let j=20;
+            let j=10;
             let aux=20;
             let arrayHotspots=[];
 
