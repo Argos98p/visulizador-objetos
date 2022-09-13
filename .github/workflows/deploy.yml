@@ -15,7 +15,7 @@ jobs:
           uses: mr-smithers-excellent/docker-build-push@v5
           with:
             image: seaman69/3dspace
-            tags: objetosv2
+            tags: visualizador-vehiculos
             registry: docker.io
             username: ${{secrets.DOCKER_MAIL}}
             password: ${{ secrets.DOCKER_PASSWD }}
