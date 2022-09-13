@@ -755,7 +755,7 @@ export function Visualizador({tipo, id,data, extras}) {
 const botonCompartir=()=>{
     const notify = () => toast("Enlace copiado al portapales");
         return <button className="btn-share button-option"
-                       onClick={() => {navigator.clipboard.writeText(`http://redpanda.sytes.net:9093/visualizador/${id}`);notify()}}>Compartir</button>
+                       onClick={() => {navigator.clipboard.writeText(`http://173.255.114.112:3000/visualizador/${id}`);notify()}}>Compartir</button>
 }
 
     const addPdfVis=(file)=>{

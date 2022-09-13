@@ -2,14 +2,15 @@
 FROM node:16-alpine AS development
 ENV NODE_ENV development
 # Add a work directory
-WORKDIR /app
+WORKDIR /visualizador-vehiculos
 # Cache and Install dependencies
 COPY package.json .
 COPY yarn.lock .
 RUN yarn install
+ENV PATH ="./node_modules/.bin:$PATH"
 # Copy app files
 COPY . .
 # Expose port
-EXPOSE 3000
+RUN npm run build
 # Start the app
 CMD [ "yarn", "start" ]
