@@ -8,6 +8,7 @@ const ButtonEscena = memo(({escenaInfo, onClick , activo})=>{
 
     let icono =null;
 
+
     switch (escenaInfo[1].nombre) {
         case "puertas_cerradas":
             icono=<FaCarSide></FaCarSide>

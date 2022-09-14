@@ -18,6 +18,10 @@
   display: none;
 }
 
+.no-oculto{
+  display: block;
+}
+
 .toast-message {
    background: darkblue;
    color: #fff;
