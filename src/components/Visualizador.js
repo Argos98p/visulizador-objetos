@@ -3,6 +3,8 @@ import Tridi from "react-tridi";
 import OptionButtons from "./botones/buttonsOptions";
 import axios from "axios";
 import ReelImages from "./reel/ReelImages";
+import 'react-modal-video/scss/modal-video.scss';
+import ModalVideo from 'react-modal-video'
 import {
     completeImageUrl,
     deleteHotspot,
@@ -51,6 +53,9 @@ export function Visualizador({tipo, id,data, extras}) {
     const [countForLoadBug, setCountForLoadBug] = useState(0);
     const [showInfoObject, setShowInfoObject] = useState(false);
     const [activeEscena, setActiveEscena] = useState("0"); //escena que esta activa lo hace con
+
+    const [openYoutubeModal, setOpenYoutubeModal] = useState(false);
+    const [extraPdfOrVideo, setExtraPdfOrVideo] = useState({});
 
     const extraContainerRef=useRef();
     const extraInViewRef = useRef();
@@ -244,6 +249,8 @@ export function Visualizador({tipo, id,data, extras}) {
             extraInViewRef.current.onExtra(pin.idExtra);
         }
         else if(extraInHotspot.hasOwnProperty("enlace")){
+            setOpenYoutubeModal(true);
+            setExtraPdfOrVideo(extraInHotspot);
             console.log('enlace video')
         }
         else if(extraInHotspot.hasOwnProperty("path")){
@@ -898,6 +905,20 @@ export function Visualizador({tipo, id,data, extras}) {
         return <h1>holaa</h1>
     }
 
+
+    function youtube_parser(url){
+        var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+        var match = url.match(regExp);
+        return (match&&match[7].length==11)? match[7] : false;
+    }
+
+    const modalVideoYoutube=useCallback(()=>{
+        return (
+            <ModalVideo channel='youtube' autoplay isOpen={openYoutubeModal} videoId={youtube_parser(extraPdfOrVideo.enlace)} onClose={() => setOpenYoutubeModal(false)} />
+        );
+
+    },[openYoutubeModal]
+)
     return (
         <div className="visualizador dragging">
             <ToastContainer />
@@ -912,7 +933,9 @@ export function Visualizador({tipo, id,data, extras}) {
                 </button>
             </div>
 
-
+            {
+                modalVideoYoutube()
+            }
 
 
             {/*
