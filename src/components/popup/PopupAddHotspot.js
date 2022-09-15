@@ -22,9 +22,7 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
     const [acceptedFiles,setAcceptedFiles] = useState([])
     const [linkYoutube, setLinkYoutube] = useState("");
     const [extrasOnlyImages, setExtrasOnlyImages]= useState(extras.filter(extra => extra.hasOwnProperty("imagen")))
-
-
-
+    const [ inputTituloHotspotValue, setInputTituloHotspotValue ] = useState("")
 
     //const [extras, setExtras] = useState([])
     /*
@@ -54,62 +52,61 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
 */
 
     function handleClickOnImageModal(event, item){
-      if(imageSelected===item)
-      {
-        setImageSelected(null)
-      }else{
-        setImageSelected(item)
-      }
+        if(imageSelected===item)
+        {
+            setImageSelected(null)
+        }else{
+            setImageSelected(item)
+        }
     }
-
 
     function onCrear(){
 
         if(extraType==="video_youtube"){
-            handleCreateHotpotsExtra('video_youtube',null,linkYoutube);
+            handleCreateHotpotsExtra(inputTituloHotspotValue,'video_youtube',null,linkYoutube);
             setOpen(false)
         }else if(extraType ==="vincular_extra"){
-            handleCreateHotpotsExtra("vincular_extra",null,null,imageSelected);
+            handleCreateHotpotsExtra(inputTituloHotspotValue,"vincular_extra",null,null,imageSelected);
             setOpen(false)
         }else if(extraType ==="pdf"){
 
-            handleCreateHotpotsExtra("pdf",acceptedFiles[0]);
+            handleCreateHotpotsExtra(inputTituloHotspotValue,"pdf",acceptedFiles[0]);
             setOpen(false)
         }
     }
 
-/*
-    function onCrear(image,input){
-      console.log(imageSelected);
-      console.log(input);
+    /*
+        function onCrear(image,input){
+          console.log(imageSelected);
+          console.log(input);
 
-      //FUNCION PARA CONTROLAR SELECCION DE EXTRAS
-      if(image === null || nameValue === ""){
-        if (image === null){
-          console.log('la imagen es nula');
-        }
-        if(nameValue ===""){
-          console.log('El nombre esta en blanco');
-        }
-      }else{
-        console.log('todo ok');
+          //FUNCION PARA CONTROLAR SELECCION DE EXTRAS
+          if(image === null || nameValue === ""){
+            if (image === null){
+              console.log('la imagen es nula');
+            }
+            if(nameValue ===""){
+              console.log('El nombre esta en blanco');
+            }
+          }else{
+            console.log('todo ok');
 
-        handleCreateHotspot(imageSelected,nameValue)
-        setOpen(false);
-        setImageSelected(null)
-        setNameValue("")
-      }
-    }
-*/
+            handleCreateHotspot(imageSelected,nameValue)
+            setOpen(false);
+            setImageSelected(null)
+            setNameValue("")
+          }
+        }
+    */
 
     function onClickHotspotPopup(){
-      setOpen(true)
+        setOpen(true)
     }
 
     function onCancelHotspotModal(){
-      setOpen(false)
-      setNameValue("");
-      setImageSelected(null)
+        setOpen(false)
+        setNameValue("");
+        setImageSelected(null)
     }
 
     function onChangeInput(nombreHotspot){
@@ -126,9 +123,6 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
             return <AddYoutubeVideo onHandleInputYoutube={onHandleInputYoutube} addPdfVis={addPdfVis}></AddYoutubeVideo>
         }
         if(extraType==="vincular_extra"){
-
-
-
             return(
                 <div className='container-lista-extras'>
                     <div className='lista-extras'>
@@ -174,15 +168,17 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
                 ...baseStyle,
             }
 
+
+
             return <Dropzone onDrop={acceptedFiles => setAcceptedFiles(acceptedFiles)} >
 
                 {({getRootProps, getInputProps}) => (
                     <section>
                         <aside>
                             {acceptedFiles.map(file => (
-                            <li key={file.path}>
-                                {file.path} - {file.size} bytes
-                            </li>))}
+                                <li key={file.path}>
+                                    {file.path} - {file.size} bytes
+                                </li>))}
                         </aside>
 
                         <div {...getRootProps({style})}>
@@ -192,85 +188,64 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
                     </section>
                 )}
             </Dropzone>
-           /* return  <AddPdf></AddPdf>*/
+            /* return  <AddPdf></AddPdf>*/
         }
     }
 
+    const onChangeInputTitulo = (e)=>{
+        setInputTituloHotspotValue(e.target.value);
+        console.log(e.target.value);
+    }
+
+    const inputTituloHotspot = () => {
+        return (
+            <label>
+                Ingrese un titulo o descripcion<br/>
+                <input type="text" onChange={(e)=>onChangeInputTitulo(e)} name="input-titulo"/>
+            </label>
+    );
+    }
 
     return (
-      <>
-    <button className="button-option"  onClick={onClickHotspotPopup}>Hotspot</button>
-    <Popup
-    onClose={onCancelHotspotModal}
-    open={open}
-        modal
-        nested >
-        {
-      }
-
-
-<div className="modalp">
+        <>
+            <button className="button-option"  onClick={onClickHotspotPopup}>Hotspot</button>
+            <Popup
+                onClose={onCancelHotspotModal}
+                open={open}
+                modal
+                nested >
+                <div className="modalp">
                     <div className="header"> Añadir hotspot </div>
                     Seleccione el tipo de extra
                     <div className="content-popup">
                         <div className="buttons-type-hotspots">
-                            <button className="button-option" onClick={()=>setExtraType("vincular_extra")}>Vincular con extra</button>
-                            <button className="button-option" onClick={()=>setExtraType("video_youtube")}>Video de Youtube</button>
-                            <button className="button-option" onClick={()=>setExtraType("pdf")}>PDF</button>
+                            <button className={"button-option " + (extraType === "vincular_extra" ? "activo" : "" )} onClick={()=>setExtraType("vincular_extra")}>Vincular con extra</button>
+                            <button className={"button-option " + (extraType === "video_youtube" ? "activo" : "" )} onClick={()=>setExtraType("video_youtube")}>Video de Youtube</button>
+                            <button className={"button-option " + (extraType === "pdf" ? "activo" : "" )} onClick={()=>setExtraType("pdf")}>PDF</button>
                         </div>
+                        <br/>
+
+                        {inputTituloHotspot()}
 
                         {loadPopupContent()}
 
-                        {<div className='container-lista-extras'>
-                            {/*<div>Seleccione un extra</div>*/}
-                            {/* <div className='lista-extras'>
-                          {
-
-                             extras.map((item, index) => (
-                                 <div className='imagen-modal-container ' key={index}>
-                                   <figure onClick={(event) => handleClickOnImageModal(event,item)}>
-                                   <img className={`imagen-modal  ${
-                                     item===imageSelected
-                                     ? "image-modal-selected" : ""
-                                   }`} src={ImagePath(item.imagen.path)}  />
-                                        <figcaption>
-                                         {item.nombre}
-                                        </figcaption>
-                                  </figure>
-                                 </div>
-                            ))
-                          }
-
-                      </div>*/}
-
-
-                      { /*imageSelected === null
-                            ? <p>Esta opcion es obligatoria</p>
-                            : null
-                          */}
-
-    </div>}
-
-
-
                     </div>
-
 
                     <div className="actions">
-                    <button className="button-option"
-                    disabled={false/*
+                        <button className="button-option"
+                                disabled={false/*
                       //FUNCION PARA CONTROLAR SELECCION DE EXTRAS
                       !!(imageSelected === null ||  nameValue === "")*/
-                    }
+                                }
 
-                    onClick={()=>{ onCrear() }}
-                    >Crear</button>
-                    <button onClick={onCancelHotspotModal}>Cancelar</button>
+                                onClick={()=>{ onCrear() }}
+                        >Crear</button>
+                        <button onClick={onCancelHotspotModal}>Cancelar</button>
                     </div>
-                  </div>
-              </Popup>
-              </>
+                </div>
+            </Popup>
+        </>
     );
-    }
+}
 
 export default PopupNewHotspot

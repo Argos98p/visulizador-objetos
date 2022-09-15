@@ -28,8 +28,7 @@ import PopupListaHotspot from "./popup/PopupListaHotspots";
 
 export function Visualizador({tipo, id,data, extras}) {
 
-    const [objetoData,setObjetoData] = useState(null);
-    const [escenasAux, setEscenasAux] = useState({});//muestra todas las escenas
+    const [objetoData,setObjetoData] = useState({escenas:{}});
     const [currentEscena, setCurrentEscena] = useState({}); //ver si se cambia por null
     const [frames, setFrames] = useState([]);
     const [hotspotsMap, setHotspotsMap] = useState([]);
@@ -51,14 +50,13 @@ export function Visualizador({tipo, id,data, extras}) {
     const [sphereImageInView, setSphereImageInView] = useState(false);
     const [countForLoadBug, setCountForLoadBug] = useState(0);
     const [showInfoObject, setShowInfoObject] = useState(false);
-    const [activeEscena, setActiveEscena] = useState("0");
-    const [zooom, setZooom] = useState(1);
+    const [activeEscena, setActiveEscena] = useState("0"); //escena que esta activa lo hace con
 
     const extraContainerRef=useRef();
     const extraInViewRef = useRef();
     const tridiRef = useRef(null);
 
-    //let zooom=1;
+    let zooom=1;
 
 
     // Recibe toda la info del objeto
@@ -80,15 +78,15 @@ export function Visualizador({tipo, id,data, extras}) {
     }, []);
 
     useEffect(() => {
-        if(objetoData!== null){
+
             let promesas=[];
             let mapHotspots={};
             for(let escena in objetoData.escenas){
-                let nombreEscena=objetoData.escenas[escena].nombre
+                let nombreEscena=objetoData.escenas[escena].nombre;
                 promesas.push(
                     axios.get(getHotspots(id,nombreEscena))
                         .then(response=>{
-                            mapHotspots[nombreEscena]=response.data;
+                            mapHotspots[escena]=response.data;
                         }).catch(error => {
                         if(error.response){
                             console.log(error.response);
@@ -102,12 +100,12 @@ export function Visualizador({tipo, id,data, extras}) {
                 )
             }
             Promise.all(promesas).then(()=> {
+                console.log(mapHotspots)
                 setHotspotsMap(mapHotspots);
-                prepararPins(mapHotspots)
-                setEscenasAux(objetoData.escenas);
-                setCurrentEscena(getFirstSceneWithFrames(objetoData.escenas));
+                setPins(prepararPins(mapHotspots[activeEscena]));
             });
-        }
+
+
     }, [objetoData]);
 
     useEffect(() => {
@@ -118,8 +116,9 @@ export function Visualizador({tipo, id,data, extras}) {
         return(setLoadStatus(false))
     }, []);
 
+    /*
     useEffect(() => {
-        if(objetoData!== null && updateHotspots===true){
+        if(updateHotspots===true){
 
             console.log('recibe nuevamente pins')
             let promesass=[];
@@ -146,26 +145,34 @@ export function Visualizador({tipo, id,data, extras}) {
                 setHotspotsMap(mapHotspots);
                 prepararPins(mapHotspots)
                 setPins(mapHotspots[currentEscena.nombre])
-
             });
         }
         return () => {
             setUpdateHotspots(false)
         };
-    }, [updateHotspots]);
+    }, [updateHotspots]);*/
 
 
 
-    function prepararPins(fetchedPins){
-        for(let escena in fetchedPins){
-            for (let hotspot of fetchedPins[escena]){
+    const prepararPins = (fetchedPinsObject) => {
+
+        if(fetchedPinsObject !== undefined)
+        {
+            console.log(fetchedPinsObject)
+            let newPins=[]
+            for (let hotspot of fetchedPinsObject ){
                 hotspot.frameId=hotspot.idFrame;
                 hotspot.id=hotspot.idHotspot;
                 hotspot.recordingSessionId=null;
+                newPins.push(hotspot)
             }
+            return newPins;
         }
+        return [];
+
     }
 
+    /*
     useEffect(() => {
         let timer1 = setTimeout(()=>{},10)
         if(currentEscena.imagenes!== undefined) {
@@ -180,9 +187,10 @@ export function Visualizador({tipo, id,data, extras}) {
             clearTimeout(timer1);
         };
 
-    }, [currentEscena]);
+    }, [currentEscena]);*/
 
     function getArraySrcPath(escena){
+
 
         let n = Object.keys(escena.imagenes).length;
         let [aux,escenaNumber,temp,frames,nameImage]= [];
@@ -216,14 +224,6 @@ export function Visualizador({tipo, id,data, extras}) {
         progress: undefined
     });
 
-    function getFirstSceneWithFrames(escenas) {
-        for(let escena in escenas){
-            if(escenas[escena].imagenes.length>1){
-                return escenas[escena];
-            }
-        }
-        return escenas[0];
-    }
     function handleClickExtras() {
         extraContainerRef.current.classList.toogle("no-visible")
         //setVisibleExtras(!visibleExtras)
@@ -237,9 +237,24 @@ export function Visualizador({tipo, id,data, extras}) {
     const recordStopHandler = (recordingSessionId) => /* console.log("on record stop", {recordingSessionId, pins})*/
         console.log();
     const pinClickHandler = (pin) => {
-        setVisibleExtras(true);
-        extraInViewRef.current.onExtra(pin.idExtra);
+        let extraInHotspot = searchExtra(pin.idExtra);
+
+        if(extraInHotspot.hasOwnProperty("imagen")){
+            setVisibleExtras(true);
+            extraInViewRef.current.onExtra(pin.idExtra);
+        }
+        else if(extraInHotspot.hasOwnProperty("enlace")){
+            console.log('enlace video')
+        }
+        else if(extraInHotspot.hasOwnProperty("path")){
+            console.log("pdf")
+        }
+
     };
+
+    const searchExtra=(extraId)=>{
+        return extras.find(x => x.idextra === extraId);
+    }
 
     function handlePrev() {
         tridiRef.current.prev();
@@ -249,19 +264,12 @@ export function Visualizador({tipo, id,data, extras}) {
     }
 
     const zoomValueHandler = (valorZoom) => {
-        //zooom=valorZoom;
-       // setZooom(valorZoom)
-        console.log(zooom)
+        zooom=valorZoom;
     }
-
-    useEffect(() => {
-
-    }, [zooom]);
-
 
     const  handleZoomIn = () => {
-        setZooom(zooom+0.3);
-        tridiRef.current.setZoom(zooom+0.3);
+        zooom=zooom+0.3;
+        tridiRef.current.setZoom(zooom);
         if (zooom > 1) {
             tridiRef.current.toggleMoving(true)
         }
@@ -270,9 +278,10 @@ export function Visualizador({tipo, id,data, extras}) {
         }
     }
 
-    function handleZoomOut() {
-        setZooom(zooom-0.1);
-        tridiRef.current.setZoom(zooom - 0.1);
+    const handleZoomOut = () => {
+        //setZooom(zooom-0.1);
+        zooom = zooom -0.1
+        tridiRef.current.setZoom(zooom );
         if (zooom > 1) {
             tridiRef.current.toggleMoving(true)
         }
@@ -282,26 +291,22 @@ export function Visualizador({tipo, id,data, extras}) {
     }
 
 
-    function handleAutoPlay() {
+    const handleAutoPlay = () => {
         tridiRef.current.toggleAutoplay(!isAutoPlayRunning);
     }
 
-    function handleWheel(e) {
-        /*
+    const handleWheel = (e) => {
         if(!sphereImageInView){
             e.deltaY > 0 ? handleZoomOut() : handleZoomIn();
         }
-*/
+
     }
 
-    /*
-    const handleButtonEscena=useCallback((escena)=> {
-        setCurrentEscena(escena[1]);
-    },[currentEscena])*/
 
     const handleButtonEscena=useCallback((escena)=>{
         setActiveEscena(escena.toString())
-    },[activeEscena]
+        setPins(prepararPins(hotspotsMap[escena]))
+    },[activeEscena,hotspotsMap]
 )
 
 
@@ -320,7 +325,7 @@ export function Visualizador({tipo, id,data, extras}) {
         }
     }
 
-    function clickOnTridiContainer() {
+    const clickOnTridiContainer = () => {
         if (addHotspotMode) {
             tridiRef.current.toggleRecording(false);
         }
@@ -422,9 +427,9 @@ export function Visualizador({tipo, id,data, extras}) {
         }
 
 
-
+        console.log(objetoData.escenas[activeEscena].nombre)
         console.log(arrayHotspots)
-        postNewHotspots(id,currentEscena.nombre,arrayHotspots).then(
+        postNewHotspots(id,objetoData.escenas[activeEscena].nombre,arrayHotspots).then(
             response=>{
                 console.log(response)
                 setAwaitAddHotspot(false);
@@ -443,15 +448,15 @@ export function Visualizador({tipo, id,data, extras}) {
     }
 
     useEffect(() => {
-
+        console.log(pins)
         if (pins.length !== 0 && newHotspot === true) {
             setAwaitAddHotspot(true);
             frameReplicateOneReference(pins[pins.length-1]);
         }
-    }, [pins.length]);
+    }, [pins]);
 
-    function postNewHotspots(id, nombreEscena,arrayHotspots){
-        return axios.post(postAddHotspot(id,currentEscena.nombre),arrayHotspots);
+    const postNewHotspots = (id, nombreEscena,arrayHotspots) => {
+        return axios.post(postAddHotspot(id,nombreEscena),arrayHotspots);
     }
 
     /****** Fin ---- HOTSPOTS UNA REFERENCIA ******/
@@ -580,7 +585,7 @@ export function Visualizador({tipo, id,data, extras}) {
 
     */
     /****** Fin ---- FUNCIONALIDAD PARA AGREGAR HOTSPOTS******/
-    function myRenderPin(pin) {
+    const myRenderPin = (pin) => {
         ReactTooltip.rebuild()
         return (
             <>
@@ -732,7 +737,8 @@ export function Visualizador({tipo, id,data, extras}) {
     const botonesEscenas=useMemo(()=>
             <>
                 {
-                    Object.entries(escenasAux).map((escena,index) => (
+
+                    Object.entries(objetoData.escenas).map((escena,index) => (
                         <ButtonEscena key={
                             escena[0]
                         }
@@ -744,8 +750,9 @@ export function Visualizador({tipo, id,data, extras}) {
                         ></ButtonEscena>
                     ))}
             </>
-        ,[escenasAux,handleButtonEscena,currentEscena.nombre]
+        ,[handleButtonEscena,objetoData]
     )
+
 
     const botonInfoObject=()=>{
 
@@ -777,20 +784,25 @@ export function Visualizador({tipo, id,data, extras}) {
         console.log(file)
 
     }
-    const handleCreateHotpotsExtra=(type,file=null,linkYoutube="",extra=null)=>{
+    const handleCreateHotpotsExtra=(titulo="",type,file=null,linkYoutube="",extra=null)=>{
 
         if(type==="pdf"){
             let bodyFormData = new FormData();
             bodyFormData.append('extra', file);
             axios({
                 method: "post",
-                url: addExtraPdf(id,file.name),
+                url: addExtraPdf(id,file.name,titulo, titulo),
                 data: bodyFormData,
                 headers: { "Content-Type": "multipart/form-data" },
             })
                 .then(function (response) {
-                    //handle success
-
+                    if(response.status === 200){
+                        tridiRef.current.toggleRecording(true)
+                        setExtraSelected(response.data);
+                        setNameHotspot(titulo);
+                        setAddHotspotMode(true);
+                        setNewHotspot(true);
+                    }
                 })
                 .catch(function (response) {
                     //handle error
@@ -802,7 +814,11 @@ export function Visualizador({tipo, id,data, extras}) {
             axios.post(addLinkYoutube(id, 'test', linkYoutube))
                 .then(res => {
                     if(res.status===200){
-
+                        tridiRef.current.toggleRecording(true)
+                        setExtraSelected(res.data);
+                        setNameHotspot(titulo);
+                        setAddHotspotMode(true);
+                        setNewHotspot(true);
                     }
                 })
                 .catch(function (response) {
@@ -814,7 +830,7 @@ export function Visualizador({tipo, id,data, extras}) {
             console.log(extra);
             tridiRef.current.toggleRecording(true)
             setExtraSelected(extra);
-            setNameHotspot('test');
+            setNameHotspot(titulo);
             setAddHotspotMode(true);
             setNewHotspot(true);
         }
@@ -827,42 +843,54 @@ export function Visualizador({tipo, id,data, extras}) {
             let show=false;
             for (let index in escenas){
                 show=activeEscena===index
-                escenasSrcImages.push(
-                    <Tridi ref={ show ? tridiRef : null}
-                           key={index}
-                           className={show ? "" : "oculto"}
-                           images={getArraySrcPath(escenas[index])}
-                           autoplaySpeed={70}
-                           zoom={1}
-                           maxZoom={3}
-                           minZoom={1}
-                           onZoom={zoomValueHandler}
-                           onFrameChange={frameChangeHandler}
-                           onAutoplayStart={
-                               () => setIsAutoPlayRunning(true)
-                           }
-                           onAutoplayStop={
-                               () => setIsAutoPlayRunning(false)
-                           }
-                           onRecordStart={
-                               recordStartHandler
-                           }
-                           onRecordStop={
-                               recordStopHandler
-                           }
-                           onPinClick={pinClickHandler}
-                           setPins={setPins}
-                           renderPin={myRenderPin}
-                           showStatusBar
-                           pins={pins}
-                        //hintOnStartup
-                        //hintText="Arrastre para mover"
-                        //onLoadChange={(e,y)=>console.log(e,y)}
-                    />
-                );
+                let imagesSrcOneScene = getArraySrcPath(escenas[index])
+                if(imagesSrcOneScene.length === 0 ){
+                    escenasSrcImages.push(
+                        <div className="emptyEscena ">
+                            <h2 className="texto-blanco">Escena vacia</h2>
+                            <br></br>
+                            <LottieEmptyEscenas></LottieEmptyEscenas>
+                        </div>
+                    )
+                }else{
+                    escenasSrcImages.push(
+                        <Tridi ref={ show ? tridiRef : null}
+                               key={index}
+                               className={show ? "" : "oculto"}
+                               images={imagesSrcOneScene}
+                               autoplaySpeed={70}
+                               zoom={1}
+                               maxZoom={3}
+                               minZoom={1}
+                               onZoom={zoomValueHandler}
+                               onFrameChange={frameChangeHandler}
+                               onAutoplayStart={
+                                   () => setIsAutoPlayRunning(true)
+                               }
+                               onAutoplayStop={
+                                   () => setIsAutoPlayRunning(false)
+                               }
+                               onRecordStart={
+                                   recordStartHandler
+                               }
+                               onRecordStop={
+                                   recordStopHandler
+                               }
+                               onPinClick={pinClickHandler}
+                               setPins={setPins}
+                               renderPin={myRenderPin}
+                               showStatusBar
+                               pins={pins}
+                            //hintOnStartup
+                            //hintText="Arrastre para mover"
+                            //onLoadChange={(e,y)=>console.log(e,y)}
+                        />
+                    )
+                }
+;
             }
             return (
-                <div className={`tridi-container`}>
+                <div className={`tridi-container`} onWheel={handleWheel} onClick={clickOnTridiContainer}>
                     {escenasSrcImages}
                 </div>
             );
@@ -880,7 +908,6 @@ export function Visualizador({tipo, id,data, extras}) {
                 {botonInfoObject()}
                 <button className="button-option"
                         onClick={handleActivateEditMode}>
-
                     Modo Edicion
                 </button>
             </div>

@@ -44,12 +44,12 @@ function getHotspots(id, nombreEscena){
 function deleteHotspot(id, nombreEscena,nombreHotspot){
     return `${BaseURL}:8084/api/objects/deletehotspot?idobjeto=${id}&nombre_escena=${nombreEscena}&nombreHotspot=${nombreHotspot}`
 }
-function addExtraPdf(id,nombre_doc){
-    return `${BaseURL}:8084/api/objects/addextra/pdf?idobjeto=${id}&archivo=${nombre_doc}`;
+function addExtraPdf(id,nombre_doc,titulo, descripcion){
+    return `${BaseURL}:8084/api/objects/addextra/pdf?idobjeto=${id}&archivo=${nombre_doc}&titulo=${titulo}&descripcion=${descripcion}`;
 }
 
-function addLinkYoutube(id,nombre, link){
-    return `${BaseURL}:8084/api/objects/addextra/link?idobjeto=${id}&nombre=${nombre}&link=${link}`;
+function addLinkYoutube(id,nombreArchivo, link, titulo, descripcion){
+    return `${BaseURL}:8084/api/objects/addextra/link?idobjeto=${id}&nombre=${nombreArchivo}&link=${link}&titulo=${titulo}&descripcion=${descripcion}`;
 }
 
 export {addLinkYoutube,addExtraPdf,deleteHotspot,statusEsceneUrl,uploadExtraUrl,infoObjectUrl,getHotspots,numberFramesInScene,completeImageUrl,getExtrasUrl,ImagePath,postAddHotspot,deleteExtra}
