@@ -4,7 +4,14 @@ import OptionButtons from "./botones/buttonsOptions";
 import axios from "axios";
 import ReelImages from "./reel/ReelImages";
 import 'react-modal-video/scss/modal-video.scss';
-import ModalVideo from 'react-modal-video'
+import ModalVideo from 'react-modal-video';
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
+import { useSwipeable } from 'react-swipeable';
+
+//import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
+import { PDFViewer } from '@react-pdf/renderer';
+import { Document, Page } from 'react-pdf';
 import {
     completeImageUrl,
     deleteHotspot,
@@ -53,15 +60,43 @@ export function Visualizador({tipo, id,data, extras}) {
     const [countForLoadBug, setCountForLoadBug] = useState(0);
     const [showInfoObject, setShowInfoObject] = useState(false);
     const [activeEscena, setActiveEscena] = useState("0"); //escena que esta activa lo hace con
+    const [prevDelta, setPrevDelta] = useState(1);
 
     const [openYoutubeModal, setOpenYoutubeModal] = useState(false);
     const [extraPdfOrVideo, setExtraPdfOrVideo] = useState({});
+    const [ openPdfModal, setOpenPdfModal ] = useState(false);
 
     const extraContainerRef=useRef();
     const extraInViewRef = useRef();
     const tridiRef = useRef(null);
 
     let zooom=1;
+
+    const handlers = useSwipeable({
+        onSwiping: (eventData) => leftSwip(eventData),
+        delta: { left: 1, right: 1 }
+    });
+
+
+
+    const leftSwip=(eventData)=>{
+        if(prevDelta > eventData.deltaX){
+            tridiRef.current.next();
+            tridiRef.current.next();
+            tridiRef.current.next();
+            tridiRef.current.next();
+            tridiRef.current.next();
+        }else{
+            tridiRef.current.prev();
+            tridiRef.current.prev();
+            tridiRef.current.prev();
+            tridiRef.current.prev();
+            tridiRef.current.prev();
+        }
+        setPrevDelta(eventData.deltaX);
+
+    }
+
 
 
     // Recibe toda la info del objeto
@@ -163,7 +198,6 @@ export function Visualizador({tipo, id,data, extras}) {
 
         if(fetchedPinsObject !== undefined)
         {
-            console.log(fetchedPinsObject)
             let newPins=[]
             for (let hotspot of fetchedPinsObject ){
                 hotspot.frameId=hotspot.idFrame;
@@ -255,6 +289,9 @@ export function Visualizador({tipo, id,data, extras}) {
         }
         else if(extraInHotspot.hasOwnProperty("path")){
             console.log("pdf")
+            setExtraPdfOrVideo(extraInHotspot);
+            setOpenPdfModal(true);
+
         }
 
     };
@@ -455,7 +492,6 @@ export function Visualizador({tipo, id,data, extras}) {
     }
 
     useEffect(() => {
-        console.log(pins)
         if (pins.length !== 0 && newHotspot === true) {
             setAwaitAddHotspot(true);
             frameReplicateOneReference(pins[pins.length-1]);
@@ -871,6 +907,7 @@ export function Visualizador({tipo, id,data, extras}) {
                                minZoom={1}
                                onZoom={zoomValueHandler}
                                onFrameChange={frameChangeHandler}
+                               touch={false}
                                onAutoplayStart={
                                    () => setIsAutoPlayRunning(true)
                                }
@@ -897,7 +934,7 @@ export function Visualizador({tipo, id,data, extras}) {
 ;
             }
             return (
-                <div className={`tridi-container`} onWheel={handleWheel} onClick={clickOnTridiContainer}>
+                <div className={`tridi-container`} {...handlers} onWheel={handleWheel} onClick={clickOnTridiContainer}>
                     {escenasSrcImages}
                 </div>
             );
@@ -906,7 +943,9 @@ export function Visualizador({tipo, id,data, extras}) {
     }
 
 
-    function youtube_parser(url){
+
+    function youtube_parser(url=""){
+
         var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
         var match = url.match(regExp);
         return (match&&match[7].length==11)? match[7] : false;
@@ -919,6 +958,31 @@ export function Visualizador({tipo, id,data, extras}) {
 
     },[openYoutubeModal]
 )
+
+    function openModal() {
+        setOpenPdfModal(true);
+    }
+
+    function closeModal() {
+        setOpenPdfModal(false);
+    }
+
+    const modalPdf = ()=>{
+        return (
+            openPdfModal?
+            <div className={"modal-pdf-container "} >
+                <Popup open={openPdfModal} onClose={ ()=>setOpenPdfModal(false)} position="right center">
+                    <div className={"container-iframe-modal"}>
+                        <iframe id="iframepdf" src="https://www.africau.edu/images/default/sample.pdf"></iframe>
+                        <button className={"button-option"} onClick={()=>setOpenPdfModal(false)}>Cerrar</button>
+                    </div>
+
+                </Popup>
+
+            </div>
+                : null
+        );
+    }
     return (
         <div className="visualizador dragging">
             <ToastContainer />
@@ -932,6 +996,7 @@ export function Visualizador({tipo, id,data, extras}) {
                     Modo Edicion
                 </button>
             </div>
+            {modalPdf()}
 
             {
                 modalVideoYoutube()
@@ -1001,6 +1066,4 @@ export function Visualizador({tipo, id,data, extras}) {
                 tipo === "vehiculo" ? null /*<NavigationCarButtons onOpenDoors={handleOpenDoors} onCloseDoors={handleCloseDoors}  onInterior={handleInterior}></NavigationCarButtons>*/ : null /*<NavigationObjectButttons ></NavigationObjectButttons>*/
             } </div>
     );
-
-
 }
