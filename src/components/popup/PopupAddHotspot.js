@@ -75,29 +75,6 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
         }
     }
 
-    /*
-        function onCrear(image,input){
-          console.log(imageSelected);
-          console.log(input);
-
-          //FUNCION PARA CONTROLAR SELECCION DE EXTRAS
-          if(image === null || nameValue === ""){
-            if (image === null){
-              console.log('la imagen es nula');
-            }
-            if(nameValue ===""){
-              console.log('El nombre esta en blanco');
-            }
-          }else{
-            console.log('todo ok');
-
-            handleCreateHotspot(imageSelected,nameValue)
-            setOpen(false);
-            setImageSelected(null)
-            setNameValue("")
-          }
-        }
-    */
 
     function onClickHotspotPopup(){
         setOpen(true)
@@ -170,25 +147,29 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
 
 
 
-            return <Dropzone onDrop={acceptedFiles => setAcceptedFiles(acceptedFiles)} >
+            return (
+                <div >
+                    <Dropzone onDrop={acceptedFiles => setAcceptedFiles(acceptedFiles)} >
 
-                {({getRootProps, getInputProps}) => (
-                    <section>
-                        <aside>
-                            {acceptedFiles.map(file => (
-                                <li key={file.path}>
-                                    {file.path} - {file.size} bytes
-                                </li>))}
-                        </aside>
+                        {({getRootProps, getInputProps}) => (
+                            <section>
+                                <aside>
+                                    {acceptedFiles.map(file => (
+                                        <li key={file.path}>
+                                            {file.path} - {file.size} bytes
+                                        </li>))}
+                                </aside>
 
-                        <div {...getRootProps({style})}>
-                            <input {...getInputProps()} />
-                            <p>Drag 'n' drop some files here, or click to select files</p>
-                        </div>
-                    </section>
-                )}
-            </Dropzone>
-            /* return  <AddPdf></AddPdf>*/
+                                <div {...getRootProps({style})}>
+                                    <input {...getInputProps()} />
+                                    <p>Arraste o pulse para subir un archivo PDF</p>
+                                </div>
+                            </section>
+                        )}
+                    </Dropzone>
+                </div>
+            );
+
         }
     }
 

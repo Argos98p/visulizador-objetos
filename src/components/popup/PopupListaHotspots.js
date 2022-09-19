@@ -9,20 +9,20 @@ import "./PopupListaHotspotsStyle.css"
 
         useEffect(() => {
             console.log('render lista')
-        }, );
+        });
 
 
     function tooglePopup(){
         setOpen(!open)
     }
 
-
-
     function handleDeleteHotspot(itemObject){
         onClickDeleteHotspot(itemObject.item);
     }
 
     function handleListaHotspots(){
+
+
         if(listaHotspots.length===0){
             return (<h6>No se encontron hotspots</h6>);
         }
@@ -30,7 +30,6 @@ import "./PopupListaHotspotsStyle.css"
             let nombresHotspots=[]
             const unique = [...new Set(listaHotspots.map(item => item.nombreHotspot))];
             nombresHotspots=nombresHotspots.concat(unique);
-            //console.log(nombresHotspots)
             return nombresHotspots.map((item) => {
                 return (
                     <div key={item} className="item-hotspots">

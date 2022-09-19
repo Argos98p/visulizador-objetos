@@ -8,10 +8,7 @@ import ModalVideo from 'react-modal-video';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { useSwipeable } from 'react-swipeable';
-
-//import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
-import { PDFViewer } from '@react-pdf/renderer';
-import { Document, Page } from 'react-pdf';
+import copy from 'copy-to-clipboard';
 import {
     completeImageUrl,
     deleteHotspot,
@@ -32,8 +29,8 @@ import "./visualizador_style.css";
 import {toast, ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import DotLoader from "react-spinners/DotLoader";
-
 import PopupListaHotspot from "./popup/PopupListaHotspots";
+import PopupInfoObjetct from "./popup/PopupInfoObjetct";
 
 export function Visualizador({tipo, id,data, extras}) {
 
@@ -57,14 +54,14 @@ export function Visualizador({tipo, id,data, extras}) {
     const [hotspotInit, setHotspotInit] = useState(false);
     const [hotspotEnd, setHotspotEnd] = useState(false);
     const [sphereImageInView, setSphereImageInView] = useState(false);
-    const [countForLoadBug, setCountForLoadBug] = useState(0);
-    const [showInfoObject, setShowInfoObject] = useState(false);
+
     const [activeEscena, setActiveEscena] = useState("0"); //escena que esta activa lo hace con
     const [prevDelta, setPrevDelta] = useState(1);
-
     const [openYoutubeModal, setOpenYoutubeModal] = useState(false);
     const [extraPdfOrVideo, setExtraPdfOrVideo] = useState({});
     const [ openPdfModal, setOpenPdfModal ] = useState(false);
+    const [infoObjectData, setInfoObjectData] = useState("");
+    const [ openModalInfoObject, setOpenModalInfoObject] = useState(false);
 
     const extraContainerRef=useRef();
     const extraInViewRef = useRef();
@@ -76,8 +73,6 @@ export function Visualizador({tipo, id,data, extras}) {
         onSwiping: (eventData) => leftSwip(eventData),
         delta: { left: 1, right: 1 }
     });
-
-
 
     const leftSwip=(eventData)=>{
         if(prevDelta > eventData.deltaX){
@@ -94,16 +89,22 @@ export function Visualizador({tipo, id,data, extras}) {
             tridiRef.current.prev();
         }
         setPrevDelta(eventData.deltaX);
-
     }
-
-
 
     // Recibe toda la info del objeto
     useEffect(() => {
         axios.get(infoObjectUrl(id)).then(
             response=>{
-                setObjetoData(response.data);
+                if (response.status===200){
+                    setObjetoData(response.data);
+                    setInfoObjectData(response.data.info);
+                    let numberOfFrames = {};
+                    for(let index in response.data.escenas){
+                        numberOfFrames[index] = Object.keys(response.data.escenas[index].imagenes).length;
+                    }
+                    setFrames(numberOfFrames)
+                }
+
             }
         ).catch(error => {
             if(error.response){
@@ -145,8 +146,8 @@ export function Visualizador({tipo, id,data, extras}) {
                 setPins(prepararPins(mapHotspots[activeEscena]));
             });
 
-
-    }, [objetoData]);
+return ()=>setUpdateHotspots(false);
+    }, [objetoData, updateHotspots]);
 
     useEffect(() => {
         setTimeout(()=>{
@@ -159,7 +160,6 @@ export function Visualizador({tipo, id,data, extras}) {
     /*
     useEffect(() => {
         if(updateHotspots===true){
-
             console.log('recibe nuevamente pins')
             let promesass=[];
             let mapHotspots={};
@@ -191,8 +191,6 @@ export function Visualizador({tipo, id,data, extras}) {
             setUpdateHotspots(false)
         };
     }, [updateHotspots]);*/
-
-
 
     const prepararPins = (fetchedPinsObject) => {
 
@@ -243,30 +241,13 @@ export function Visualizador({tipo, id,data, extras}) {
         return arrayFrames;
     }
 
-    const notifyEdicion = () => toast.info("modo edición", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined
-    });
-
-    const notifyVisualizacion = () => toast.info("visualización", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined
-    });
 
     function handleClickExtras() {
-        extraContainerRef.current.classList.toogle("no-visible")
-        //setVisibleExtras(!visibleExtras)
+        console.log(!visibleExtras);
+        setVisibleExtras(!visibleExtras);
+        extraContainerRef.current.classList.toggle("no-visible");
     }
+
     const frameChangeHandler = (currentFrameIndex) => {
         setCurrentFrameIndex(currentFrameIndex);
     };
@@ -357,6 +338,7 @@ export function Visualizador({tipo, id,data, extras}) {
     /****** Inicio ---- HOTSPOTS UNA REFERENCIA ******/
 
     const handleCreateHotspot=(imgExtra,info)=>{
+
         if (info === "" || imgExtra == null
         ) {
             console.log('Informacion erronea')
@@ -369,6 +351,14 @@ export function Visualizador({tipo, id,data, extras}) {
         }
     }
 
+    useEffect(() => {
+        if(newHotspot===true){
+            toast.info('clicke o pulse sobre la pantalla para crear el hotspot',{autoClose: 3000,
+                hideProgressBar: true,theme:"dark"});
+        }
+    }, [newHotspot]);
+
+
     const clickOnTridiContainer = () => {
         if (addHotspotMode) {
             tridiRef.current.toggleRecording(false);
@@ -376,28 +366,49 @@ export function Visualizador({tipo, id,data, extras}) {
     }
 
     const frameReplicateOneReference=()=>{
+
+        console.log(
+            pins[pins.length-1]
+        )
+        console.log(frames[activeEscena]);
+
         let lastPin= pins[pins.length-1];
         let move = 0.014;
         let j=10;
-        let aux=20;
+        let aux=j;
         let arrayHotspots=[];
 
         let originalX = parseFloat(lastPin.x);
         let originalY = lastPin.y;
 
-        if(lastPin.frameId -j > 0  && lastPin.frameId + j <=frames.length){
-            for(let i=lastPin.frameId-20;i<=lastPin.frameId+20;i++){
+        if(lastPin.frameId -j > 0  && lastPin.frameId + j <=frames[activeEscena]){
+
+            console.log('entra 1');
+            for(let i=lastPin.frameId-j;i<=lastPin.frameId+j;i++){
                 let newPin={
-                    idframe:i+1,
+                    idframe:i,
                     nombreHotspot:nameHotspot,
                     idExtra:extraSelected.idextra,
                     x:originalX+move*aux,
                     y:parseFloat(originalY),
                 }
+                if(j===0){
+                    newPin={
+                        idframe:i,
+                        nombreHotspot:nameHotspot,
+                        idExtra:extraSelected.idextra,
+                        x:originalX,
+                        y:parseFloat(originalY),
+                    }
+                }
                 arrayHotspots.push(newPin)
                 aux--;
             }
+
+
         }else if(lastPin.frameId - j < 0 ){
+            console.log('entra 2');
+
             let k=1;
             for(let i=lastPin.frameId;i<=j+lastPin.frameId;i++){
                 let newPin={
@@ -411,9 +422,9 @@ export function Visualizador({tipo, id,data, extras}) {
                 k++;
             }
             k=-20;
-            let h= lastPin.frameId -j +frames.length
+            let h= lastPin.frameId -j +frames[activeEscena]
             for(let i = lastPin.frameId -j;i<lastPin.frameId;i++){
-                if(h===frames.length){
+                if(h===frames[activeEscena]){
                     h=0;
                 }
                 if(h!==0){
@@ -433,7 +444,8 @@ export function Visualizador({tipo, id,data, extras}) {
             }
 
         }
-        else if(lastPin.frameId+j >frames.length){
+        else if(lastPin.frameId+j > frames[activeEscena].length){
+            console.log('entra 3');
             let k=-20;
             for(let i=lastPin.frameId-j;i<lastPin.frameId;i++){
                 let newPin={
@@ -449,7 +461,7 @@ export function Visualizador({tipo, id,data, extras}) {
             k=1
             let h= lastPin.frameId +1;
             for(let i = lastPin.frameId ;i<lastPin.frameId+j;i++){
-                if(h===frames.length){
+                if(h===frames[activeEscena].length){
                     h=0;
                 }
                 if(h!==0){
@@ -480,7 +492,6 @@ export function Visualizador({tipo, id,data, extras}) {
                 setAddHotspotMode(false)
                 setUpdateHotspots(true);
                 setNewHotspot(false);
-
             }
         ).catch(
             (e)=>{
@@ -771,7 +782,7 @@ export function Visualizador({tipo, id,data, extras}) {
 
         return isEditMode?
             <div className="lista-hotspost">
-                <PopupListaHotspot listaHotspots={hotspotsMap[currentEscena.nombre]} onClickDeleteHotspot={handleDeleteHotspot}></PopupListaHotspot>
+                <PopupListaHotspot listaHotspots={hotspotsMap[activeEscena]} onClickDeleteHotspot={handleDeleteHotspot}></PopupListaHotspot>
             </div>
             :null
     }
@@ -796,32 +807,33 @@ export function Visualizador({tipo, id,data, extras}) {
         ,[handleButtonEscena,objetoData]
     )
 
+    const handleOpenModalInfoObject = () => {
+        setOpenModalInfoObject(false);
+    }
 
     const botonInfoObject=()=>{
-
-        const infoObject=()=>{
-            if(objetoData!== null){
-                let info=objetoData.info.split(',')
-                return <div className="info-object-data">{info.map(item => item)}</div>
-            }
-        }
-        const showInfoObjectToast = () => {
-            toast.info(infoObject, {
-                position: toast.POSITION.TOP_CENTER,
-                className:'toast-message',
-                autoClose: false
-            });
-        };
         return <>
-            <button className="button-option button-info-object" onClick={showInfoObjectToast}>Informacion </button>
-            <ToastContainer autoClose={false}/>
+            <PopupInfoObjetct infoObjectData={infoObjectData} handleOpenModalInfoObject={()=>handleOpenModalInfoObject()} openModalInfoObject={openModalInfoObject}></PopupInfoObjetct>
+            <button className="button-option button-info-object" onClick={()=>setOpenModalInfoObject(true)}>Informacion </button>
         </>
     }
     const botonCompartir=()=>{
-        const notify = () => toast("Enlace copiado al portapales");
-        return <button className="btn-share button-option"
-                       onClick={() => {navigator.clipboard.writeText(`http://173.255.114.112:3000/visualizador/${id}`);notify()}}>Compartir</button>
+        const notify = () => toast.info("Enlace copiado al portapapeles",{autoClose: 3000,
+            hideProgressBar: true,theme:"dark"});
+        const handleBtnCompartir = ()=>{
+            try {
+                copy(`http://173.255.114.112:3000/visualizador/${id}`);
+                notify();
+
+            }catch (e) {
+            }
+        }
+
+
+    return <button className="btn-share button-option"
+                       onClick={() =>handleBtnCompartir()}>Compartir</button>
     }
+
 
     const addPdfVis=(file)=>{
         console.log(file)
@@ -878,7 +890,6 @@ export function Visualizador({tipo, id,data, extras}) {
             setNewHotspot(true);
         }
     }
-
     const loadAllTridiComponents=()=>{
         if(objetoData){
             let escenas=objetoData.escenas;
@@ -886,7 +897,7 @@ export function Visualizador({tipo, id,data, extras}) {
             let show=false;
             for (let index in escenas){
                 show=activeEscena===index
-                let imagesSrcOneScene = getArraySrcPath(escenas[index])
+                let imagesSrcOneScene = getArraySrcPath(escenas[index]);
                 if(imagesSrcOneScene.length === 0 ){
                     escenasSrcImages.push(
                         <div className="emptyEscena ">
@@ -931,8 +942,9 @@ export function Visualizador({tipo, id,data, extras}) {
                         />
                     )
                 }
-;
+
             }
+
             return (
                 <div className={`tridi-container`} {...handlers} onWheel={handleWheel} onClick={clickOnTridiContainer}>
                     {escenasSrcImages}
@@ -986,7 +998,6 @@ export function Visualizador({tipo, id,data, extras}) {
     return (
         <div className="visualizador dragging">
             <ToastContainer />
-
             {listaHotspost()}
             <div className="top-buttons ">
                 {botonCompartir()}
@@ -1010,10 +1021,9 @@ export function Visualizador({tipo, id,data, extras}) {
             </div> : null*/
             }
 
+
             <div ref={extraContainerRef} className={
-                `reel ${
-                    !visibleExtras && "no-visible"
-                } `
+                `reel `
             }>
                 <ReelImages id={id}
                             ref={extraInViewRef}
@@ -1030,7 +1040,7 @@ export function Visualizador({tipo, id,data, extras}) {
             }
             <button className={
                 `reel-btn button-option ${
-                    visibleExtras ? "activo" : ""
+                    visibleExtras===true ? "activo" : ""
                 }`
             }
                     onClick={handleClickExtras}>
