@@ -153,7 +153,7 @@ return ()=>setUpdateHotspots(false);
         setTimeout(()=>{
             setLoadPercentage(100);
             setLoadStatus(true);
-        },5000);
+        },6000);
         return(setLoadStatus(false))
     }, []);
 
@@ -367,10 +367,6 @@ return ()=>setUpdateHotspots(false);
 
     const frameReplicateOneReference=()=>{
 
-        console.log(
-            pins[pins.length-1]
-        )
-        console.log(frames[activeEscena]);
 
         let lastPin= pins[pins.length-1];
         let move = 0.014;
@@ -409,7 +405,7 @@ return ()=>setUpdateHotspots(false);
         }else if(lastPin.frameId - j < 0 ){
             console.log('entra 2');
 
-            let k=1;
+            let k=0;
             for(let i=lastPin.frameId;i<=j+lastPin.frameId;i++){
                 let newPin={
                     idframe:i,
@@ -421,7 +417,7 @@ return ()=>setUpdateHotspots(false);
                 arrayHotspots.push(newPin)
                 k++;
             }
-            k=-20;
+            k=-j;
             let h= lastPin.frameId -j +frames[activeEscena]
             for(let i = lastPin.frameId -j;i<lastPin.frameId;i++){
                 if(h===frames[activeEscena]){
@@ -444,24 +440,24 @@ return ()=>setUpdateHotspots(false);
             }
 
         }
-        else if(lastPin.frameId+j > frames[activeEscena].length){
+        else if(lastPin.frameId+j > frames[activeEscena]){
             console.log('entra 3');
-            let k=-20;
-            for(let i=lastPin.frameId-j;i<lastPin.frameId;i++){
+            let k=0;
+            for(let i=lastPin.frameId;i>lastPin.frameId-j;i--){
                 let newPin={
-                    idframe:i+1,
+                    idframe:i,
                     nombreHotspot:nameHotspot,
                     idExtra:extraSelected.idextra,
                     x:originalX+move*k,
                     y:parseFloat(originalY),
                 }
                 arrayHotspots.push(newPin)
-                k++;
+                k--;
             }
-            k=1
+            k=0
             let h= lastPin.frameId +1;
             for(let i = lastPin.frameId ;i<lastPin.frameId+j;i++){
-                if(h===frames[activeEscena].length){
+                if(h===frames[activeEscena]){
                     h=0;
                 }
                 if(h!==0){
@@ -780,11 +776,18 @@ return ()=>setUpdateHotspots(false);
     }
     function listaHotspost(){
 
-        return isEditMode?
+
+        {
+            /*
+            * return isEditMode?
             <div className="lista-hotspost">
                 <PopupListaHotspot listaHotspots={hotspotsMap[activeEscena]} onClickDeleteHotspot={handleDeleteHotspot}></PopupListaHotspot>
             </div>
             :null
+            * */
+        }
+        return null;
+
     }
 
 
@@ -908,9 +911,11 @@ return ()=>setUpdateHotspots(false);
                     )
                 }else{
                     escenasSrcImages.push(
+
                         <Tridi ref={ show ? tridiRef : null}
                                key={index}
-                               className={show ? "" : "oculto"}
+                               className={show && loadStatus? "" : "oculto" }
+
                                images={imagesSrcOneScene}
                                autoplaySpeed={70}
                                zoom={1}
@@ -934,7 +939,7 @@ return ()=>setUpdateHotspots(false);
                                onPinClick={pinClickHandler}
                                setPins={setPins}
                                renderPin={myRenderPin}
-                               showStatusBar
+                               showStatusBar={false}
                                pins={pins}
                             //hintOnStartup
                             //hintText="Arrastre para mover"
@@ -946,7 +951,20 @@ return ()=>setUpdateHotspots(false);
             }
 
             return (
+
                 <div className={`tridi-container`} {...handlers} onWheel={handleWheel} onClick={clickOnTridiContainer}>
+                    {
+                        loadStatus === false ? <div className="sweet-loading">
+                            <DotLoader color="#3F3F3F"
+                                       loading={
+                                           !loadStatus
+                                       }
+                                       size={70}/>
+                            {/*<h1>{loadPercentage}
+                            %
+                        </h1>*/}
+                        </div> : null
+                    }
                     {escenasSrcImages}
                 </div>
             );

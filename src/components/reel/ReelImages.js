@@ -279,6 +279,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
                 }) => (
 
                   <div className="upload__image-wrapper">
+                    {/*
                     <button
                         style={isDragging ? { color: 'red' } : undefined}
                         onClick={onImageUpload}
@@ -287,6 +288,8 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
                       Agregar extra
                     </button>
                     &nbsp;
+                    */}
+
 
                   </div>
               )}
