@@ -10,6 +10,7 @@ import {FaTrash} from "react-icons/fa/index.js";
 import {deleteExtra,getExtrasUrl,uploadExtraUrl} from "../../Api/apiRoutes";
 import './ReelImages.css'
 import Slider from "react-slick";
+import {FaChevronCircleDown} from "react-icons/fa/index.js"
 
 const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
@@ -26,7 +27,11 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     slidesToShow: 4,
     slidesToScroll: 1,
     draggable:false,
-
+    centered:true,
+    adaptiveHeight:false,
+    centerMode:true,
+    centerPadding:"10px",
+    rows:1,
     responsive: [
       {
         breakpoint: 1024,
@@ -57,8 +62,8 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   useImperativeHandle(ref, () => ({
 
     onExtra(extraId) {
-        setCurrentImage(searchExtraById(extraId));
-        setIsViewerOpen(true);
+      setCurrentImage(searchExtraById(extraId));
+      setIsViewerOpen(true);
     }
   }));
 
@@ -91,23 +96,23 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
   const getExtras = async() => {
     axios.get(getExtrasUrl(id))
-    .then((response)=>{
-      if(response.status===200){
-        let temp= [];
-        response.data.forEach((item,index)=>{
-              if(item.hasOwnProperty("imagen")){
-                let srcImage=ImagePath(item.imagen.path);
-                temp.push([srcImage,item.idextra])
+        .then((response)=>{
+              if(response.status===200){
+                let temp= [];
+                response.data.forEach((item,index)=>{
+                      if(item.hasOwnProperty("imagen")){
+                        let srcImage=ImagePath(item.imagen.path);
+                        temp.push([srcImage,item.idextra])
+                      }
+                    }
+                );
+                console.log(temp);
+                setImagesListSrc(temp)
+              }else{
+                console.log('error al recibir las imagenes');
               }
-        }
-        );
-        console.log(temp);
-        setImagesListSrc(temp)
-      }else{
-        console.log('error al recibir las imagenes');
-      }
-    }
-    ).catch(error => {
+            }
+        ).catch(error => {
       if(error.response){
         console.log(error.response);
       }else if(error.request){
@@ -153,24 +158,24 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
   useEffect(()=>{
     axios.get(getExtrasUrl(id))
-    .then((response)=>{
-      if(response.status===200){
-        let temp= [];
-        response.data.forEach((item,index)=>{
-          if(item.hasOwnProperty("imagen")){
-            let srcImage=ImagePath(item.imagen.path);
-            temp.push([srcImage,item.idextra])
-          }
+        .then((response)=>{
+              if(response.status===200){
+                let temp= [];
+                response.data.forEach((item,index)=>{
+                      if(item.hasOwnProperty("imagen")){
+                        let srcImage=ImagePath(item.imagen.path);
+                        temp.push([srcImage,item.idextra])
+                      }
 
-          //temp.push( <Carousel.Item key={index} ><img width="100%" src={srcImage} key={index}  onClick={ () => openImageViewer(index)}/> </Carousel.Item>)
-        }
-        );
-        setImagesListSrc(temp)
-      }else{
-        console.log('error al recibir las imagenes');
-      }
-    }
-    ).catch(error => {
+                      //temp.push( <Carousel.Item key={index} ><img width="100%" src={srcImage} key={index}  onClick={ () => openImageViewer(index)}/> </Carousel.Item>)
+                    }
+                );
+                setImagesListSrc(temp)
+              }else{
+                console.log('error al recibir las imagenes');
+              }
+            }
+        ).catch(error => {
       if(error.response){
         console.log(error.response);
       }else if(error.request){
@@ -188,15 +193,15 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
   function onClickDeleteExtra(src){
 
-      axios.post(deleteExtra(id,src[1]))
-    .then((response)=>{
-      if(response.status === 200){
-        console.log(response);
-        getExtras();
-      }else{
-        console.log(response);
-      }
-    }).catch(error => {
+    axios.post(deleteExtra(id,src[1]))
+        .then((response)=>{
+          if(response.status === 200){
+            console.log(response);
+            getExtras();
+          }else{
+            console.log(response);
+          }
+        }).catch(error => {
       if(error.response){
         console.log(error.response);
       }else if(error.request){
@@ -218,21 +223,19 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
       )
     }
 
-    return <Slider {...settings}>
+    return <Slider className="reel_image-extra-container" {...settings}>
 
       {imagesListSrc.map((src, index) => (
 
+          <div className='reel_div-img' key={index}>
+            {isEditMode
+                ?<button className='btn-eliminar-extra' onClick={()=>onClickDeleteExtra(src)}> <FaTrash/></button>
+                :null
+            }
+            <img className='cursor-pointer reel_borde-redondo ' src={src[0]} key={index} alt={'hola'}
+                 onClick={() => openImageViewer(index)}/>
 
-
-          <div className='reel-image-extra-container' key={index}>
-              {isEditMode
-                  ?<button className='btn-eliminar-extra' onClick={()=>onClickDeleteExtra(src)}> <FaTrash/></button>
-                  :null
-              }
-              <img className='cursor-pointer imgReel' src={src[0]} key={index} alt={'hola'}
-          onClick={() => openImageViewer(index)}/>
-
-            </div>
+          </div>
 
       ))}
 
@@ -240,46 +243,47 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
   }
 
+
   return (
-    <div className='reel-images-container'>
-      {
-          imagesListSrc.length===0 && <div className="extra-vacio"><h4>No hay extras</h4></div>
-      }
+      <div className='reel_container'>
+        {
+            imagesListSrc.length===0 && <div className="extra-vacio"><h4>No hay extras</h4></div>
+        }
 
-<div>
-      {isViewerOpen && (
-        <ImageViewer
-          src={ imagesListSrc.map((item,index)=>item[0]) }
-          currentIndex={ currentImage }
-          disableScroll={ false }
-          closeOnClickOutside={ true }
-          onClose={ closeImageViewer }
-          backgroundStyle={{
-            backgroundColor: "rgba(0,0,0,0.9)"
-          }}
-        />
-      )}
-    </div>
-      {
-        isEditMode
-          ? <ImageUploading
-                multiple
-                value={images}
-                onChange={onChange}
-                dataURLKey="data_url"
-            >
-              {({
-                  imageListUpload,
-                  onImageUpload,
-                  onImageRemoveAll,
-                  onImageUpdate,
-                  onImageRemove,
-                  isDragging,
-                  dragProps,
-                }) => (
 
-                  <div className="upload__image-wrapper">
-                    {/*
+
+        {isViewerOpen && (
+            <ImageViewer
+                src={ imagesListSrc.map((item,index)=>item[0]) }
+                currentIndex={ currentImage }
+                disableScroll={ false }
+                closeOnClickOutside={ true }
+                onClose={ closeImageViewer }
+                backgroundStyle={{
+                  backgroundColor: "rgba(0,0,0,0.9)"
+                }}
+            />
+        )}
+        {
+          isEditMode
+              ? <ImageUploading
+                  multiple
+                  value={images}
+                  onChange={onChange}
+                  dataURLKey="data_url"
+              >
+                {({
+                    imageListUpload,
+                    onImageUpload,
+                    onImageRemoveAll,
+                    onImageUpdate,
+                    onImageRemove,
+                    isDragging,
+                    dragProps,
+                  }) => (
+
+                    <div className="upload__image-wrapper">
+                      {/*
                     <button
                         style={isDragging ? { color: 'red' } : undefined}
                         onClick={onImageUpload}
@@ -291,18 +295,18 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
                     */}
 
 
-                  </div>
-              )}
-            </ImageUploading>
-          : null
-      }
+                    </div>
+                )}
+              </ImageUploading>
+              : null
 
+        }
 
-{
-  ImagesReel()
-}
+        {
+          ImagesReel()
+        }
 
-{/*
+        {/*
 
       <Carousel cols={6} rows={1} gap={10} loop containerStyle={{height:"100%"}} responsiveLayout={[
               {

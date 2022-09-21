@@ -1,14 +1,7 @@
-.reel-images-container{
-    /*display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;*/
-    /*
-    height: 100%;*/
-   /* width: 100%;*/
+/*.reel-images-container{
+
 max-height: 100%;
-}
+}*/
 
 
 .extra-vacio{
@@ -82,7 +75,7 @@ height: 100%;
     position: relative;
 }
 
-
+/*
 .imgReel{
     object-fit: contain;
     height: 100%;
@@ -90,7 +83,7 @@ box-sizing: border-box;
 max-width: 100%;
 max-height: 149px;
 width: 100%;
-}
+}*/
 
 
 

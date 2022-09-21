@@ -31,6 +31,7 @@ import "react-toastify/dist/ReactToastify.css";
 import DotLoader from "react-spinners/DotLoader";
 import PopupListaHotspot from "./popup/PopupListaHotspots";
 import PopupInfoObjetct from "./popup/PopupInfoObjetct";
+import {FaChevronDown, FaChevronUp} from "react-icons/fa";
 
 export function Visualizador({tipo, id,data, extras}) {
 
@@ -670,74 +671,6 @@ return ()=>setUpdateHotspots(false);
     }
 
 
-    const getVisualizador = ()=> {
-        if (frames.length === 0) {
-            return <div className="emptyEscena ">
-                <h2 className="texto-blanco">Escena vacia</h2>
-                <br></br>
-                <LottieEmptyEscenas></LottieEmptyEscenas>
-            </div>
-        } else {
-            return (
-                <div className={`tridi-container`}
-                     onWheel={handleWheel}
-                     onClick={clickOnTridiContainer}>
-                    {
-                        loadStatus === false ? <div className="sweet-loading">
-                            <DotLoader color="#3F3F3F"
-                                       loading={
-                                           !loadStatus
-                                       }
-                                       size={70}/>
-                            {/*<h1>{loadPercentage}
-                            %
-                        </h1>*/}
-                        </div> : null
-                    }
-                    {
-                        <Tridi ref={tridiRef}
-                               className={
-
-                                   `${
-                                       loadStatus ? "" : 'oculto'
-                                   }`
-                               }
-                               images={frames}
-                               autoplaySpeed={70}
-                               zoom={1}
-                               maxZoom={3}
-                               minZoom={1}
-                               onZoom={zoomValueHandler}
-                               onFrameChange={frameChangeHandler}
-                               onAutoplayStart={
-                                   () => setIsAutoPlayRunning(true)
-                               }
-                               onAutoplayStop={
-                                   () => setIsAutoPlayRunning(false)
-                               }
-                               onRecordStart={
-                                   recordStartHandler
-                               }
-                               onRecordStop={
-                                   recordStopHandler
-                               }
-                               onPinClick={pinClickHandler}
-                               setPins={setPins}
-                               renderPin={myRenderPin}
-                               showStatusBar
-                               pins={pins}
-                            //hintOnStartup
-                            //hintText="Arrastre para mover"
-                            //onLoadChange={(e,y)=>console.log(e,y)}
-                        />
-                    }
-                </div>
-
-            )
-        }
-    }
-
-
     function handleActivateEditMode() {
         setIsEditMode(!isEditMode)
     }
@@ -972,8 +905,6 @@ return ()=>setUpdateHotspots(false);
         return <h1>holaa</h1>
     }
 
-
-
     function youtube_parser(url=""){
 
         var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
@@ -1013,8 +944,33 @@ return ()=>setUpdateHotspots(false);
                 : null
         );
     }
+    const buttonCloseReel= () =>{
+        return <>
+                <div className="visualizador_close-reel-button" onClick={handleClickExtras}>
+                    <div className="visualizador_close_container_icon">
+                        <FaChevronDown></FaChevronDown>
+                    </div>
+
+                </div>
+        </>
+
+    }
+
+    const buttonOpenReel = ()=>{
+        if(!visibleExtras)
+        return (
+            <div className={"visualizador_open-reel-button "} onClick={handleClickExtras}>
+                <div className="visualizador_open_container_icon">
+                    <FaChevronUp></FaChevronUp>
+                </div>
+            </div>
+        );
+        else return "";
+
+    }
     return (
         <div className="visualizador dragging">
+            {buttonOpenReel()}
             <ToastContainer />
             {listaHotspost()}
             <div className="top-buttons ">
@@ -1041,8 +997,9 @@ return ()=>setUpdateHotspots(false);
 
 
             <div ref={extraContainerRef} className={
-                `reel `
+                `visualizador_reel `
             }>
+                {buttonCloseReel()}
                 <ReelImages id={id}
                             ref={extraInViewRef}
                             extrasImages={extras}
@@ -1056,14 +1013,11 @@ return ()=>setUpdateHotspots(false);
 
                 </div> : null
             }
-            <button className={
-                `reel-btn button-option ${
-                    visibleExtras===true ? "activo" : ""
-                }`
-            }
-                    onClick={handleClickExtras}>
-                Extras
-            </button>
+
+
+
+
+
             {
                 /*getVisualizador()*/
                 loadAllTridiComponents()
