@@ -32,6 +32,10 @@ import DotLoader from "react-spinners/DotLoader";
 import PopupListaHotspot from "./popup/PopupListaHotspots";
 import PopupInfoObjetct from "./popup/PopupInfoObjetct";
 import {FaChevronDown, FaChevronUp} from "react-icons/fa";
+import {AiOutlineInfo} from "react-icons/ai";
+import {BsChevronDown, BsChevronUp, BsShareFill} from "react-icons/bs";
+import PopupCompartir from "./popup/PopupCompartir";
+
 
 export function Visualizador({tipo, id,data, extras}) {
 
@@ -63,6 +67,7 @@ export function Visualizador({tipo, id,data, extras}) {
     const [ openPdfModal, setOpenPdfModal ] = useState(false);
     const [infoObjectData, setInfoObjectData] = useState("");
     const [ openModalInfoObject, setOpenModalInfoObject] = useState(false);
+    const [ openModalCompartir, setOpenModalCompartir]  = useState(false);
 
     const extraContainerRef=useRef();
     const extraInViewRef = useRef();
@@ -303,7 +308,6 @@ return ()=>setUpdateHotspots(false);
             tridiRef.current.toggleMoving(false)
         }
     }
-
     const handleZoomOut = () => {
         //setZooom(zooom-0.1);
         zooom = zooom -0.1
@@ -315,20 +319,15 @@ return ()=>setUpdateHotspots(false);
             tridiRef.current.toggleMoving(false)
         }
     }
-
-
     const handleAutoPlay = () => {
         tridiRef.current.toggleAutoplay(!isAutoPlayRunning);
     }
-
     const handleWheel = (e) => {
         if(!sphereImageInView){
             e.deltaY > 0 ? handleZoomOut() : handleZoomIn();
         }
 
     }
-
-
     const handleButtonEscena=useCallback((escena)=>{
         setActiveEscena(escena.toString())
         setPins(prepararPins(hotspotsMap[escena]))
@@ -351,21 +350,17 @@ return ()=>setUpdateHotspots(false);
             setNewHotspot(true);
         }
     }
-
     useEffect(() => {
         if(newHotspot===true){
             toast.info('clicke o pulse sobre la pantalla para crear el hotspot',{autoClose: 3000,
                 hideProgressBar: true,theme:"dark"});
         }
     }, [newHotspot]);
-
-
     const clickOnTridiContainer = () => {
         if (addHotspotMode) {
             tridiRef.current.toggleRecording(false);
         }
     }
-
     const frameReplicateOneReference=()=>{
 
 
@@ -658,7 +653,6 @@ return ()=>setUpdateHotspots(false);
         );
     }
 
-
     useEffect(() => {
         ReactTooltip.rebuild();
     });
@@ -669,12 +663,9 @@ return ()=>setUpdateHotspots(false);
             setLoadStatus(true)
         }
     }
-
-
     function handleActivateEditMode() {
         setIsEditMode(!isEditMode)
     }
-
     function handleDeleteHotspot(nameHotspot) {
         setAwaitAddHotspot(true);
         let arrayFramesId = [];
@@ -723,11 +714,9 @@ return ()=>setUpdateHotspots(false);
 
     }
 
-
     const botonesEscenas=useMemo(()=>
             <>
                 {
-
                     Object.entries(objetoData.escenas).map((escena,index) => (
                         <ButtonEscena key={
                             escena[0]
@@ -750,24 +739,27 @@ return ()=>setUpdateHotspots(false);
     const botonInfoObject=()=>{
         return <>
             <PopupInfoObjetct infoObjectData={infoObjectData} handleOpenModalInfoObject={()=>handleOpenModalInfoObject()} openModalInfoObject={openModalInfoObject}></PopupInfoObjetct>
-            <button className="button-option button-info-object" onClick={()=>setOpenModalInfoObject(true)}>Informacion </button>
+            <button className="visualizador_btn-info shadow-buttons" onClick={()=>setOpenModalInfoObject(true)}><AiOutlineInfo className="icon-bold"/> </button>
         </>
     }
-    const botonCompartir=()=>{
-        const notify = () => toast.info("Enlace copiado al portapapeles",{autoClose: 3000,
-            hideProgressBar: true,theme:"dark"});
-        const handleBtnCompartir = ()=>{
-            try {
-                copy(`http://173.255.114.112:3000/visualizador/${id}`);
-                notify();
 
-            }catch (e) {
-            }
+
+
+    const botonCompartir=()=>{
+        const handleCloseModalCompartir = ()=>{
+            setOpenModalCompartir(false);
+        }
+        const handleOpenModalCompartir = ()=>{
+            setOpenModalCompartir(true);
         }
 
+    return <>
+        <PopupCompartir openModalCompartir = {openModalCompartir} handleCloseModalCompartir={()=>handleCloseModalCompartir()}></PopupCompartir>;
+        <button className="visualizador_btn-share shadow-buttons"
+                onClick={() =>handleOpenModalCompartir()}><BsShareFill></BsShareFill></button>
 
-    return <button className="btn-share button-option"
-                       onClick={() =>handleBtnCompartir()}>Compartir</button>
+    </>
+
     }
 
 
@@ -948,7 +940,7 @@ return ()=>setUpdateHotspots(false);
         return <>
                 <div className="visualizador_close-reel-button" onClick={handleClickExtras}>
                     <div className="visualizador_close_container_icon">
-                        <FaChevronDown></FaChevronDown>
+                        <BsChevronDown className="visualizador_close-reel-icon"></BsChevronDown>
                     </div>
 
                 </div>
@@ -961,32 +953,50 @@ return ()=>setUpdateHotspots(false);
         return (
             <div className={"visualizador_open-reel-button "} onClick={handleClickExtras}>
                 <div className="visualizador_open_container_icon">
-                    <FaChevronUp></FaChevronUp>
+                    <BsChevronUp></BsChevronUp>
                 </div>
             </div>
         );
         else return "";
 
     }
+
+
+    const botonAgregarHotspot=()=>{
+        if(isEditMode){
+            return <div className="add-buttons">
+                <PopupNewHotspot id={id} extras={extras} addPdfVis={addPdfVis} handleCreateHotpotsExtra={handleCreateHotpotsExtra}
+            handleCreateHotspot={handleCreateHotspot}></PopupNewHotspot>
+        </div>
+        }
+        else{
+            return null;
+        }
+    }
+
+
+
     return (
         <div className="visualizador dragging">
             {buttonOpenReel()}
             <ToastContainer />
             {listaHotspost()}
-            <div className="top-buttons ">
+            <div className="visualizador_top-buttons ">
                 {botonCompartir()}
                 {botonInfoObject()}
-                <button className="button-option"
-                        onClick={handleActivateEditMode}>
-                    Modo Edicion
-                </button>
+                {botonAgregarHotspot()}
             </div>
+
+
+            <button className="button-option"
+                    onClick={handleActivateEditMode}>
+                Modo Edicion
+            </button>
             {modalPdf()}
 
             {
                 modalVideoYoutube()
             }
-
 
             {/*
             addHotspotMode ? <div className="start-end-hotspot-buttons">
@@ -995,10 +1005,7 @@ return ()=>setUpdateHotspots(false);
             </div> : null*/
             }
 
-
-            <div ref={extraContainerRef} className={
-                `visualizador_reel `
-            }>
+            <div ref={extraContainerRef} className="visualizador_reel">
                 {buttonCloseReel()}
                 <ReelImages id={id}
                             ref={extraInViewRef}
@@ -1007,26 +1014,16 @@ return ()=>setUpdateHotspots(false);
             </div>
 
             {
-                isEditMode ? <div className="add-buttons">
-                    <PopupNewHotspot id={id} extras={extras} addPdfVis={addPdfVis} handleCreateHotpotsExtra={handleCreateHotpotsExtra}
-                                     handleCreateHotspot={handleCreateHotspot}></PopupNewHotspot>
-
-                </div> : null
-            }
-
-
-
-
-
-            {
                 /*getVisualizador()*/
                 loadAllTridiComponents()
             }
-            <div className="navigation-container">
+            <div className="visualizador_navigation-container">
                 {
                     botonesEscenas
                 }
             </div>
+
+
 
             {
                 awaitAddHotspot
@@ -1034,7 +1031,7 @@ return ()=>setUpdateHotspots(false);
                     : null
             }
 
-            <div className="options-container">
+            <div className="visualizador_container-handle-buttons">
                 <OptionButtons /*onAddHotspot={handleAddHostpot}*/
                     onPrev={handlePrev}
                     onNext={handleNext}
@@ -1044,6 +1041,9 @@ return ()=>setUpdateHotspots(false);
                     isAutoPlayRunning={isAutoPlayRunning}
                     isEditMode={isEditMode}></OptionButtons>
             </div>
+
+
+
             {
                 tipo === "vehiculo" ? null /*<NavigationCarButtons onOpenDoors={handleOpenDoors} onCloseDoors={handleCloseDoors}  onInterior={handleInterior}></NavigationCarButtons>*/ : null /*<NavigationObjectButttons ></NavigationObjectButttons>*/
             } </div>

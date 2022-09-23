@@ -1,0 +1,28 @@
+.button-option-container-flex{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: normal;
+  align-items: normal;
+  align-content: normal;
+
+  .option-item{
+  width: 35px;
+  height: 35px;
+    margin: 0 0.2em;
+    .semi-transparent-button{
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      border:none;
+      color: $buttons-dark;
+      border-radius: 0.5em;
+      background-color: $buttons-navigation;
+      font-size: 11px;
+      &:hover{
+        background: $buttons-navigation;
+        color: rgb(255, 255, 255);
+        transition: all 0.2s ease-in; }
+    }
+  }
+}

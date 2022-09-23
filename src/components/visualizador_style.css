@@ -5,6 +5,7 @@
     user-select: none;
 }
 
+/*
 .reel{
   background-color: rgba(0, 0, 0, 0.705);
   position: fixed;
@@ -12,15 +13,16 @@
   bottom: 0;
   width: 100vw;
   z-index: 999;
-}
+}*/
 
+/*
 .oculto{
   display: none;
 }
 
 .no-oculto{
   display: block;
-}
+}*/
 
 
 .modal-pdf-container > .popup-content{
@@ -46,13 +48,14 @@
    width: 34vw;
    padding: 30px 20px;
  }
+/*
 .center-animation{
   position: absolute;
   left: 50%;
   top: 50%;
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
-}
+}*/
 
 .container-iframe-modal{
   display: flex;
@@ -90,7 +93,7 @@
   top: 110px;
 }
 
-
+/*
 .reel-container{
   position: fixed;
   width: 100vw;
@@ -98,7 +101,8 @@
   bottom: 0;
   z-index: 999;
 }
-
+*/
+/*
 .button-option{
   background-color: rgba(0, 0, 0, 0.705);
   color: white;
@@ -114,8 +118,8 @@
   background: rgba(30, 52, 142, 0.5);
   color: rgb(255, 255, 255); 
   transition: all 0.5s ease-in;
-}
-
+}*/
+/*
 .reel-btn{
   position: absolute;
   top: 1em;
@@ -123,7 +127,7 @@
   z-index: 100;
   
   margin-left: 2px;
-}
+}*/
 
 .no-visible{
   display: none;
@@ -143,7 +147,7 @@
     /* max-width: 100vh; */
     max-height: 100vh;
 }
-
+/*
 .top-buttons{
   width: 100%;
   position: absolute;
@@ -153,8 +157,8 @@
   align-items: center;
   justify-content: center;
   margin-top: 1em;
-}
-
+}*/
+/*
 .add-buttons{
   z-index: 100;
   width: 100%;
@@ -164,12 +168,13 @@
   align-items: center;
   justify-content: center;
   margin-top: 3.5em;
-}
+}*/
 
+/*
 .add-buttons > button {
   margin-left: 0.5em;
   margin-right: 0.5em;
-}
+}*/
 
 .tridi-container{
   height: 100%;
@@ -222,6 +227,7 @@
   cursor: url("https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin-drag.png") 16.5 10.5,url("https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin-drag.png") 16.5 10.5,url(	https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin-drag.cur)
 }
 
+/*
 .navigation-container {
   display: flex;
   flex-direction: column;
@@ -233,7 +239,8 @@
   top: 50%;
     transform: translate(-50%, -50%);
   left: 40px;
-}
+}*/
+/*
 .navigation-item{
   display: block;
     flex-grow: 0;
@@ -241,10 +248,10 @@
     flex-basis: auto;
     align-self: auto;
     order: 0;    
-}
+}*/
 
 
-
+/*
 .options-container {
     display: flex;
     flex-direction: column;
@@ -302,7 +309,7 @@
       border-radius: 0.5em;
       background-color: rgba(0, 0, 0, 0.781);
     font-size: 13px;
-  }
+  }*/
 
   .sphere-button{
     position: absolute;
@@ -311,9 +318,9 @@
     z-index: 100;
   }
 
-
+/*
   .semi-transparent-button:hover
-  { /*background: #fff; */
+  {
     background: rgba(30, 52, 142, 0.5);
     color: rgb(255, 255, 255); 
     transition: all 0.5s ease-in; }
@@ -321,7 +328,7 @@
     .activo{
       background: rgba(30, 52, 142, 0.5) ;
     }
-
+*/
     button:disabled,
 button[disabled], button:disabled:hover{
   

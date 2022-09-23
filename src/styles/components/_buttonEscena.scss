@@ -1,0 +1,32 @@
+
+.button-escena_navigation-item{
+  width: 45px;
+  height: 40px;
+  margin: 0.2em 0;
+  .activo{
+    background-color: $buttons-backgroud-hover !important;
+  }
+  .button-escena-btn{
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    border:none;
+    color: $secondary-color;
+    border-radius: 0.3em;
+    background-color: $buttons-backgroud;
+    font-size: 22px;
+    position: relative;
+
+    svg{
+      margin-left: auto;
+      margin-right: auto;
+      display: block !important;
+    }
+    &:hover{
+      background: $buttons-backgroud-hover;
+      color: rgb(255, 255, 255);
+      transition: all 0s ease-in;
+    }
+
+  }
+}

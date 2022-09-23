@@ -1,0 +1,74 @@
+.popup-compartir_container-content{
+  width: 51% !important;
+  background-color: $border-dark !important;
+  border-radius: 0.6em;
+
+  .popup-compartir-relative{
+    position: relative;
+
+    .popup-compartir-close{
+      position: absolute;
+      right: 0.1em;
+      top: -0.3em;
+      border: none;
+      background: transparent;
+      font-size: 0.6em;
+      color: $secondary-color ;
+      font-size: 1.2em;
+      &:hover{
+        color: $reel-icon-color;
+      }
+    }
+    .popup-compartir-title{
+      color: $secondary-color;
+      margin: 0.9em;
+      margin-bottom: 0.9em;
+      text-align: center;
+      font-size: 0.9em;
+    }
+
+    .popup-compartir_social-buttons{
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+      .popup-compartir_button-item{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+
+        p{
+          margin-top: 1em;
+          color: $secondary-color;
+          font-size: 0.6em;
+        }
+        &:hover{
+          p{
+            color: $reel-icon-color;
+
+          }
+        }
+      }
+
+
+    }
+    .popup-compartir_button-copiar-enlace{
+      text-align: center;
+      margin-bottom: 1em;
+      button{
+        border: none;
+        background-color: transparent;
+        color:$reel-icon-color;
+        border-bottom: $reel-icon-color 2px solid;
+        line-height: 2em;
+        font-size: 0.8em;
+
+        &:hover{
+          color:$secondary-color;
+          border-bottom: $secondary-color 2px solid;
+        }
+      }
+    }
+  }
+
+}

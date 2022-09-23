@@ -1,12 +1,93 @@
+.icon-bold{
+  font-size:20px;
+}
+.shadow-buttons{
+  box-shadow: 8px 12px 12px -4px rgba(18,17,17,0.75);
+  -webkit-box-shadow: 8px 12px 12px -4px rgba(18,17,17,0.75);
+  -moz-box-shadow: 8px 12px 12px -4px rgba(18,17,17,0.75);
+}
+
+.visualizador_btn-share{
+  background-color: $secondary-color;
+  border: none;
+  border-radius:100%;
+  color: $primary-color;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2em;
+  height: 2em;
+}
+
+.visualizador_btn-info{
+  background-color: $primary-color;
+  border: none;
+  border-radius:100%;
+  color: $secondary-color;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2em;
+  height: 2em;
+
+}
+
 .visualizador{
   overflow: hidden;
   position: relative;
+  .visualizador_top-buttons{
+    width: 100%;
+    position: absolute;
+    z-index: 100;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1em;
+    button {
+      margin-left: 0.5em;
+      margin-right: 0.5em;
+    }
+  }
+  .visualizador_navigation-container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: normal;
+    align-items: normal;
+    align-content: normal;
+    position: fixed;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    right: 0;
+  }
+  .visualizador_container-handle-buttons{
+    position: absolute;
+    bottom: 3.6em;
+    right: 1.3em;
+  }
+
 }
+
 .hidden{
   display: none;
 }
 .no-hidden{
   display: inline;
+}
+.oculto{
+  display: none;
+}
+
+.no-oculto{
+  display: block;
+}
+.center-animation{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 .visualizador_reel{
   background-color: rgba(6, 72, 100, 0.44);
@@ -23,7 +104,7 @@
 
   .visualizador_close-reel-button{
     cursor: pointer;
-    top:-2em;
+    top:-3em;
     margin-left: auto;
     margin-right: auto;
     width: 5em;
@@ -33,15 +114,22 @@
     left: 0;
     right: 0;
     text-align: center;
-    background-color: #f2f2f2;
+    background-color: $secondary-color;
     position: absolute;
     overflow: hidden;
     .visualizador_close_container_icon{
-      font-size: 2em;
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      position: relative;
+      height: 100%;
+      .visualizador_close-reel-icon{
+        color: $reel-icon-color;
+        font-size: 2em;
+        position: absolute;
+        left: 50%;
+        -webkit-transform: translateX(-50%);
+        transform: translateX(-50%);
+        bottom: 2%;
+        //bottom:10px
+      }
     }
   }
 
@@ -69,5 +157,6 @@
     top: 0;
     left: 0;
     right: 0;
+    color: $reel-icon-color
   }
 }

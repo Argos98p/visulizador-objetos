@@ -1,11 +1,14 @@
 
 // UI settings
-
+@import "./base/settings";
 
 //Components
 @Import './components/_reel.scss';
 @import "./components/visualizador";
-
+@import "./components/popupAddHotspot";
+@import "./components/optionButttons";
+@import "./components/buttonEscena";
+@import "./components/popupCompartir";
 
 //Screens
 

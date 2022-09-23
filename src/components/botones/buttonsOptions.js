@@ -18,17 +18,22 @@ export default function OptionButtons({
     onAddHotspot,
     isEditMode
 }) {
-  var aux
-    return (
-        <>
-        {/*<div className="option-item">
-                <button className= {isEditMode ? "semi-transparent-button activo" : "semi-transparent-button"} 
-                    onClick={onAddHotspot}>
-                    <FaCrosshairs/>
-                </button>
-            </div> */}
-            
 
+    return (
+        <div className="button-option-container-flex">
+
+            <div className="option-item">
+                <button className="semi-transparent-button"  disabled={isEditMode}
+                        onClick={onZoomIn}>
+                    <FaPlus/>
+                </button>
+            </div>
+            <div className="option-item">
+                <button className="semi-transparent-button"  disabled={isEditMode}
+                        onClick={onZoomOut}>
+                    <FaMinus/>
+                </button>
+            </div>
             <div className="option-item">
                 <button className="semi-transparent-button" disabled={isEditMode}
                     onClick={onPrev}>
@@ -42,25 +47,19 @@ export default function OptionButtons({
                     <FaChevronRight/>
                 </button>
             </div>
-            <div className="option-item">
-                <button className="semi-transparent-button"  disabled={isEditMode}
-                    onClick={onZoomIn}>
-                    <FaPlus/>
-                </button>
-            </div>
-            <div className="option-item">
-                <button className="semi-transparent-button"  disabled={isEditMode}
-                    onClick={onZoomOut}> 
-                    <FaMinus/>
-                </button>
-            </div>
-            <div className="option-item">
+
+            {
+                /*
+                * <div className="option-item">
                 <button className="semi-transparent-button"  disabled={isEditMode}
                     onClick={onAutoPlay}>
                     {
                     isAutoPlayRunning ? <FaPause/>: <FaPlay/>
                 } </button>
             </div>
-        </>
+                * */
+            }
+
+        </div>
     );
 }

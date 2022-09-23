@@ -24,10 +24,8 @@ const ButtonEscena = memo(({escenaInfo, onClick , activo})=>{
             icono = <FaCarSide></FaCarSide>
             break;
     }
-
-
-    return <div className="navigation-item">
-    <button  data-for='soclose' data-tip={escenaInfo[1].nombre}  className={`semi-transparent-button ${activo ? "activo":""}`} onClick={()=>onClick(escenaInfo)}>
+    return <div className="button-escena_navigation-item">
+    <button  data-for='soclose' data-tip={escenaInfo[1].nombre}  className={`button-escena-btn ${activo ? "activo":""}`} onClick={()=>onClick(escenaInfo)}>
       {icono}
     </button>
     <ReactTooltip id="soclose" place="top" effect="solid" getContent={(dataTip=>dataTip)}>

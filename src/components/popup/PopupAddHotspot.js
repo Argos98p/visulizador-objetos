@@ -10,6 +10,8 @@ import AddYoutubeVideo from "./AddYoutubeVideo";
 import AddVinculateExtra from "./AddVinculateExtra";
 import AddPdf from "./AddPdf";
 import Dropzone from "react-dropzone";
+import {FaRecordVinyl} from "react-icons/fa";
+
 
 const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExtra,addPdfVis}) =>{
 
@@ -189,7 +191,7 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
 
     return (
         <>
-            <button className="button-option"  onClick={onClickHotspotPopup}>Hotspot</button>
+            <button className="popupAddHotspot_btn_hotspot shadow-buttons"  onClick={onClickHotspotPopup}><FaRecordVinyl></FaRecordVinyl></button>
             <Popup
                 onClose={onCancelHotspotModal}
                 open={open}
@@ -218,7 +220,6 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
                       //FUNCION PARA CONTROLAR SELECCION DE EXTRAS
                       !!(imageSelected === null ||  nameValue === "")*/
                                 }
-
                                 onClick={()=>{ onCrear() }}
                         >Crear</button>
                         <button onClick={onCancelHotspotModal}>Cancelar</button>
