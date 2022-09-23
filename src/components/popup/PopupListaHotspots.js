@@ -36,14 +36,9 @@ import "./PopupListaHotspotsStyle.css"
                         <div className="icon-name">
                             <FaCrosshairs className="icon-hotspot"></FaCrosshairs> <h6>{item}</h6>
                         </div>{
-                        /*
-                        *                         <button className="button-delete-hotspot" onClick={()=>handleDeleteHotspot({item})}><FaTrash></FaTrash></button>
-
-                        * */
+                        <button className="button-delete-hotspot" onClick={()=>handleDeleteHotspot({item})}><FaTrash></FaTrash></button>
                     }
-
                     </div>
-
                 );
             });
 

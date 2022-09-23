@@ -666,20 +666,26 @@ return ()=>setUpdateHotspots(false);
     function handleActivateEditMode() {
         setIsEditMode(!isEditMode)
     }
+
     function handleDeleteHotspot(nameHotspot) {
         setAwaitAddHotspot(true);
         let arrayFramesId = [];
+        let escenas=objetoData.escenas;
 
-        for (let frame in currentEscena.imagenes) {
-            for (let value in currentEscena.imagenes[frame].hotspots) {
-                let tempHotspot = currentEscena.imagenes[frame].hotspots[value]
-                if (tempHotspot.nombreHotspot === nameHotspot) {
-                    arrayFramesId.push(currentEscena.imagenes[frame].path.split('/')[3].split('.')[0]);
+        console.log(escenas[activeEscena])
+
+        for (let frame in escenas[activeEscena].imagenes){
+            for(let value in escenas[activeEscena].imagenes[frame].hotspots){
+                let tempHotspot = escenas[activeEscena].imagenes[frame].hotspots[value]
+                if(tempHotspot.nombreHotspot === nameHotspot){
+                    arrayFramesId.push(escenas[activeEscena].imagenes[frame].path.split('/')[3].split('.')[0]);
                 }
             }
+
         }
 
-        axios.post(deleteHotspot(id,currentEscena.nombre,nameHotspot),arrayFramesId)
+
+        axios.post(deleteHotspot(id,escenas[activeEscena].nombre,nameHotspot),arrayFramesId)
             .then((response)=>{
                 console.log(response);
                 setUpdateHotspots(true);
@@ -699,16 +705,13 @@ return ()=>setUpdateHotspots(false);
             });
     }
     function listaHotspost(){
-
-
         {
-            /*
-            * return isEditMode?
+
+             return isEditMode?
             <div className="lista-hotspost">
                 <PopupListaHotspot listaHotspots={hotspotsMap[activeEscena]} onClickDeleteHotspot={handleDeleteHotspot}></PopupListaHotspot>
             </div>
             :null
-            * */
         }
         return null;
 
