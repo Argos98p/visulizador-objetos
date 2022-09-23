@@ -11,6 +11,9 @@ import AddVinculateExtra from "./AddVinculateExtra";
 import AddPdf from "./AddPdf";
 import Dropzone from "react-dropzone";
 import {FaRecordVinyl} from "react-icons/fa";
+import {TiArrowBack} from "react-icons/ti";
+import {BsPlayCircle} from "react-icons/bs";
+import {BiArrowToTop} from "react-icons/bi";
 
 
 const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExtra,addPdfVis}) =>{
@@ -138,7 +141,7 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
                 borderRadius: 2,
                 borderColor: '#eeeeee',
                 borderStyle: 'dashed',
-                backgroundColor: '#343535',
+                backgroundColor: 'rgba(53, 92, 106,0.89)',
                 color: '#bdbdbd',
                 outline: 'none',
                 transition: 'border .24s ease-in-out'
@@ -182,32 +185,46 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
 
     const inputTituloHotspot = () => {
         return (
-            <label>
-                Ingrese un titulo o descripcion<br/>
-                <input type="text" onChange={(e)=>onChangeInputTitulo(e)} name="input-titulo"/>
-            </label>
+
+                <input type="text" onChange={(e)=>onChangeInputTitulo(e)} placeholder={"Ingrese un titulo o descripcion"} name="input-titulo"/>
+
     );
     }
 
     return (
         <>
             <button className="popupAddHotspot_btn_hotspot shadow-buttons"  onClick={onClickHotspotPopup}><FaRecordVinyl></FaRecordVinyl></button>
-            <Popup
+            <Popup className="popup-add-hotspot"
                 onClose={onCancelHotspotModal}
                 open={open}
                 modal
                 nested >
                 <div className="modalp">
-                    <div className="header"> Añadir hotspot </div>
-                    Seleccione el tipo de extra
-                    <div className="content-popup">
-                        <div className="buttons-type-hotspots">
-                            <button className={"button-option " + (extraType === "vincular_extra" ? "activo" : "" )} onClick={()=>setExtraType("vincular_extra")}>Vincular con extra</button>
-                            <button className={"button-option " + (extraType === "video_youtube" ? "activo" : "" )} onClick={()=>setExtraType("video_youtube")}>Video de Youtube</button>
-                            <button className={"button-option " + (extraType === "pdf" ? "activo" : "" )} onClick={()=>setExtraType("pdf")}>PDF</button>
+                    <div className="header">
+                        <TiArrowBack fontSize={36}></TiArrowBack>
+                        <h5>Añadir hotspot</h5>
+                        <div className={"button-type-extra " + (extraType === "vincular_extra" ? "activo" : "" )}  onClick={()=>setExtraType("vincular_extra")}>
+                            <BsPlayCircle></BsPlayCircle>
+                            <button>Vincular con extra</button>
                         </div>
-                        <br/>
+                        <div className={"button-type-extra " + (extraType === "video_youtube" ? "activo" : "" )}  onClick={()=>setExtraType("video_youtube")}>
+                            <BsPlayCircle></BsPlayCircle>
+                            <button>Video de youtube</button>
+                        </div>
+                        <div className={"button-type-extra " + (extraType === "pdf" ? "activo" : "" )}  onClick={()=>setExtraType("pdf")}>
+                            <BiArrowToTop></BiArrowToTop>
+                            <button>Subir PDF</button>
+                        </div>
+                        <div className="button-type-extra">
+                            <BsPlayCircle></BsPlayCircle>
+                            <button>Lista de hotspot</button>
+                        </div>
 
+
+                    </div>
+
+                    <div className="content-popup">
+                        <br/>
                         {inputTituloHotspot()}
 
                         {loadPopupContent()}

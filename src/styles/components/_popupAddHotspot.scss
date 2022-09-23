@@ -9,3 +9,74 @@
   width: 2em;
   height: 2em;
 }
+
+.popup-add-hotspot-content{
+  font-size: 12px;
+  background-color: $border-dark !important;
+  border: none !important;
+  max-height: 90%;
+  width: 90% !important;
+  color: $secondary-color;
+  border-radius: 1em;
+  padding: 1em;
+  .modalp {
+
+    .header {
+      width: 100%;
+      border-bottom: 1px solid gray;
+      font-size: 18px;
+      text-align: center;
+      padding: 5px;
+      border: none;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      .button-type-extra{
+        cursor: pointer;
+        background-color: $primary-color;
+        border-radius: 0.4em;
+        button{
+          border: none;
+          background-color: transparent;
+          color: $secondary-color;
+          font-size: 0.7em;
+        }
+      }
+    }
+    .content-popup{
+      width: 100%;
+      padding: 10px 5px;
+      border: none;
+      input{
+        background-color:$buttons-backgroud-transparent ;
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 0px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+    }
+    .actions {
+      width: 100%;
+      padding: 10px 5px;
+      margin: auto;
+      text-align: center;
+    }
+    /*.close {
+      cursor: pointer;
+      position: absolute;
+      display: block;
+      padding: 2px 5px;
+      line-height: 20px;
+      right: -10px;
+      top: -10px;
+      font-size: 24px;
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #cfcece;
+    }*/
+
+  }
+}

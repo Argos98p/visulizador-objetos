@@ -68,6 +68,7 @@ export function Visualizador({tipo, id,data, extras}) {
     const [infoObjectData, setInfoObjectData] = useState("");
     const [ openModalInfoObject, setOpenModalInfoObject] = useState(false);
     const [ openModalCompartir, setOpenModalCompartir]  = useState(false);
+    const [imgForInfoModal, setImgForModal] = useState("");
 
     const extraContainerRef=useRef();
     const extraInViewRef = useRef();
@@ -105,9 +106,11 @@ export function Visualizador({tipo, id,data, extras}) {
                     setObjetoData(response.data);
                     setInfoObjectData(response.data.info);
                     let numberOfFrames = {};
+
                     for(let index in response.data.escenas){
                         numberOfFrames[index] = Object.keys(response.data.escenas[index].imagenes).length;
                     }
+
                     setFrames(numberOfFrames)
                 }
 
@@ -233,17 +236,26 @@ return ()=>setUpdateHotspots(false);
     }, [currentEscena]);*/
 
     function getArraySrcPath(escena){
-
-
         let n = Object.keys(escena.imagenes).length;
         let [aux,escenaNumber,temp,frames,nameImage]= [];
         if(n!==0){
             [aux,escenaNumber,temp,frames,nameImage]= escena.imagenes[1].path.split("/");
+
         }
+
+
         let arrayFrames=[]
         for(let i=1;i<=n;i++){
+
             arrayFrames.push(completeImageUrl(`/${id}/${escenaNumber}/frames_compresos/${i}.jpg`));
         }
+
+        if(imgForInfoModal === ""){
+            if(arrayFrames.length>0){
+                setImgForModal(arrayFrames[0]);
+            }
+        }
+
         return arrayFrames;
     }
 
@@ -741,7 +753,7 @@ return ()=>setUpdateHotspots(false);
 
     const botonInfoObject=()=>{
         return <>
-            <PopupInfoObjetct infoObjectData={infoObjectData} handleOpenModalInfoObject={()=>handleOpenModalInfoObject()} openModalInfoObject={openModalInfoObject}></PopupInfoObjetct>
+            <PopupInfoObjetct imgForInfoModal={imgForInfoModal} infoObjectData={infoObjectData} handleOpenModalInfoObject={()=>handleOpenModalInfoObject()} openModalInfoObject={openModalInfoObject}></PopupInfoObjetct>
             <button className="visualizador_btn-info shadow-buttons" onClick={()=>setOpenModalInfoObject(true)}><AiOutlineInfo className="icon-bold"/> </button>
         </>
     }
@@ -967,7 +979,7 @@ return ()=>setUpdateHotspots(false);
 
     const botonAgregarHotspot=()=>{
         if(isEditMode){
-            return <div className="add-buttons">
+            return <div>
                 <PopupNewHotspot id={id} extras={extras} addPdfVis={addPdfVis} handleCreateHotpotsExtra={handleCreateHotpotsExtra}
             handleCreateHotspot={handleCreateHotspot}></PopupNewHotspot>
         </div>

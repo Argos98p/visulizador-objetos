@@ -5,10 +5,8 @@ const AddYoutubeVideo= ({onHandleInputYoutube})=>{
 
     return (
         <>
-            <label>
-                Ingrese un link de youtube<br/>
-                <input type="text" onChange={(e)=>onHandleInputYoutube(e.target.value)} name="video-youtube"/>
-            </label>
+                <input type="text" onChange={(e)=>onHandleInputYoutube(e.target.value)} placeholder={" Ingrese un link de youtube"} name="video-youtube"/>
+
         </>
     );
 }
