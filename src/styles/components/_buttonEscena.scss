@@ -3,6 +3,9 @@
   width: 45px;
   height: 40px;
   margin: 0.2em 0;
+  img{
+    width: 100%;
+  }
   .activo{
     background-color: $buttons-backgroud-hover !important;
   }

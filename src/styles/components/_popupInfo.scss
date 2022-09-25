@@ -7,6 +7,7 @@
     background-color: $modal-info !important;
     border-radius: 2em;
 
+    border: 0 red solid !important;
     .popup-info-div-container{
       display: flex;
       flex-direction: row;
@@ -47,7 +48,7 @@
         }
 
       }
-      .popup-info-der{
+      .popup-info-izq{
         flex: 1;
         img{
           width: 100%;
@@ -68,7 +69,40 @@
       .button{
         cursor: pointer;
       }
+
+    }
+    @media screen and (max-width: 400px) {
+      .button-container{
+        bottom: 0;
+      }
     }
 
   }
+  
+  @media screen and (max-width: 856px) {
+    .popup-info-container-content{
+      width: 90% !important;
+    }
+  }
+  @media screen and (max-width: 720px) {
+    .popup-info-container-content{
+      width: 95% !important;
+      .popup-info-div-container{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        .popup-info-der{
+          flex: 2;
+        }
+        .popup-info-izq{
+          flex: 1;
+          img{
+            height: 200px;
+          }
+        }
+      }
+    }
+
+  }
+
 }

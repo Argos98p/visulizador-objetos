@@ -10,13 +10,16 @@ import AddYoutubeVideo from "./AddYoutubeVideo";
 import AddVinculateExtra from "./AddVinculateExtra";
 import AddPdf from "./AddPdf";
 import Dropzone from "react-dropzone";
-import {FaRecordVinyl} from "react-icons/fa";
+import {FaInfo, FaRecordVinyl} from "react-icons/fa";
 import {TiArrowBack} from "react-icons/ti";
 import {BsPlayCircle} from "react-icons/bs";
 import {BiArrowToTop} from "react-icons/bi";
+import {FiDownload} from "react-icons/fi";
+import PopupListaHotspot from "./PopupListaHotspots";
+import {SiAddthis} from "react-icons/si";
 
 
-const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExtra,addPdfVis}) =>{
+const  PopupNewHotspot =({id, extras,handleCreateHotspot,listaHotspots,onClickDeleteHotspot, handleCreateHotpotsExtra,addPdfVis}) =>{
 
     const [imageSelected, setImageSelected] = useState(null);
     const [noImageSelected, setNoImageSelected] = useState(false);
@@ -99,7 +102,6 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
         setLinkYoutube(linkYoutube);
     }
 
-
     const loadPopupContent=()=>{
         if(extraType==="video_youtube"){
             return <AddYoutubeVideo onHandleInputYoutube={onHandleInputYoutube} addPdfVis={addPdfVis}></AddYoutubeVideo>
@@ -149,9 +151,6 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
             const style = {
                 ...baseStyle,
             }
-
-
-
             return (
                 <div >
                     <Dropzone onDrop={acceptedFiles => setAcceptedFiles(acceptedFiles)} >
@@ -165,8 +164,10 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
                                         </li>))}
                                 </aside>
 
-                                <div {...getRootProps({style})}>
+                                <div {...getRootProps({style})} className="pdf-input-container">
                                     <input {...getInputProps()} />
+                                    <h1>PDF</h1>
+                                    <FiDownload className={"icon"}></FiDownload>
                                     <p>Arraste o pulse para subir un archivo PDF</p>
                                 </div>
                             </section>
@@ -176,6 +177,10 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
             );
 
         }
+
+        if(extraType === "hotspots"){
+            return <PopupListaHotspot listaHotspots={listaHotspots} onClickDeleteHotspot={onClickDeleteHotspot}></PopupListaHotspot>
+        }
     }
 
     const onChangeInputTitulo = (e)=>{
@@ -184,16 +189,17 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
     }
 
     const inputTituloHotspot = () => {
+        if(extraType === "hotspots"){
+            return null;
+        }
         return (
-
                 <input type="text" onChange={(e)=>onChangeInputTitulo(e)} placeholder={"Ingrese un titulo o descripcion"} name="input-titulo"/>
-
     );
     }
 
     return (
         <>
-            <button className="popupAddHotspot_btn_hotspot shadow-buttons"  onClick={onClickHotspotPopup}><FaRecordVinyl></FaRecordVinyl></button>
+            <img onClick={onClickHotspotPopup} className="cursor-pointer visualizador_btn-share-img popupAddHotspot_btn_hotspot" src="../iconos/btn-editar-hotspot.png" alt=""/>
             <Popup className="popup-add-hotspot"
                 onClose={onCancelHotspotModal}
                 open={open}
@@ -201,30 +207,37 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
                 nested >
                 <div className="modalp">
                     <div className="header">
-                        <TiArrowBack fontSize={36}></TiArrowBack>
-                        <h5>Añadir hotspot</h5>
-                        <div className={"button-type-extra " + (extraType === "vincular_extra" ? "activo" : "" )}  onClick={()=>setExtraType("vincular_extra")}>
-                            <BsPlayCircle></BsPlayCircle>
-                            <button>Vincular con extra</button>
+                        <div className="icono-anadir">
+                            <TiArrowBack className="icon" fontSize={40}></TiArrowBack>
+                            <h5>Añadir hotspot</h5>
                         </div>
-                        <div className={"button-type-extra " + (extraType === "video_youtube" ? "activo" : "" )}  onClick={()=>setExtraType("video_youtube")}>
-                            <BsPlayCircle></BsPlayCircle>
-                            <button>Video de youtube</button>
-                        </div>
-                        <div className={"button-type-extra " + (extraType === "pdf" ? "activo" : "" )}  onClick={()=>setExtraType("pdf")}>
-                            <BiArrowToTop></BiArrowToTop>
-                            <button>Subir PDF</button>
-                        </div>
-                        <div className="button-type-extra">
-                            <BsPlayCircle></BsPlayCircle>
-                            <button>Lista de hotspot</button>
+
+                        <div className="buttons-container">
+
+                            <div className={"button-type-extra " + (extraType === "vincular_extra" ? "activo" : "" )}  onClick={()=>setExtraType("vincular_extra")}>
+                                <img src="../iconos/enlace.png"/>
+                                <button>Vincular con extra</button>
+                            </div>
+                            <div className={"button-type-extra " + (extraType === "video_youtube" ? "activo" : "" )}  onClick={()=>setExtraType("video_youtube")}>
+                                <BsPlayCircle fontSize={25}></BsPlayCircle>
+                                <button>Video de youtube</button>
+                            </div>
+                            <div className={"button-type-extra " + (extraType === "pdf" ? "activo" : "" )}  onClick={()=>setExtraType("pdf")}>
+                                <BiArrowToTop fontSize={25}></BiArrowToTop>
+                                <button>Subir PDF</button>
+                            </div>
+                            <div className={"button-type-extra " + (extraType === "hotspots " ? "activo" : "" )}  onClick={()=>setExtraType("hotspots")}>
+                                <img src="../iconos/lista_hotspot.png"/>
+                                <button>Lista de hotspot</button>
+                            </div>
+
                         </div>
 
 
                     </div>
 
                     <div className="content-popup">
-                        <br/>
+
                         {inputTituloHotspot()}
 
                         {loadPopupContent()}
@@ -232,14 +245,27 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot, handleCreateHotpotsExt
                     </div>
 
                     <div className="actions">
-                        <button className="button-option"
-                                disabled={false/*
+                        <div>
+
+                            { (extraType === "hotspots") ? null
+                                : <div className="button-cancel-container">
+
+                                    <SiAddthis></SiAddthis>
+
+                                    <button className="button-option"
+                                            disabled={false/*
                       //FUNCION PARA CONTROLAR SELECCION DE EXTRAS
                       !!(imageSelected === null ||  nameValue === "")*/
-                                }
-                                onClick={()=>{ onCrear() }}
-                        >Crear</button>
-                        <button onClick={onCancelHotspotModal}>Cancelar</button>
+                                            }
+                                            onClick={()=>{ onCrear() }}
+                                    >Crear</button>
+                                </div>
+
+                            }
+
+                        </div>
+
+
                     </div>
                 </div>
             </Popup>

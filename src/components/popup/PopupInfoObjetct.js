@@ -35,7 +35,7 @@ const PopupInfoObjetct = ({ imgForInfoModal, infoObjectData, handleOpenModalInfo
                         </div>
                     </div>
                 </div>
-                <div className="popup-info-der">
+                <div className="popup-info-izq">
                     <img  src= {imgForInfoModal} alt="MDN"/>
                 </div>
 

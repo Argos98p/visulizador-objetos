@@ -1,11 +1,11 @@
+
 .popup-compartir_container-content{
-  width: 51% !important;
+  width: 50% !important;
   background-color: $border-dark !important;
   border-radius: 0.6em;
-
+  border: 0 red solid !important;
   .popup-compartir-relative{
     position: relative;
-
     .popup-compartir-close{
       position: absolute;
       right: 0.1em;
@@ -71,4 +71,23 @@
     }
   }
 
+}
+@media screen  and (min-width: 950px) {
+  .popup-compartir_container-content{
+    width: 30% !important;
+  }
+}
+@media screen  and (max-width: 625px) {
+  .popup-compartir_container-content{
+    width: 90% !important;
+
+  }
+}
+@media screen  and (max-width: 300px) {
+  .popup-compartir_container-content{
+    width: 90% !important;
+    p{
+      display: none;
+    }
+  }
 }

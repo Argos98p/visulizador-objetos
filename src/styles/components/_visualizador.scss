@@ -6,7 +6,23 @@
   -webkit-box-shadow: 8px 12px 12px -4px rgba(18,17,17,0.75);
   -moz-box-shadow: 8px 12px 12px -4px rgba(18,17,17,0.75);
 }
+.Toastify__toast-theme--dark {
+  background-color: $border-dark !important;
+  border-radius: 0.5em !important;
+}
+.visualizador_btn-share-img {
+  height: 2.5em;
+  margin: 0 0.6em;
+}
+.btn-info-margin{
+  margin-top: 7.5px;
+  height: 2.5em;
+}
 
+.cursor-pointer{
+  cursor: pointer;
+}
+/*
 .visualizador_btn-share{
   background-color: $secondary-color;
   border: none;
@@ -17,8 +33,9 @@
   align-items: center;
   width: 2em;
   height: 2em;
-}
+}*/
 
+/*
 .visualizador_btn-info{
   background-color: $primary-color;
   border: none;
@@ -30,7 +47,7 @@
   width: 2em;
   height: 2em;
 
-}
+}*/
 
 .visualizador{
   overflow: hidden;
@@ -65,6 +82,10 @@
     position: absolute;
     bottom: 3.6em;
     right: 1.3em;
+  }
+
+  .popup-content{
+    border: 0 solid transparent !important;
   }
 
 }

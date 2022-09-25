@@ -8,7 +8,6 @@ import ModalVideo from 'react-modal-video';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { useSwipeable } from 'react-swipeable';
-import copy from 'copy-to-clipboard';
 import {
     completeImageUrl,
     deleteHotspot,
@@ -29,18 +28,15 @@ import "./visualizador_style.css";
 import {toast, ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import DotLoader from "react-spinners/DotLoader";
-import PopupListaHotspot from "./popup/PopupListaHotspots";
 import PopupInfoObjetct from "./popup/PopupInfoObjetct";
-import {FaChevronDown, FaChevronUp} from "react-icons/fa";
-import {AiOutlineInfo} from "react-icons/ai";
 import {BsChevronDown, BsChevronUp, BsShareFill} from "react-icons/bs";
 import PopupCompartir from "./popup/PopupCompartir";
+import ToogleButton from "./botones/ToogleButton";
 
 
 export function Visualizador({tipo, id,data, extras}) {
 
     const [objetoData,setObjetoData] = useState({escenas:{}});
-    const [currentEscena, setCurrentEscena] = useState({}); //ver si se cambia por null
     const [frames, setFrames] = useState([]);
     const [hotspotsMap, setHotspotsMap] = useState([]);
     const [updateHotspots, setUpdateHotspots] = useState(false); //variable para que se vuelva a pedir los hotspots
@@ -675,9 +671,7 @@ return ()=>setUpdateHotspots(false);
             setLoadStatus(true)
         }
     }
-    function handleActivateEditMode() {
-        setIsEditMode(!isEditMode)
-    }
+
 
     function handleDeleteHotspot(nameHotspot) {
         setAwaitAddHotspot(true);
@@ -716,18 +710,6 @@ return ()=>setUpdateHotspots(false);
                 setAwaitAddHotspot(false);
             });
     }
-    function listaHotspost(){
-        {
-
-             return isEditMode?
-            <div className="lista-hotspost">
-                <PopupListaHotspot listaHotspots={hotspotsMap[activeEscena]} onClickDeleteHotspot={handleDeleteHotspot}></PopupListaHotspot>
-            </div>
-            :null
-        }
-        return null;
-
-    }
 
     const botonesEscenas=useMemo(()=>
             <>
@@ -750,16 +732,12 @@ return ()=>setUpdateHotspots(false);
     const handleOpenModalInfoObject = () => {
         setOpenModalInfoObject(false);
     }
-
     const botonInfoObject=()=>{
         return <>
             <PopupInfoObjetct imgForInfoModal={imgForInfoModal} infoObjectData={infoObjectData} handleOpenModalInfoObject={()=>handleOpenModalInfoObject()} openModalInfoObject={openModalInfoObject}></PopupInfoObjetct>
-            <button className="visualizador_btn-info shadow-buttons" onClick={()=>setOpenModalInfoObject(true)}><AiOutlineInfo className="icon-bold"/> </button>
+            <img className="visualizador_btn-share-img cursor-pointer btn-info-margin" src="../iconos/btn-informacion.png" alt="" onClick={()=>setOpenModalInfoObject(true)}/>
         </>
     }
-
-
-
     const botonCompartir=()=>{
         const handleCloseModalCompartir = ()=>{
             setOpenModalCompartir(false);
@@ -770,9 +748,7 @@ return ()=>setUpdateHotspots(false);
 
     return <>
         <PopupCompartir openModalCompartir = {openModalCompartir} handleCloseModalCompartir={()=>handleCloseModalCompartir()}></PopupCompartir>;
-        <button className="visualizador_btn-share shadow-buttons"
-                onClick={() =>handleOpenModalCompartir()}><BsShareFill></BsShareFill></button>
-
+        <img className="visualizador_btn-share-img cursor-pointer" onClick={() =>handleOpenModalCompartir()} src="../iconos/btn-compartir.png" alt=""/>
     </>
 
     }
@@ -979,9 +955,12 @@ return ()=>setUpdateHotspots(false);
 
     const botonAgregarHotspot=()=>{
         if(isEditMode){
+
             return <div>
                 <PopupNewHotspot id={id} extras={extras} addPdfVis={addPdfVis} handleCreateHotpotsExtra={handleCreateHotpotsExtra}
-            handleCreateHotspot={handleCreateHotspot}></PopupNewHotspot>
+            handleCreateHotspot={handleCreateHotspot}
+                                 listaHotspots={hotspotsMap[activeEscena]} onClickDeleteHotspot={handleDeleteHotspot}
+                ></PopupNewHotspot>
         </div>
         }
         else{
@@ -989,13 +968,28 @@ return ()=>setUpdateHotspots(false);
         }
     }
 
+    const botonAutoGiro=()=>{
+        return <div className="button-escena_navigation-item" onClick={()=>handleAutoPlay()}>
+            <button  data-for='soclose' data-tip="Girar" className={`button-escena-btn`} >
+                <img src="../iconos/giro-carro.png" alt=""/>
+            </button>
+            <ReactTooltip id="soclose" place="top" effect="solid" getContent={(dataTip=>dataTip)}>
+            </ReactTooltip>
+        </div>
+    }
 
+    const botonModoEdicion =()=>{
+        function handleActivateEditMode() {
+            setIsEditMode(!isEditMode)
+        }
+        return <ToogleButton isEditMode={isEditMode} handleActivateEditMode={handleActivateEditMode}></ToogleButton>;
+    }
 
     return (
         <div className="visualizador dragging">
             {buttonOpenReel()}
             <ToastContainer />
-            {listaHotspost()}
+
             <div className="visualizador_top-buttons ">
                 {botonCompartir()}
                 {botonInfoObject()}
@@ -1003,10 +997,21 @@ return ()=>setUpdateHotspots(false);
             </div>
 
 
-            <button className="button-option"
+            {
+                botonModoEdicion()
+            }
+
+            {
+                /*
+                <button className="button-option"
                     onClick={handleActivateEditMode}>
                 Modo Edicion
             </button>
+                * */
+            }
+
+
+
             {modalPdf()}
 
             {
@@ -1035,6 +1040,9 @@ return ()=>setUpdateHotspots(false);
             <div className="visualizador_navigation-container">
                 {
                     botonesEscenas
+                }
+                {
+                    botonAutoGiro()
                 }
             </div>
 

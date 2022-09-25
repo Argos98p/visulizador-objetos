@@ -1,13 +1,15 @@
 .popupAddHotspot_btn_hotspot{
-  background-color: #ffffff;
+  //background-color: #ffffff;
   border: none;
   border-radius:100%;
   color: #1070ee;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 2em;
-  height: 2em;
+  width: 2.5em;
+
+  margin-top: 7.5px;
+  height: 2.5em;
 }
 
 .popup-add-hotspot-content{
@@ -31,22 +33,99 @@
       display: flex;
       flex-direction: row;
       justify-content: space-around;
-      .button-type-extra{
-        cursor: pointer;
-        background-color: $primary-color;
-        border-radius: 0.4em;
-        button{
-          border: none;
-          background-color: transparent;
-          color: $secondary-color;
-          font-size: 0.7em;
+      .icono-anadir{
+        display: flex;
+        flex-direction: row;
+        margin:0.5em 0;
+        padding: 0;
+        justify-content: start;
+        flex: 2;
+        .icon{
+          flex: 1;
+        }
+        h5{
+          flex: 3;
+          text-align: left;
+          margin-bottom: 0 !important;
+          line-height: 2em;
+        }
+      }
+
+      .buttons-container{
+        display: flex;
+        flex-direction: row;
+        flex: 1 1 60%;
+        justify-content: flex-end;
+        .button-type-extra{
+          cursor: pointer;
+          background-color: $primary-color;
+          border-radius: 0.4em;
+          display: flex;
+          flex-direction: row;
+          justify-content: stretch;
+          align-items: center;
+          padding-left: 5px;
+          margin-left: 1em;
+          height: 70%;
+          img{
+            height: 1.5em
+
+          }
+          button{
+            border: none;
+            background-color: transparent;
+            color: $secondary-color;
+            font-size: 0.7em;
+            padding: 0.5em;
+          }
+        }
+      }
+
+
+    }
+    @media screen  and (max-width: 625px) {
+      .header{
+        flex-direction: column;
+        .buttons-container{
+          justify-content: space-between;
+          .button-type-extra{
+            margin: 0 0.3em;
+          }
         }
       }
     }
+    @media screen and (max-width: 402px) {
+      .buttons-container{
+        flex-wrap: wrap;
+        .button-type-extra{
+          width: 45%;
+          margin: 0.2em !important;
+          height: auto !important
+        }
+      }
+
+    }
     .content-popup{
       width: 100%;
-      padding: 10px 5px;
+      padding: 0 5px;
       border: none;
+      .pdf-input-container{
+        h1{
+
+        }
+        .icon{
+          font-size: 5em;
+        }
+        @media screen and (max-width: 402px) {
+          .icon{
+            font-size: 4em;
+          }
+          h1{
+            font-size: 1.5em;
+          }
+        }
+
+      }
       input{
         background-color:$buttons-backgroud-transparent ;
         width: 100%;
@@ -63,6 +142,34 @@
       padding: 10px 5px;
       margin: auto;
       text-align: center;
+      &>div{
+        width: 15%;
+        .button-cancel-container{
+          cursor: pointer;
+          background-color: $primary-color;
+          border-radius: 0.4em;
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          padding-left: 5px;
+          button{
+            border: none;
+            background-color: transparent;
+            color: $secondary-color;
+            font-size: 1.2em;
+            height: 3em;
+          }
+        }
+
+      }
+      @media screen and (max-width: 402px) {
+        &>div{
+          width: 35%;
+        }
+      }
+
+
     }
     /*.close {
       cursor: pointer;

@@ -11,14 +11,14 @@ const ButtonEscena = memo(({escenaInfo, onClick , activo})=>{
 
     switch (escenaInfo[1].nombre) {
         case "puertas_cerradas":
-            icono=<FaCarSide></FaCarSide>
+            icono=<img src="../iconos/carro-cerrado.png" alt=""/>
             break;
         case "puertas_abiertas":
-            icono = <GiCarDoor></GiCarDoor>
+            icono = <img src="../iconos/carro-abierto.png" alt=""/>
             break;
 
         case "interior":
-            icono = <GiSteeringWheel></GiSteeringWheel>
+            icono = <img src="../iconos/interior-carro.png" alt=""/>
             break;
         default:
             icono = <FaCarSide></FaCarSide>
