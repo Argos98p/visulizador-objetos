@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import React, {createRef, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import Tridi from "react-tridi";
 import OptionButtons from "./botones/buttonsOptions";
 import axios from "axios";
@@ -69,6 +69,7 @@ export function Visualizador({tipo, id,data, extras}) {
     const extraContainerRef=useRef();
     const extraInViewRef = useRef();
     const tridiRef = useRef(null);
+    const tridiContainerRef = useRef(null);
 
     let zooom=1;
 
@@ -83,13 +84,13 @@ export function Visualizador({tipo, id,data, extras}) {
             tridiRef.current.next();
             tridiRef.current.next();
             tridiRef.current.next();
-            tridiRef.current.next();
+
         }else{
             tridiRef.current.prev();
             tridiRef.current.prev();
             tridiRef.current.prev();
             tridiRef.current.prev();
-            tridiRef.current.prev();
+
         }
         setPrevDelta(eventData.deltaX);
     }
@@ -262,9 +263,6 @@ return ()=>setUpdateHotspots(false);
         extraContainerRef.current.classList.toggle("no-visible");
     }
 
-    const frameChangeHandler = (currentFrameIndex) => {
-        setCurrentFrameIndex(currentFrameIndex);
-    };
 
     const recordStartHandler = (recordingSessionId) => /*console.log("on record start", {recordingSessionId, pins})*/
         console.log();
@@ -338,10 +336,73 @@ return ()=>setUpdateHotspots(false);
     }
     const handleButtonEscena=useCallback((escena)=>{
         setActiveEscena(escena.toString())
-        setPins(prepararPins(hotspotsMap[escena]))
-    },[activeEscena,hotspotsMap]
-)
+        setPins(prepararPins(hotspotsMap[escena]));
+        console.log(tridiRef);
+    },[activeEscena,hotspotsMap,tridiContainerRef]);
 
+
+
+    const move=(a,b)=>{
+        if(a<b){
+
+                tridiRef.current.next();
+                tridiRef.current.next();
+                tridiRef.current.next();
+                tridiRef.current.next();
+                tridiRef.current.next();
+                tridiRef.current.next();
+                tridiRef.current.next();
+                tridiRef.current.next();
+                tridiRef.current.next();
+                tridiRef.current.next();
+
+        }
+        if(a>b){
+
+                tridiRef.current.prev();
+                tridiRef.current.prev();
+                tridiRef.current.prev();
+                tridiRef.current.prev();
+                tridiRef.current.prev();
+                tridiRef.current.prev();
+                tridiRef.current.prev();
+                tridiRef.current.prev();
+                tridiRef.current.prev();
+                tridiRef.current.prev();
+                tridiRef.current.prev();
+                console.log('entra');
+
+        }
+    }
+
+
+    useEffect(() => {
+        return () => {
+            console.log('ejecuta');
+            tridiRef.current.next();
+            tridiRef.current.next();
+            tridiRef.current.next();
+            tridiRef.current.next();
+            tridiRef.current.next();
+            tridiRef.current.next();
+
+        };
+    }, [activeEscena]);
+
+        /*
+        const myDiv = tridiContainerRef.current;
+        let activeTridi = Array.from(myDiv.querySelectorAll('.visible .info-value '))[0];
+        if(activeTridi !== undefined){
+            let actualFrame = parseInt(activeTridi.innerHTML);
+            let previousFrame= currentFrameIndex;
+            move(actualFrame,previousFrame);
+
+        }*/
+
+
+    const frameChangeHandler = (currentFrameIndex) => {
+        setCurrentFrameIndex(currentFrameIndex);
+    };
 
     /****** Inicio ---- HOTSPOTS UNA REFERENCIA ******/
 
@@ -358,12 +419,14 @@ return ()=>setUpdateHotspots(false);
             setNewHotspot(true);
         }
     }
+
     useEffect(() => {
         if(newHotspot===true){
             toast.info('clicke o pulse sobre la pantalla para crear el hotspot',{autoClose: 3000,
                 hideProgressBar: true,theme:"dark"});
         }
     }, [newHotspot]);
+
     const clickOnTridiContainer = () => {
         if (addHotspotMode) {
             tridiRef.current.toggleRecording(false);
@@ -810,6 +873,7 @@ return ()=>setUpdateHotspots(false);
         }
     }
     const loadAllTridiComponents=()=>{
+        console.log('all tridi')
         if(objetoData){
             let escenas=objetoData.escenas;
             let escenasSrcImages=[];
@@ -828,9 +892,9 @@ return ()=>setUpdateHotspots(false);
                 }else{
                     escenasSrcImages.push(
 
-                        <Tridi ref={ show ? tridiRef : null}
+                        <Tridi ref={  show  ? tridiRef :null}
                                key={index}
-                               className={show && loadStatus? "" : "oculto" }
+                               className={show && loadStatus? "visible" : "oculto" }
 
                                images={imagesSrcOneScene}
                                autoplaySpeed={70}
@@ -855,7 +919,7 @@ return ()=>setUpdateHotspots(false);
                                onPinClick={pinClickHandler}
                                setPins={setPins}
                                renderPin={myRenderPin}
-                               showStatusBar={false}
+                               showStatusBar={true}
                                pins={pins}
                             //hintOnStartup
                             //hintText="Arrastre para mover"
@@ -868,7 +932,7 @@ return ()=>setUpdateHotspots(false);
 
             return (
 
-                <div className={`tridi-container`} {...handlers} onWheel={handleWheel} onClick={clickOnTridiContainer}>
+                <div className={`tridi-container`}  {...handlers}  onWheel={handleWheel} onClick={clickOnTridiContainer}>
                     {
                         loadStatus === false ? <div className="sweet-loading">
                             <DotLoader color="#3F3F3F"
@@ -1033,10 +1097,16 @@ return ()=>setUpdateHotspots(false);
                             isEditMode={isEditMode}></ReelImages>
             </div>
 
-            {
-                /*getVisualizador()*/
-                loadAllTridiComponents()
-            }
+
+            <div  ref={tridiContainerRef} className="tridi-container">
+                {
+                    /*getVisualizador()*/
+                    loadAllTridiComponents()
+                }
+            </div>
+
+
+
             <div className="visualizador_navigation-container">
                 {
                     botonesEscenas
@@ -1045,8 +1115,6 @@ return ()=>setUpdateHotspots(false);
                     botonAutoGiro()
                 }
             </div>
-
-
 
             {
                 awaitAddHotspot
@@ -1064,7 +1132,6 @@ return ()=>setUpdateHotspots(false);
                     isAutoPlayRunning={isAutoPlayRunning}
                     isEditMode={isEditMode}></OptionButtons>
             </div>
-
 
 
             {

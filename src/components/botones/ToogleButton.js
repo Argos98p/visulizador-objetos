@@ -2,7 +2,7 @@ import Switch from "react-switch";
 
 import React, {useState} from "react";
 const ToogleButton=({isEditMode,handleActivateEditMode})=>{
-    const [checked, setChecked] = useState(true);
+
 
 
     return (
