@@ -337,8 +337,7 @@ return ()=>setUpdateHotspots(false);
     const handleButtonEscena=useCallback((escena)=>{
         setActiveEscena(escena.toString())
         setPins(prepararPins(hotspotsMap[escena]));
-        console.log(tridiRef);
-    },[activeEscena,hotspotsMap,tridiContainerRef]);
+    },[activeEscena,hotspotsMap]);
 
 
 
@@ -377,16 +376,15 @@ return ()=>setUpdateHotspots(false);
 
 
     useEffect(() => {
-        return () => {
-            console.log('ejecuta');
-            tridiRef.current.next();
-            tridiRef.current.next();
-            tridiRef.current.next();
-            tridiRef.current.next();
-            tridiRef.current.next();
-            tridiRef.current.next();
-
-        };
+        console.log(tridiRef)
+            if(tridiRef.current!== null){
+                tridiRef.current.next();
+                tridiRef.current.next();
+                tridiRef.current.next();
+                tridiRef.current.next();
+                tridiRef.current.next();
+                tridiRef.current.next();
+            }
     }, [activeEscena]);
 
         /*
