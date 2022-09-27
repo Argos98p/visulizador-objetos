@@ -15,7 +15,7 @@ import {
     getHotspots,
     infoObjectUrl,
     postAddHotspot,
-    addLinkYoutube, getExtrasUrl
+    addLinkYoutube, getExtrasUrl,getPDF,
 } from "../Api/apiRoutes";
 import ButtonEscena from "./botones/buttonEscena";
 import LottieEmptyEscenas from "../Animations/lottieEmptyEscena";
@@ -315,6 +315,11 @@ export function Visualizador({tipo, id,data, extras}) {
         console.log(pin);
         let extraInHotspot = searchExtra(pin.idExtra);
         console.log(extraInHotspot)
+        //setVisibleExtras(true);
+
+        if(extraContainerRef.current.classList.contains("no-visible")){
+            extraContainerRef.current.classList.toggle("no-visible");
+        }
 
         if(extraInHotspot.hasOwnProperty("imagen")){
             setVisibleExtras(true);
@@ -1011,17 +1016,21 @@ export function Visualizador({tipo, id,data, extras}) {
     }
 
     const modalPdf = ()=>{
+
+
+        let url = getPDF(id,extraPdfOrVideo.path);
+        url = url.replace("pdf",".pdf")
+
+        console.log(url);
         return (
             openPdfModal?
             <div className={"modal-pdf-container"} >
                 <Popup open={openPdfModal} className={"pdf-modal"} onClose={ ()=>setOpenPdfModal(false)} position="right center">
                     <div className={"container-iframe-modal"}>
-                        <iframe id="iframepdf" src="https://www.africau.edu/images/default/sample.pdf"></iframe>
+                        <iframe id="iframepdf" src={url}></iframe>
                         <button className={"button-option-pdf-modal"} onClick={()=>setOpenPdfModal(false)}>Cerrar</button>
                     </div>
-
                 </Popup>
-
             </div>
                 : null
         );

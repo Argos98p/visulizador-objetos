@@ -51,5 +51,7 @@ function addExtraPdf(id,nombre_doc,titulo, descripcion){
 function addLinkYoutube(id,nombreArchivo, link, titulo, descripcion){
     return `${BaseURL}:8084/api/objects/addextra/link?idobjeto=${id}&nombre=${nombreArchivo}&link=${link}&titulo=${titulo}&descripcion=${descripcion}`;
 }
-
-export {addLinkYoutube,addExtraPdf,deleteHotspot,statusEsceneUrl,uploadExtraUrl,infoObjectUrl,getHotspots,numberFramesInScene,completeImageUrl,getExtrasUrl,ImagePath,postAddHotspot,deleteExtra}
+function getPDF(id,path){
+    return `${BaseURL}:8085/api/images/getresource?path=${path}`
+}
+export {addLinkYoutube,getPDF,addExtraPdf,deleteHotspot,statusEsceneUrl,uploadExtraUrl,infoObjectUrl,getHotspots,numberFramesInScene,completeImageUrl,getExtrasUrl,ImagePath,postAddHotspot,deleteExtra}
