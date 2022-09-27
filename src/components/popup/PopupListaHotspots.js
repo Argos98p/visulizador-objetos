@@ -1,16 +1,18 @@
 import React, {memo, useState,useEffect} from "react";
 import Popup from "reactjs-popup";
 import {FaCrosshairs, FaTrash} from "react-icons/fa/index.js";
-import "./PopupListaHotspotsStyle.css"
+//import "./PopupListaHotspotsStyle.css"
 import {MdOutlineCancel} from "react-icons/md";
 
-    const PopupListaHotspot =memo(({listaHotspots,onClickDeleteHotspot})=>{
+    const PopupListaHotspot =({listaHotspots,onClickDeleteHotspot})=>{
 
     function handleDeleteHotspot(itemObject){
         onClickDeleteHotspot(itemObject.item);
     }
 
     function handleListaHotspots(){
+        console.log(listaHotspots)
+
         if(listaHotspots.length===0){
             return (<h6>No se encontron hotspots</h6>);
         }
@@ -20,8 +22,8 @@ import {MdOutlineCancel} from "react-icons/md";
             nombresHotspots=nombresHotspots.concat(unique);
             return nombresHotspots.map((item) => {
                 return (
-                    <div key={item} className="item-hotspots">
-                        <img className="button-delete-hotspot" onClick={()=>handleDeleteHotspot({item})} src="../iconos/eliminar-hotspot.png" alt=""/>
+                    <div key={item} className="item-hotspots ">
+                        <img className="button-delete-hotspot cursor-pointer" onClick={()=>handleDeleteHotspot({item})} src="../iconos/eliminar-hotspot.png" alt=""/>
 
                         <img  src="../iconos/lista_hotspot.png" alt=""/>
 
@@ -45,5 +47,5 @@ import {MdOutlineCancel} from "react-icons/md";
 
     </>);
 
-})
+}
 export default PopupListaHotspot;

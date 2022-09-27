@@ -103,6 +103,8 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot,listaHotspots,onClickDe
     }
 
     const loadPopupContent=()=>{
+        console.log(listaHotspots)
+
         if(extraType==="video_youtube"){
             return <AddYoutubeVideo onHandleInputYoutube={onHandleInputYoutube} addPdfVis={addPdfVis}></AddYoutubeVideo>
         }

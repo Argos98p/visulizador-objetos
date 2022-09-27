@@ -3,13 +3,9 @@ import Switch from "react-switch";
 import React, {useState} from "react";
 const ToogleButton=({isEditMode,handleActivateEditMode})=>{
 
-
-
     return (
-            <div className="example">
-
+            <div className="toogle-edit-mode">
                 <label htmlFor="material-switch">
-
                     <Switch
                         checked={isEditMode}
                         onChange={handleActivateEditMode}

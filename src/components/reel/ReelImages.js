@@ -29,25 +29,31 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     draggable:false,
     centered:true,
     adaptiveHeight:false,
-    centerMode:true,
+    centerMode:false,
     centerPadding:"10px",
     rows:1,
     responsive: [
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 3,
+          slidesToShow: 4,
 
         }
       },
       {
         breakpoint: 800,
         settings: {
+          slidesToShow: 3,
+        }
+      },
+      {
+        breakpoint: 475,
+        settings: {
           slidesToShow: 2,
         }
       },
       {
-        breakpoint: 616,
+        breakpoint: 318,
         settings: {
           slidesToShow: 1,
         }
@@ -56,9 +62,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     ]
 
   };
-  useEffect(()=>{
-    console.log("render reel");
-  });
+
   useImperativeHandle(ref, () => ({
 
     onExtra(extraId) {
@@ -228,10 +232,10 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
       {imagesListSrc.map((src, index) => (
 
           <div className='reel_div-img' key={index}>
-            {isEditMode
+            {/*isEditMode
                 ?<button className='btn-eliminar-extra' onClick={()=>onClickDeleteExtra(src)}> <FaTrash/></button>
                 :null
-            }
+            */}
             <img className='cursor-pointer reel_borde-redondo ' src={src[0]} key={index} alt={'hola'}
                  onClick={() => openImageViewer(index)}/>
 

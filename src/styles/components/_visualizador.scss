@@ -1,5 +1,15 @@
+.toogle-edit-mode{
+  position: absolute;
+  top: 1.5em;
+  left: 1em;
+  z-index: 100;
+}
+
 .icon-bold{
   font-size:20px;
+}
+.status-info{
+  color: transparent;
 }
 .shadow-buttons{
   box-shadow: 8px 12px 12px -4px rgba(18,17,17,0.75);

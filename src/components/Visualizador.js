@@ -32,6 +32,7 @@ import PopupInfoObjetct from "./popup/PopupInfoObjetct";
 import {BsChevronDown, BsChevronUp, BsShareFill} from "react-icons/bs";
 import PopupCompartir from "./popup/PopupCompartir";
 import ToogleButton from "./botones/ToogleButton";
+import {traverseTwoPhase} from "react-dom/test-utils";
 
 
 export function Visualizador({tipo, id,data, extras}) {
@@ -125,7 +126,8 @@ export function Visualizador({tipo, id,data, extras}) {
     }, []);
 
     useEffect(() => {
-
+        async function getDataHotspots(){
+            console.log('entra')
             let promesas=[];
             let mapHotspots={};
             for(let escena in objetoData.escenas){
@@ -151,6 +153,9 @@ export function Visualizador({tipo, id,data, extras}) {
                 setHotspotsMap(mapHotspots);
                 setPins(prepararPins(mapHotspots[activeEscena]));
             });
+        }
+        getDataHotspots();
+
 
 return ()=>setUpdateHotspots(false);
     }, [objetoData, updateHotspots]);
@@ -341,61 +346,30 @@ return ()=>setUpdateHotspots(false);
 
 
 
-    const move=(a,b)=>{
-        if(a<b){
 
-                tridiRef.current.next();
-                tridiRef.current.next();
-                tridiRef.current.next();
-                tridiRef.current.next();
-                tridiRef.current.next();
-                tridiRef.current.next();
-                tridiRef.current.next();
-                tridiRef.current.next();
-                tridiRef.current.next();
-                tridiRef.current.next();
-
-        }
-        if(a>b){
-
-                tridiRef.current.prev();
-                tridiRef.current.prev();
-                tridiRef.current.prev();
-                tridiRef.current.prev();
-                tridiRef.current.prev();
-                tridiRef.current.prev();
-                tridiRef.current.prev();
-                tridiRef.current.prev();
-                tridiRef.current.prev();
-                tridiRef.current.prev();
-                tridiRef.current.prev();
-                console.log('entra');
-
-        }
-    }
 
 
     useEffect(() => {
-        console.log(tridiRef)
-            if(tridiRef.current!== null){
-                tridiRef.current.next();
-                tridiRef.current.next();
-                tridiRef.current.next();
-                tridiRef.current.next();
-                tridiRef.current.next();
-                tridiRef.current.next();
+        async function fetchData() {
+            const myDiv = tridiContainerRef.current;
+            let activeTridi = Array.from(myDiv.querySelectorAll('.visible .info-value '))[0];
+
+            if(activeTridi !== undefined) {
+                let actualFrame = parseInt(activeTridi.innerHTML);
+                let previousFrame = currentFrameIndex;
+                if(actualFrame>previousFrame){
+                    for(let i = actualFrame;i>previousFrame;i--){
+                        await tridiRef.current.prev();
+                    }
+                }else {
+                    for(let i = actualFrame;i<previousFrame;i++){
+                        await tridiRef.current.next();
+                    }
+                }
             }
+        }
+        fetchData();
     }, [activeEscena]);
-
-        /*
-        const myDiv = tridiContainerRef.current;
-        let activeTridi = Array.from(myDiv.querySelectorAll('.visible .info-value '))[0];
-        if(activeTridi !== undefined){
-            let actualFrame = parseInt(activeTridi.innerHTML);
-            let previousFrame= currentFrameIndex;
-            move(actualFrame,previousFrame);
-
-        }*/
 
 
     const frameChangeHandler = (currentFrameIndex) => {
@@ -476,10 +450,14 @@ return ()=>setUpdateHotspots(false);
                     idframe:i,
                     nombreHotspot:nameHotspot,
                     idExtra:extraSelected.idextra,
-                    x:originalX+move*k,
+                    x:originalX+move*-k,
                     y:parseFloat(originalY),
                 }
-                arrayHotspots.push(newPin)
+                if(newPin.idframe===0){
+
+                }else{
+                    arrayHotspots.push(newPin)
+                }
                 k++;
             }
             k=-j;
@@ -493,7 +471,7 @@ return ()=>setUpdateHotspots(false);
                         idframe:h,
                         nombreHotspot:nameHotspot,
                         idExtra:extraSelected.idextra,
-                        x:originalX+move*k,
+                        x:originalX+move*-k,
                         y:parseFloat(originalY),
                     }
                     arrayHotspots.push(newPin)
@@ -556,6 +534,8 @@ return ()=>setUpdateHotspots(false);
             }
         ).catch(
             (e)=>{
+                toast.error('ha ocurrido un error',{autoClose: 3000,
+                    hideProgressBar: true,theme:"dark"});
                 console.log(e)
                 setAwaitAddHotspot(false);
             }
@@ -751,6 +731,7 @@ return ()=>setUpdateHotspots(false);
 
         }
 
+        console.log(arrayFramesId);
 
         axios.post(deleteHotspot(id,escenas[activeEscena].nombre,nameHotspot),arrayFramesId)
             .then((response)=>{
@@ -871,7 +852,6 @@ return ()=>setUpdateHotspots(false);
         }
     }
     const loadAllTridiComponents=()=>{
-        console.log('all tridi')
         if(objetoData){
             let escenas=objetoData.escenas;
             let escenasSrcImages=[];
