@@ -15,7 +15,7 @@ import {
     getHotspots,
     infoObjectUrl,
     postAddHotspot,
-    addLinkYoutube
+    addLinkYoutube, getExtrasUrl
 } from "../Api/apiRoutes";
 import ButtonEscena from "./botones/buttonEscena";
 import LottieEmptyEscenas from "../Animations/lottieEmptyEscena";
@@ -66,6 +66,9 @@ export function Visualizador({tipo, id,data, extras}) {
     const [ openModalInfoObject, setOpenModalInfoObject] = useState(false);
     const [ openModalCompartir, setOpenModalCompartir]  = useState(false);
     const [imgForInfoModal, setImgForModal] = useState("");
+    const [updateObjectData, setUpdateObjectData] = useState(false);
+    const [extrasList, setExtrasList] = useState(extras);
+    const [updateExtras, setUpdateExtras] = useState(false);
 
     const extraContainerRef=useRef();
     const extraInViewRef = useRef();
@@ -127,7 +130,6 @@ export function Visualizador({tipo, id,data, extras}) {
 
     useEffect(() => {
         async function getDataHotspots(){
-            console.log('entra')
             let promesas=[];
             let mapHotspots={};
             for(let escena in objetoData.escenas){
@@ -149,16 +151,52 @@ export function Visualizador({tipo, id,data, extras}) {
                 )
             }
             Promise.all(promesas).then(()=> {
-                console.log(mapHotspots)
                 setHotspotsMap(mapHotspots);
                 setPins(prepararPins(mapHotspots[activeEscena]));
             });
         }
         getDataHotspots();
-
-
-return ()=>setUpdateHotspots(false);
+        return ()=>setUpdateHotspots(false);
     }, [objetoData, updateHotspots]);
+
+    useEffect(() => {
+        axios.get(infoObjectUrl(id)).then(
+            response=>{
+                if (response.status===200){
+                    setObjetoData(response.data);
+
+                }
+
+            }
+        ).catch(error => {
+            if(error.response){
+                console.log(error.response);
+            }else if(error.request){
+                console.log(error.request)
+            }else{
+                console.log('Error ',error.message);
+            }
+            console.log(error.config);
+        })
+        return () => {
+            setUpdateObjectData(false);
+        };
+    }, [updateObjectData]);
+
+    useEffect(() => {
+        axios.get(getExtrasUrl(id))
+            .then((response)=>{
+                if(response.data !== []){
+                    if(response.status === 200){
+                        setExtrasList(response.data);
+                    }
+                }
+            });
+        return () => {
+            setUpdateExtras(false);
+        };
+    }, [updateExtras]);
+
 
     useEffect(() => {
         setTimeout(()=>{
@@ -274,7 +312,9 @@ return ()=>setUpdateHotspots(false);
     const recordStopHandler = (recordingSessionId) => /* console.log("on record stop", {recordingSessionId, pins})*/
         console.log();
     const pinClickHandler = (pin) => {
+        console.log(pin);
         let extraInHotspot = searchExtra(pin.idExtra);
+        console.log(extraInHotspot)
 
         if(extraInHotspot.hasOwnProperty("imagen")){
             setVisibleExtras(true);
@@ -289,13 +329,13 @@ return ()=>setUpdateHotspots(false);
             console.log("pdf")
             setExtraPdfOrVideo(extraInHotspot);
             setOpenPdfModal(true);
-
         }
 
     };
 
     const searchExtra=(extraId)=>{
-        return extras.find(x => x.idextra === extraId);
+        console.log(extrasList);
+        return extrasList.find(x => x.idextra === extraId);
     }
 
     function handlePrev() {
@@ -343,10 +383,6 @@ return ()=>setUpdateHotspots(false);
         setActiveEscena(escena.toString())
         setPins(prepararPins(hotspotsMap[escena]));
     },[activeEscena,hotspotsMap]);
-
-
-
-
 
 
     useEffect(() => {
@@ -402,14 +438,16 @@ return ()=>setUpdateHotspots(false);
     const clickOnTridiContainer = () => {
         if (addHotspotMode) {
             tridiRef.current.toggleRecording(false);
+
         }
+
     }
     const frameReplicateOneReference=()=>{
 
 
         let lastPin= pins[pins.length-1];
         let move = 0.014;
-        let j=10;
+        let j=20;
         let aux=j;
         let arrayHotspots=[];
 
@@ -526,11 +564,14 @@ return ()=>setUpdateHotspots(false);
         console.log(arrayHotspots)
         postNewHotspots(id,objetoData.escenas[activeEscena].nombre,arrayHotspots).then(
             response=>{
-                console.log(response)
+                console.log(response);
+                setUpdateObjectData(true);
+                setUpdateExtras(true);
                 setAwaitAddHotspot(false);
                 setAddHotspotMode(false)
                 setUpdateHotspots(true);
                 setNewHotspot(false);
+
             }
         ).catch(
             (e)=>{
@@ -695,8 +736,13 @@ return ()=>setUpdateHotspots(false);
                         </div>
 
                     </label>
-                    <ReactTooltip id="test" place="top" effect="solid" getContent={(dataTip=>dataTip)}>
+                    {
+                        /*
+                        *   <ReactTooltip id="test" place="top" effect="solid" getContent={(dataTip=>dataTip)}>
                     </ReactTooltip>
+                        * */
+                    }
+
                 </div>
             </>
         );
@@ -715,23 +761,20 @@ return ()=>setUpdateHotspots(false);
 
 
     function handleDeleteHotspot(nameHotspot) {
+
         setAwaitAddHotspot(true);
         let arrayFramesId = [];
         let escenas=objetoData.escenas;
 
-        console.log(escenas[activeEscena])
-
         for (let frame in escenas[activeEscena].imagenes){
             for(let value in escenas[activeEscena].imagenes[frame].hotspots){
-                let tempHotspot = escenas[activeEscena].imagenes[frame].hotspots[value]
+                let tempHotspot = escenas[activeEscena].imagenes[frame].hotspots[value];
                 if(tempHotspot.nombreHotspot === nameHotspot){
                     arrayFramesId.push(escenas[activeEscena].imagenes[frame].path.split('/')[3].split('.')[0]);
                 }
             }
 
         }
-
-        console.log(arrayFramesId);
 
         axios.post(deleteHotspot(id,escenas[activeEscena].nombre,nameHotspot),arrayFramesId)
             .then((response)=>{
@@ -752,6 +795,8 @@ return ()=>setUpdateHotspots(false);
                 setAwaitAddHotspot(false);
             });
     }
+
+
 
     const botonesEscenas=useMemo(()=>
             <>
@@ -794,11 +839,14 @@ return ()=>setUpdateHotspots(false);
     </>
 
     }
-
-
     const addPdfVis=(file)=>{
         console.log(file)
 
+    }
+    const  convertToSlug=(Text)=> {
+        return Text.toLowerCase()
+            .replace(/ /g, '-')
+            .replace(/[^\w-]+/g, '');
     }
     const handleCreateHotpotsExtra=(titulo="",type,file=null,linkYoutube="",extra=null)=>{
 
@@ -807,12 +855,13 @@ return ()=>setUpdateHotspots(false);
             bodyFormData.append('extra', file);
             axios({
                 method: "post",
-                url: addExtraPdf(id,file.name,titulo, titulo),
+                url: addExtraPdf(id,convertToSlug(file.name),titulo, titulo),
                 data: bodyFormData,
                 headers: { "Content-Type": "multipart/form-data" },
             })
                 .then(function (response) {
                     if(response.status === 200){
+                        console.log(response)
                         tridiRef.current.toggleRecording(true)
                         setExtraSelected(response.data);
                         setNameHotspot(titulo);
@@ -823,6 +872,8 @@ return ()=>setUpdateHotspots(false);
                 .catch(function (response) {
                     //handle error
                     console.log(response);
+                    toast.error('Error en el envio',{autoClose: 2000,
+                        hideProgressBar: true,theme:"dark"});
                 });
         }
         else if(type==="video_youtube"){
@@ -838,17 +889,23 @@ return ()=>setUpdateHotspots(false);
                     }
                 })
                 .catch(function (response) {
-                    //handle error
+                    toast.error('Error',{autoClose: 2000,
+                        hideProgressBar: true,theme:"dark"});
                     console.log(response);
                 });
         }
-        else if(type==="vincular_extra"){
-            console.log(extra);
-            tridiRef.current.toggleRecording(true)
-            setExtraSelected(extra);
-            setNameHotspot(titulo);
-            setAddHotspotMode(true);
-            setNewHotspot(true);
+        else if(type==="vincular_extra" ){
+                if(extra!== null){
+                    console.log(extra);
+                    tridiRef.current.toggleRecording(true)
+                    setExtraSelected(extra);
+                    setNameHotspot(titulo);
+                    setAddHotspotMode(true);
+                    setNewHotspot(true);
+                }else{
+                    toast.error('Porfavor seleccione un extra',{autoClose: 2000,
+                        hideProgressBar: true,theme:"dark"});
+                }
         }
     }
     const loadAllTridiComponents=()=>{
@@ -956,11 +1013,11 @@ return ()=>setUpdateHotspots(false);
     const modalPdf = ()=>{
         return (
             openPdfModal?
-            <div className={"modal-pdf-container "} >
-                <Popup open={openPdfModal} onClose={ ()=>setOpenPdfModal(false)} position="right center">
+            <div className={"modal-pdf-container"} >
+                <Popup open={openPdfModal} className={"pdf-modal"} onClose={ ()=>setOpenPdfModal(false)} position="right center">
                     <div className={"container-iframe-modal"}>
                         <iframe id="iframepdf" src="https://www.africau.edu/images/default/sample.pdf"></iframe>
-                        <button className={"button-option"} onClick={()=>setOpenPdfModal(false)}>Cerrar</button>
+                        <button className={"button-option-pdf-modal"} onClick={()=>setOpenPdfModal(false)}>Cerrar</button>
                     </div>
 
                 </Popup>
@@ -980,7 +1037,6 @@ return ()=>setUpdateHotspots(false);
         </>
 
     }
-
     const buttonOpenReel = ()=>{
         if(!visibleExtras)
         return (
@@ -993,7 +1049,6 @@ return ()=>setUpdateHotspots(false);
         else return "";
 
     }
-
 
     const botonAgregarHotspot=()=>{
         if(isEditMode){

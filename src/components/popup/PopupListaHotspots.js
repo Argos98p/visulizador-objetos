@@ -11,7 +11,6 @@ import {MdOutlineCancel} from "react-icons/md";
     }
 
     function handleListaHotspots(){
-        console.log(listaHotspots)
 
         if(listaHotspots.length===0){
             return (<h6>No se encontron hotspots</h6>);

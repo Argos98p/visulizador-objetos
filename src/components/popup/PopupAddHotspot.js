@@ -103,7 +103,6 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot,listaHotspots,onClickDe
     }
 
     const loadPopupContent=()=>{
-        console.log(listaHotspots)
 
         if(extraType==="video_youtube"){
             return <AddYoutubeVideo onHandleInputYoutube={onHandleInputYoutube} addPdfVis={addPdfVis}></AddYoutubeVideo>
@@ -195,7 +194,7 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot,listaHotspots,onClickDe
             return null;
         }
         return (
-                <input type="text" onChange={(e)=>onChangeInputTitulo(e)} placeholder={"Ingrese un titulo o descripcion"} name="input-titulo"/>
+                <input type="text"  autoComplete="false" onChange={(e)=>onChangeInputTitulo(e)} placeholder={"Ingrese un titulo o descripcion"} name="input-titulo"/>
     );
     }
 
