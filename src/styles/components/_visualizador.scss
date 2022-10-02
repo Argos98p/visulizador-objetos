@@ -1,15 +1,26 @@
 .toogle-edit-mode{
   position: absolute;
   top: 1.5em;
-  left: 1em;
+  right: 1em;
   z-index: 100;
 }
-
+.logo-company{
+  position: absolute;
+  top: 1em;
+  left: 1em;
+  z-index: 100;
+  height: 3em;
+  width: 3em;
+  img{
+    width: 100%;
+    height: 100%;
+  }
+}
 .icon-bold{
   font-size:20px;
 }
 .status-info{
-  color: transparent;
+  color: white;
 }
 .shadow-buttons{
   box-shadow: 8px 12px 12px -4px rgba(18,17,17,0.75);
@@ -124,9 +135,11 @@
     right: 0;
   }
   .visualizador_container-handle-buttons{
-    position: absolute;
+    z-index: 1000;
+    top: 5.5em;
+    position: absolute;/*
     bottom: 3.6em;
-    right: 1.3em;
+    right: 1.3em;*/
   }
 
   .popup-content{

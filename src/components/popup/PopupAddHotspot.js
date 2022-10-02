@@ -1,25 +1,22 @@
 import Popup from 'reactjs-popup';
-import React, {useEffect, useState, useRef, memo} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import 'reactjs-popup/dist/index.css';
 import '../modal.css';
-import axios from "axios";
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {ImagePath, getExtrasUrl} from '../../Api/apiRoutes'
-import Form from 'react-bootstrap/Form';
+
 import AddYoutubeVideo from "./AddYoutubeVideo";
-import AddVinculateExtra from "./AddVinculateExtra";
-import AddPdf from "./AddPdf";
+
 import Dropzone from "react-dropzone";
-import {FaInfo, FaRecordVinyl} from "react-icons/fa";
 import {TiArrowBack} from "react-icons/ti";
 import {BsPlayCircle} from "react-icons/bs";
 import {BiArrowToTop} from "react-icons/bi";
 import {FiDownload} from "react-icons/fi";
 import PopupListaHotspot from "./PopupListaHotspots";
-import {SiAddthis} from "react-icons/si";
+import { useNavigate } from 'react-router-dom';
 
-
-const  PopupNewHotspot =({id, extras,handleCreateHotspot,listaHotspots,onClickDeleteHotspot, handleCreateHotpotsExtra,addPdfVis}) =>{
+const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleCreateHotpotsExtra,addPdfVis}) =>{
 
     const [imageSelected, setImageSelected] = useState(null);
     const [noImageSelected, setNoImageSelected] = useState(false);
@@ -31,6 +28,48 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot,listaHotspots,onClickDe
     const [linkYoutube, setLinkYoutube] = useState("");
     const [extrasOnlyImages, setExtrasOnlyImages]= useState(extras.filter(extra => extra.hasOwnProperty("imagen")))
     const [ inputTituloHotspotValue, setInputTituloHotspotValue ] = useState("")
+
+    const navigate = useNavigate();
+
+
+    useEffect(() => {
+
+        window.history.pushState(null, null, document.URL);
+        window.addEventListener('popstate', function(event) {
+            event.preventDefault()
+            window.location.replace(`www.google.com`);
+        });
+        document.addEventListener("popstate", (ev)=>{
+            ev.preventDefault()
+            console.log('holaaadddd');
+        });
+        window.onbeforeunload = function() {
+            console.log('holaaaa')
+            window.onbeforeunload = false;
+        }
+
+        /*
+        window.addEventListener('beforeunload', (event) => {
+            // Cancel the event as stated by the standard.
+
+            if(open===true){
+                event.preventDefault();
+                console.log('holaa');
+                event.returnValue = null;
+                window.onbeforeunload = null;
+            }else{
+                window.onbeforeunload =function() {
+                    return null;
+                };
+            }
+        });*/
+
+
+        return () => {
+            window.removeEventListener('beforeunload', ()=>{});
+        };
+    }, [open]);
+
 
     //const [extras, setExtras] = useState([])
     /*
@@ -118,7 +157,7 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot,listaHotspots,onClickDe
                                         <img className={`imagen-modal  ${
                                             item===imageSelected
                                                 ? "image-modal-selected" : ""
-                                        }`} src={ImagePath(item.imagen.path)}  />
+                                        }`} src={ImagePath(item.imagen.path)}   alt=""/>
                                         <figcaption>
                                             {item.nombre}
                                         </figcaption>
@@ -198,10 +237,14 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot,listaHotspots,onClickDe
     );
     }
 
+
+
     return (
         <>
-            <img onClick={onClickHotspotPopup} className="cursor-pointer visualizador_btn-share-img popupAddHotspot_btn_hotspot" src="../iconos/btn-editar-hotspot.png" alt=""/>
+            <div >
+            <img onClick={onClickHotspotPopup} className="cursor-pointer visualizador_btn-share-img popupAddHotspot_btn_hotspot" src="/iconos/btn-editar-hotspot.png" alt=""/>
             <Popup className="popup-add-hotspot"
+
                 onClose={onCancelHotspotModal}
                 open={open}
                 modal
@@ -209,14 +252,14 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot,listaHotspots,onClickDe
                 <div className="modalp">
                     <div className="header">
                         <div className="icono-anadir">
-                            <TiArrowBack className="icon" fontSize={40}></TiArrowBack>
+                            <TiArrowBack className="icon cursor-pointer" onClick={onCancelHotspotModal} fontSize={40}></TiArrowBack>
                             <h5>Añadir hotspot</h5>
                         </div>
 
                         <div className="buttons-container">
 
                             <div className={"button-type-extra " + (extraType === "vincular_extra" ? "activo" : "" )}  onClick={()=>setExtraType("vincular_extra")}>
-                                <img src="../iconos/enlace.png"/>
+                                <img src="/iconos/enlace.png" alt=""/>
                                 <button>Vincular con extra</button>
                             </div>
                             <div className={"button-type-extra " + (extraType === "video_youtube" ? "activo" : "" )}  onClick={()=>setExtraType("video_youtube")}>
@@ -228,7 +271,7 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot,listaHotspots,onClickDe
                                 <button>Subir PDF</button>
                             </div>
                             <div className={"button-type-extra " + (extraType === "hotspots " ? "activo" : "" )}  onClick={()=>setExtraType("hotspots")}>
-                                <img src="../iconos/lista_hotspot.png"/>
+                                <img src="/iconos/lista_hotspot.png" alt =""/>
                                 <button>Lista de hotspot</button>
                             </div>
 
@@ -251,7 +294,9 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot,listaHotspots,onClickDe
                             { (extraType === "hotspots") ? null
                                 : <div className="button-cancel-container">
 
-                                    <SiAddthis></SiAddthis>
+
+                                    <img src="/iconos/btn-crear-hospots.png" alt=""/>
+
 
                                     <button className="button-option"
                                             disabled={false/*
@@ -270,6 +315,7 @@ const  PopupNewHotspot =({id, extras,handleCreateHotspot,listaHotspots,onClickDe
                     </div>
                 </div>
             </Popup>
+            </div>
         </>
     );
 }

@@ -8,7 +8,7 @@ import LottieServerError from "../Animations/lottieServerError";
 
 
 //cambiar por una funciona que devuelva solo true o false
-function Controller() {
+function Controller({editMode}) {
     let {id} = useParams();
     const [myObjeto, setMyObjeto] = useState(null);
     const [extras, setExtras] = useState([]);
@@ -68,6 +68,7 @@ function Controller() {
 
     return myObjeto !== null ? (
         <Visualizador data={myObjeto}
+                      edit={editMode}
             tipo="vehiculo"
             id={id} extras={extras}></Visualizador>
     ) : null

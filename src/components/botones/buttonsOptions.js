@@ -1,11 +1,8 @@
 import {
     FaPlus,
     FaMinus,
-    FaPlay,
     FaChevronLeft,
     FaChevronRight,
-    FaPause,
-    FaCrosshairs
 } from "react-icons/fa/index.js";
 import "../visualizador_style.css";
 export default function OptionButtons({
@@ -48,17 +45,7 @@ export default function OptionButtons({
                 </button>
             </div>
 
-            {
-                /*
-                * <div className="option-item">
-                <button className="semi-transparent-button"  disabled={isEditMode}
-                    onClick={onAutoPlay}>
-                    {
-                    isAutoPlayRunning ? <FaPause/>: <FaPlay/>
-                } </button>
-            </div>
-                * */
-            }
+
 
         </div>
     );

@@ -22,9 +22,9 @@ import {MdOutlineCancel} from "react-icons/md";
             return nombresHotspots.map((item) => {
                 return (
                     <div key={item} className="item-hotspots ">
-                        <img className="button-delete-hotspot cursor-pointer" onClick={()=>handleDeleteHotspot({item})} src="../iconos/eliminar-hotspot.png" alt=""/>
+                        <img className="button-delete-hotspot cursor-pointer" onClick={()=>handleDeleteHotspot({item})} src="/iconos/eliminar-hotspot.png" alt=""/>
 
-                        <img  src="../iconos/lista_hotspot.png" alt=""/>
+                        <img  src="/iconos/lista_hotspot.png" alt=""/>
 
                         <h6 className="nombre-hotspot">{item}</h6>
                     </div>

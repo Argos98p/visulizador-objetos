@@ -1,4 +1,4 @@
-import React, {createRef, useCallback, useEffect, useMemo, useRef, useState} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState} from "react";
 import Tridi from "react-tridi";
 import OptionButtons from "./botones/buttonsOptions";
 import axios from "axios";
@@ -19,7 +19,7 @@ import {
 } from "../Api/apiRoutes";
 import ButtonEscena from "./botones/buttonEscena";
 import LottieEmptyEscenas from "../Animations/lottieEmptyEscena";
-
+import useLongPress from "../hooks/useLongPress";
 import PopupNewHotspot from "./popup/PopupAddHotspot";
 import ReactTooltip from "react-tooltip";
 import 'reactjs-popup/dist/index.css';
@@ -29,13 +29,12 @@ import {toast, ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import DotLoader from "react-spinners/DotLoader";
 import PopupInfoObjetct from "./popup/PopupInfoObjetct";
-import {BsChevronDown, BsChevronUp, BsShareFill} from "react-icons/bs";
+import {BsChevronDown, BsChevronUp} from "react-icons/bs";
 import PopupCompartir from "./popup/PopupCompartir";
 import ToogleButton from "./botones/ToogleButton";
-import {traverseTwoPhase} from "react-dom/test-utils";
 
 
-export function Visualizador({tipo, id,data, extras}) {
+export function Visualizador({tipo, id,data, extras,edit}) {
 
     const [objetoData,setObjetoData] = useState({escenas:{}});
     const [frames, setFrames] = useState([]);
@@ -43,7 +42,7 @@ export function Visualizador({tipo, id,data, extras}) {
     const [updateHotspots, setUpdateHotspots] = useState(false); //variable para que se vuelva a pedir los hotspots
     const [awaitAddHotspot, setAwaitAddHotspot] = useState(false); //varaible para saber si los hotspots ya se cargaron en el server
     const [isAutoPlayRunning, setIsAutoPlayRunning] = useState(false);
-    const [isEditMode, setIsEditMode] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(edit);
     const [pins, setPins] = useState([]);
     const [visibleExtras, setVisibleExtras] = useState(true);
     const [addHotspotMode, setAddHotspotMode] = useState(false); //variable para definir cuando con el click se agrega un nuevo hotspot  y para mostrar inicio y fin
@@ -69,7 +68,8 @@ export function Visualizador({tipo, id,data, extras}) {
     const [updateObjectData, setUpdateObjectData] = useState(false);
     const [extrasList, setExtrasList] = useState(extras);
     const [updateExtras, setUpdateExtras] = useState(false);
-
+    const [hotspotType, setHotspotType] = useState("imagen");
+    const [longPressed, setLongPressed] = useState(false);
     const extraContainerRef=useRef();
     const extraInViewRef = useRef();
     const tridiRef = useRef(null);
@@ -88,6 +88,7 @@ export function Visualizador({tipo, id,data, extras}) {
             tridiRef.current.next();
             tridiRef.current.next();
             tridiRef.current.next();
+            tridiRef.current.next();
 
         }else{
             tridiRef.current.prev();
@@ -97,6 +98,7 @@ export function Visualizador({tipo, id,data, extras}) {
 
         }
         setPrevDelta(eventData.deltaX);
+        setLongPressed(false);
     }
 
     // Recibe toda la info del objeto
@@ -196,7 +198,6 @@ export function Visualizador({tipo, id,data, extras}) {
             setUpdateExtras(false);
         };
     }, [updateExtras]);
-
 
     useEffect(() => {
         setTimeout(()=>{
@@ -382,8 +383,9 @@ export function Visualizador({tipo, id,data, extras}) {
         if(!sphereImageInView){
             e.deltaY > 0 ? handleZoomOut() : handleZoomIn();
         }
-
     }
+
+
     const handleButtonEscena=useCallback((escena)=>{
         setActiveEscena(escena.toString())
         setPins(prepararPins(hotspotsMap[escena]));
@@ -425,7 +427,7 @@ export function Visualizador({tipo, id,data, extras}) {
         ) {
             console.log('Informacion erronea')
         } else {
-            tridiRef.current.toggleRecording(true)
+
             setExtraSelected(imgExtra);
             setNameHotspot(info);
             setAddHotspotMode(true);
@@ -441,151 +443,201 @@ export function Visualizador({tipo, id,data, extras}) {
     }, [newHotspot]);
 
     const clickOnTridiContainer = () => {
+
         if (addHotspotMode) {
-            tridiRef.current.toggleRecording(false);
-
+            //tridiRef.current.toggleRecording(false);
+            console.log('on tridi container')
         }
-
     }
+
     const frameReplicateOneReference=()=>{
 
+        const replicateFrames = (indexEscena) => {
 
-        let lastPin= pins[pins.length-1];
-        let move = 0.014;
-        let j=20;
-        let aux=j;
-        let arrayHotspots=[];
+            let lastPin= pins[pins.length-1];
+            let move = 0.014;
+            let j=20;
+            let aux=j;
+            let arrayHotspots=[];
 
-        let originalX = parseFloat(lastPin.x);
-        let originalY = lastPin.y;
+            let originalX = parseFloat(lastPin.x);
+            let originalY = lastPin.y;
 
-        if(lastPin.frameId -j > 0  && lastPin.frameId + j <=frames[activeEscena]){
+            if(lastPin.frameId -j > 0  && lastPin.frameId + j <=frames[indexEscena]){
 
-            console.log('entra 1');
-            for(let i=lastPin.frameId-j;i<=lastPin.frameId+j;i++){
-                let newPin={
-                    idframe:i,
-                    nombreHotspot:nameHotspot,
-                    idExtra:extraSelected.idextra,
-                    x:originalX+move*aux,
-                    y:parseFloat(originalY),
-                }
-                if(j===0){
-                    newPin={
+                console.log('entra 1');
+                for(let i=lastPin.frameId-j;i<=lastPin.frameId+j;i++){
+                    let newPin={
                         idframe:i,
                         nombreHotspot:nameHotspot,
                         idExtra:extraSelected.idextra,
-                        x:originalX,
+                        x:originalX+move*aux,
                         y:parseFloat(originalY),
+                        //type:hotspotType
                     }
-                }
-                arrayHotspots.push(newPin)
-                aux--;
-            }
-
-
-        }else if(lastPin.frameId - j < 0 ){
-            console.log('entra 2');
-
-            let k=0;
-            for(let i=lastPin.frameId;i<=j+lastPin.frameId;i++){
-                let newPin={
-                    idframe:i,
-                    nombreHotspot:nameHotspot,
-                    idExtra:extraSelected.idextra,
-                    x:originalX+move*-k,
-                    y:parseFloat(originalY),
-                }
-                if(newPin.idframe===0){
-
-                }else{
+                    if(j===0){
+                        newPin={
+                            idframe:i,
+                            nombreHotspot:nameHotspot,
+                            idExtra:extraSelected.idextra,
+                            x:originalX,
+                            y:parseFloat(originalY),
+                            //type:hotspotType
+                        }
+                    }
                     arrayHotspots.push(newPin)
+                    aux--;
                 }
-                k++;
-            }
-            k=-j;
-            let h= lastPin.frameId -j +frames[activeEscena]
-            for(let i = lastPin.frameId -j;i<lastPin.frameId;i++){
-                if(h===frames[activeEscena]){
-                    h=0;
-                }
-                if(h!==0){
+
+
+            }else if(lastPin.frameId - j < 0 ){
+                console.log('entra 2');
+
+                let k=0;
+                for(let i=lastPin.frameId;i<=j+lastPin.frameId;i++){
                     let newPin={
-                        idframe:h,
+                        idframe:i,
                         nombreHotspot:nameHotspot,
                         idExtra:extraSelected.idextra,
                         x:originalX+move*-k,
                         y:parseFloat(originalY),
                     }
-                    arrayHotspots.push(newPin)
-                }
+                    if(newPin.idframe===0){
 
-                h++;
-                k++;
+                    }else{
+                        arrayHotspots.push(newPin)
+                    }
+                    k++;
+                }
+                k=-j;
+                let h= lastPin.frameId -j +frames[indexEscena]
+                for(let i = lastPin.frameId -j;i<lastPin.frameId;i++){
+                    if(h===frames[indexEscena]){
+                        h=0;
+                    }
+                    if(h!==0){
+                        let newPin={
+                            idframe:h,
+                            nombreHotspot:nameHotspot,
+                            idExtra:extraSelected.idextra,
+                            x:originalX+move*-k,
+                            y:parseFloat(originalY),
+                            //type: hotspotType
+                        }
+                        arrayHotspots.push(newPin)
+                    }
+
+                    h++;
+                    k++;
+
+                }
 
             }
-
-        }
-        else if(lastPin.frameId+j > frames[activeEscena]){
-            console.log('entra 3');
-            let k=0;
-            for(let i=lastPin.frameId;i>lastPin.frameId-j;i--){
-                let newPin={
-                    idframe:i,
-                    nombreHotspot:nameHotspot,
-                    idExtra:extraSelected.idextra,
-                    x:originalX+move*k,
-                    y:parseFloat(originalY),
-                }
-                arrayHotspots.push(newPin)
-                k--;
-            }
-            k=0
-            let h= lastPin.frameId +1;
-            for(let i = lastPin.frameId ;i<lastPin.frameId+j;i++){
-                if(h===frames[activeEscena]){
-                    h=0;
-                }
-                if(h!==0){
+            else if(lastPin.frameId+j > frames[indexEscena]){
+                console.log('entra 3');
+                let k=0;
+                for(let i=lastPin.frameId;i>lastPin.frameId-j;i--){
                     let newPin={
-                        idframe:h,
+                        idframe:i,
                         nombreHotspot:nameHotspot,
                         idExtra:extraSelected.idextra,
                         x:originalX+move*k,
                         y:parseFloat(originalY),
+                        //type:hotspotType
                     }
                     arrayHotspots.push(newPin)
+                    k--;
+                }
+                k=0
+                let h= lastPin.frameId +1;
+                for(let i = lastPin.frameId ;i<lastPin.frameId+j;i++){
+                    if(h===frames[indexEscena]){
+                        h=0;
+                    }
+                    if(h!==0){
+                        let newPin={
+                            idframe:h,
+                            nombreHotspot:nameHotspot,
+                            idExtra:extraSelected.idextra,
+                            x:originalX+move*k,
+                            y:parseFloat(originalY),
+                            //type:hotspotType
+                        }
+                        arrayHotspots.push(newPin)
+                    }
+
+                    h++;
+                    k++;
+
                 }
 
-                h++;
-                k++;
-
             }
 
+            return arrayHotspots;
         }
 
+        if(objetoData.escenas[activeEscena].nombre === "puertas_cerradas" || objetoData.escenas[activeEscena].nombre === "puertas_abiertas"){
+            let arrayPuertasCerradas =  replicateFrames("0");
+            let arrayPuertasAbiertas =  replicateFrames("1");
 
-        console.log(objetoData.escenas[activeEscena].nombre)
-        console.log(arrayHotspots)
-        postNewHotspots(id,objetoData.escenas[activeEscena].nombre,arrayHotspots).then(
-            response=>{
-                console.log(response);
-                setUpdateObjectData(true);
-                setUpdateExtras(true);
-                setAwaitAddHotspot(false);
-                setAddHotspotMode(false)
-                setUpdateHotspots(true);
-                setNewHotspot(false);
+            postNewHotspots(id,"puertas_cerradas",arrayPuertasCerradas).then(
+                response=>{
+                    console.log(response);
+                    postNewHotspots(id, "puertas_abiertas",arrayPuertasAbiertas).then(
+                        response => {
+                            toast.success(`Hotspot  ${nameHotspot} creado`,{autoClose: 2000,
+                                hideProgressBar: true,theme:"dark"});
+                            setUpdateObjectData(true);
+                            setUpdateExtras(true);
+                            setAwaitAddHotspot(false);
+                            setAddHotspotMode(false)
+                            setUpdateHotspots(true);
+                            setNewHotspot(false);
+                            tridiRef.current.toggleRecording(false);
+                            setLongPressed(false);
+                    }).catch(
+                        (e)=>{
+                            toast.error('ha ocurrido un error',{autoClose: 3000,
+                                hideProgressBar: true,theme:"dark"});
+                            console.log(e)
+                            setAwaitAddHotspot(false);
+                        }
+                    )
+                }
+            ).catch(
+                (e)=>{
 
-            }
-        ).catch(
-            (e)=>{
-                toast.error('ha ocurrido un error',{autoClose: 3000,
-                    hideProgressBar: true,theme:"dark"});
-                console.log(e)
-                setAwaitAddHotspot(false);
-            }
-        )
+                    toast.error('ha ocurrido un error',{autoClose: 3000,
+                        hideProgressBar: true,theme:"dark"});
+                    console.log(e)
+                    setAwaitAddHotspot(false);
+                }
+            )
+        }else{
+            let arrayEscena = replicateFrames(activeEscena);
+
+            postNewHotspots(id, objetoData.escenas[activeEscena].nombre ,arrayEscena).then(
+                response => {
+                    console.log(response);
+                    setUpdateObjectData(true);
+                    setUpdateExtras(true);
+                    setAwaitAddHotspot(false);
+                    setAddHotspotMode(false)
+                    setUpdateHotspots(true);
+                    setNewHotspot(false);
+                    tridiRef.current.toggleRecording(false);
+                    setLongPressed(false);
+                    toast.success(`Hotspot  ${nameHotspot} creado`,{autoClose: 2000,
+                        hideProgressBar: true,theme:"dark"});
+                }).catch(
+                (e)=>{
+                    toast.error('ha ocurrido un error',{autoClose: 3000,
+                        hideProgressBar: true,theme:"dark"});
+                    console.log(e)
+                    setAwaitAddHotspot(false);
+                }
+            )
+        }
 
     }
 
@@ -727,6 +779,8 @@ export function Visualizador({tipo, id,data, extras}) {
     */
     /****** Fin ---- FUNCIONALIDAD PARA AGREGAR HOTSPOTS******/
     const myRenderPin = (pin) => {
+
+        //console.log(pin)
         ReactTooltip.rebuild()
         return (
             <>
@@ -764,44 +818,79 @@ export function Visualizador({tipo, id,data, extras}) {
         }
     }
 
-
     function handleDeleteHotspot(nameHotspot) {
-
-        setAwaitAddHotspot(true);
-        let arrayFramesId = [];
         let escenas=objetoData.escenas;
-
-        for (let frame in escenas[activeEscena].imagenes){
-            for(let value in escenas[activeEscena].imagenes[frame].hotspots){
-                let tempHotspot = escenas[activeEscena].imagenes[frame].hotspots[value];
-                if(tempHotspot.nombreHotspot === nameHotspot){
-                    arrayFramesId.push(escenas[activeEscena].imagenes[frame].path.split('/')[3].split('.')[0]);
+        const searchHotspot = (indexEscena) => {
+            let arrayFramesId = [];
+            for (let frame in escenas[indexEscena].imagenes){
+                for(let value in escenas[indexEscena].imagenes[frame].hotspots){
+                    let tempHotspot = escenas[indexEscena].imagenes[frame].hotspots[value];
+                    if(tempHotspot.nombreHotspot === nameHotspot){
+                        arrayFramesId.push(escenas[indexEscena].imagenes[frame].path.split('/')[3].split('.')[0]);
+                    }
                 }
             }
 
+            return arrayFramesId;
         }
 
-        axios.post(deleteHotspot(id,escenas[activeEscena].nombre,nameHotspot),arrayFramesId)
-            .then((response)=>{
-                console.log(response);
-                setUpdateHotspots(true);
-                setAwaitAddHotspot(false);
-            })
-            .catch(error => {
-                if(error.response){
-                    console.log(error.response);
-                }else if(error.request){
-                    console.log(error.request)
-                }else{
-                    console.log('Error ',error.message);
-                }
-                console.log(error.config);
+        setAwaitAddHotspot(true);
+
+        console.log(escenas[activeEscena].nombre);
+
+        if( escenas[activeEscena].nombre === "puertas_abiertas" || escenas[activeEscena].nombre === "puertas_cerradas"){
+            let hotspotsDeleteAbiertas = searchHotspot("0");
+            let hotspotsDeleteCerradas = searchHotspot("1");
+            axios.post(deleteHotspot(id,"puertas_abiertas",nameHotspot),hotspotsDeleteAbiertas)
+                .then((response)=>{
+
+                    axios.post(deleteHotspot(id,"puertas_cerradas",nameHotspot),hotspotsDeleteCerradas)
+                        .then(response =>{
+                            toast.success(`Hotspot  ${nameHotspot} eliminado`,{autoClose: 2000,
+                                hideProgressBar: true,theme:"dark"});
+                            setUpdateHotspots(true);
+                            setAwaitAddHotspot(false);
+                    }).catch(error => {
+                        console.log(error.config);
+                        setUpdateHotspots(true);
+                        setAwaitAddHotspot(false);
+                        toast.error(`Error: + ${error}`,{autoClose: 3000,
+                            hideProgressBar: true,theme:"dark"});
+
+                    });
+                })
+                .catch(error => {
+                    if(error.response){
+                        console.log(error.response);
+                    }else if(error.request){
+                        console.log(error.request)
+                    }else{
+                        console.log('Error ',error.message);
+                    }
+                    console.log(error.config);
+                    toast.error(`Error: + ${error}`,{autoClose: 3000,
+                        hideProgressBar: true,theme:"dark"});
+                    setUpdateHotspots(true);
+                    setAwaitAddHotspot(false);
+                });
+        }else{
+            let arrayHotspot = searchHotspot(activeEscena);
+            axios.post(deleteHotspot(id,activeEscena,nameHotspot),arrayHotspot)
+                .then(response =>{
+                    toast.success(`Hotspot: + ${nameHotspot} creado`,{autoClose: 2000,
+                        hideProgressBar: true,theme:"dark"});
+                    setUpdateHotspots(true);
+                    setAwaitAddHotspot(false);
+                }).catch(error => {
+                toast.error(`Error: + ${error}`,{autoClose: 3000,
+                    hideProgressBar: true,theme:"dark"});
                 setUpdateHotspots(true);
                 setAwaitAddHotspot(false);
             });
+        }
+
+
     }
-
-
 
     const botonesEscenas=useMemo(()=>
             <>
@@ -827,7 +916,7 @@ export function Visualizador({tipo, id,data, extras}) {
     const botonInfoObject=()=>{
         return <>
             <PopupInfoObjetct imgForInfoModal={imgForInfoModal} infoObjectData={infoObjectData} handleOpenModalInfoObject={()=>handleOpenModalInfoObject()} openModalInfoObject={openModalInfoObject}></PopupInfoObjetct>
-            <img className="visualizador_btn-share-img cursor-pointer btn-info-margin" src="../iconos/btn-informacion.png" alt="" onClick={()=>setOpenModalInfoObject(true)}/>
+            <img className="visualizador_btn-share-img cursor-pointer btn-info-margin" src="/iconos/btn-informacion.png" alt="" onClick={()=>setOpenModalInfoObject(true)}/>
         </>
     }
     const botonCompartir=()=>{
@@ -839,8 +928,8 @@ export function Visualizador({tipo, id,data, extras}) {
         }
 
     return <>
-        <PopupCompartir openModalCompartir = {openModalCompartir} handleCloseModalCompartir={()=>handleCloseModalCompartir()}></PopupCompartir>;
-        <img className="visualizador_btn-share-img cursor-pointer" onClick={() =>handleOpenModalCompartir()} src="../iconos/btn-compartir.png" alt=""/>
+        <PopupCompartir openModalCompartir = {openModalCompartir} handleCloseModalCompartir={()=>handleCloseModalCompartir()}></PopupCompartir>
+        <img className="visualizador_btn-share-img cursor-pointer" onClick={() =>handleOpenModalCompartir()} src="/iconos/btn-compartir.png" alt=""/>
     </>
 
     }
@@ -848,7 +937,7 @@ export function Visualizador({tipo, id,data, extras}) {
         console.log(file)
 
     }
-    const  convertToSlug=(Text)=> {
+    const convertToSlug=(Text)=> {
         return Text.toLowerCase()
             .replace(/ /g, '-')
             .replace(/[^\w-]+/g, '');
@@ -867,11 +956,14 @@ export function Visualizador({tipo, id,data, extras}) {
                 .then(function (response) {
                     if(response.status === 200){
                         console.log(response)
-                        tridiRef.current.toggleRecording(true)
+                        setHotspotType('pdf');
+                        tridiRef.current.toggleRecording(true);
+                        setLongPressed(false);
                         setExtraSelected(response.data);
                         setNameHotspot(titulo);
                         setAddHotspotMode(true);
                         setNewHotspot(true);
+
                     }
                 })
                 .catch(function (response) {
@@ -886,6 +978,7 @@ export function Visualizador({tipo, id,data, extras}) {
             axios.post(addLinkYoutube(id, 'test', linkYoutube))
                 .then(res => {
                     if(res.status===200){
+                        setHotspotType('youtube');
                         tridiRef.current.toggleRecording(true)
                         setExtraSelected(res.data);
                         setNameHotspot(titulo);
@@ -902,6 +995,7 @@ export function Visualizador({tipo, id,data, extras}) {
         else if(type==="vincular_extra" ){
                 if(extra!== null){
                     console.log(extra);
+                    setHotspotType('imagen');
                     tridiRef.current.toggleRecording(true)
                     setExtraSelected(extra);
                     setNameHotspot(titulo);
@@ -913,6 +1007,54 @@ export function Visualizador({tipo, id,data, extras}) {
                 }
         }
     }
+
+
+    const onLongPress = () => {
+        if(newHotspot === true){
+            setLongPressed(true);
+        }
+    };
+    const onClick = () => {
+        if (addHotspotMode) {
+            tridiRef.current.toggleRecording(false);
+            console.log('onclick')
+        }
+    }
+    const onPressEnd = () => {
+        if(newHotspot === true){
+            setLongPressed(false)
+            tridiRef.current.toggleRecording(true)
+        }
+
+    }
+    const defaultOptions = {
+        shouldPreventDefault: false,
+        delay: 100,
+    };
+    const longPressEvent = useLongPress(onLongPress, onClick,onPressEnd, defaultOptions);
+    const onMouseUp = (ev) => {
+        if(newHotspot === true){
+            //ev.stopPropagation()
+            setLongPressed(false);
+        }
+    }
+
+    useEffect(() => {
+         function handleEdit() {
+            if (tridiRef.current !== null && newHotspot === true) {
+                if (longPressed === true) {
+                     tridiRef.current.toggleRecording(false);
+                    console.log('entra1');
+                } else {
+                     tridiRef.current.toggleRecording(true);
+                    console.log('entra2');
+                }
+            }
+        }
+        handleEdit();
+
+    }, [longPressed, newHotspot]);
+
     const loadAllTridiComponents=()=>{
         if(objetoData){
             let escenas=objetoData.escenas;
@@ -935,7 +1077,6 @@ export function Visualizador({tipo, id,data, extras}) {
                         <Tridi ref={  show  ? tridiRef :null}
                                key={index}
                                className={show && loadStatus? "visible" : "oculto" }
-
                                images={imagesSrcOneScene}
                                autoplaySpeed={70}
                                zoom={1}
@@ -961,6 +1102,7 @@ export function Visualizador({tipo, id,data, extras}) {
                                renderPin={myRenderPin}
                                showStatusBar={true}
                                pins={pins}
+                               showControlBar={false}
                             //hintOnStartup
                             //hintText="Arrastre para mover"
                             //onLoadChange={(e,y)=>console.log(e,y)}
@@ -972,8 +1114,11 @@ export function Visualizador({tipo, id,data, extras}) {
 
             return (
 
-                <div className={`tridi-container`}  {...handlers}  onWheel={handleWheel} onClick={clickOnTridiContainer}>
+
+
+                <div className={`tridi-container`}  {...longPressEvent} {...handlers}  onMouseUp={onMouseUp}  onWheel={handleWheel} onClick={clickOnTridiContainer}>
                     {
+                        /*...longPressEvent*/
                         loadStatus === false ? <div className="sweet-loading">
                             <DotLoader color="#3F3F3F"
                                        loading={
@@ -985,6 +1130,16 @@ export function Visualizador({tipo, id,data, extras}) {
                         </h1>*/}
                         </div> : null
                     }
+                    <div className="visualizador_container-handle-buttons">
+                        <OptionButtons /*onAddHotspot={handleAddHostpot}*/
+                            onPrev={handlePrev}
+                            onNext={handleNext}
+                            onZoomIn={handleZoomIn}
+                            onZoomOut={handleZoomOut}
+                            onAutoPlay={handleAutoPlay}
+                            isAutoPlayRunning={isAutoPlayRunning}
+                            isEditMode={isEditMode}></OptionButtons>
+                    </div>
                     {escenasSrcImages}
                 </div>
             );
@@ -996,7 +1151,7 @@ export function Visualizador({tipo, id,data, extras}) {
 
         var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
         var match = url.match(regExp);
-        return (match&&match[7].length==11)? match[7] : false;
+        return (match&&match[7].length===11)? match[7] : false;
     }
 
     const modalVideoYoutube=useCallback(()=>{
@@ -1007,27 +1162,19 @@ export function Visualizador({tipo, id,data, extras}) {
     },[openYoutubeModal]
 )
 
-    function openModal() {
-        setOpenPdfModal(true);
-    }
-
-    function closeModal() {
-        setOpenPdfModal(false);
-    }
 
     const modalPdf = ()=>{
-
 
         let url = getPDF(id,extraPdfOrVideo.path);
         url = url.replace("pdf",".pdf")
 
-        console.log(url);
+        //console.log(url);
         return (
             openPdfModal?
             <div className={"modal-pdf-container"} >
                 <Popup open={openPdfModal} className={"pdf-modal"} onClose={ ()=>setOpenPdfModal(false)} position="right center">
                     <div className={"container-iframe-modal"}>
-                        <iframe id="iframepdf" src={url}></iframe>
+                        <iframe id="iframepdf" src={url} title="myFrame"></iframe>
                         <button className={"button-option-pdf-modal"} onClick={()=>setOpenPdfModal(false)}>Cerrar</button>
                     </div>
                 </Popup>
@@ -1064,7 +1211,6 @@ export function Visualizador({tipo, id,data, extras}) {
 
             return <div>
                 <PopupNewHotspot id={id} extras={extras} addPdfVis={addPdfVis} handleCreateHotpotsExtra={handleCreateHotpotsExtra}
-            handleCreateHotspot={handleCreateHotspot}
                                  listaHotspots={hotspotsMap[activeEscena]} onClickDeleteHotspot={handleDeleteHotspot}
                 ></PopupNewHotspot>
         </div>
@@ -1077,7 +1223,7 @@ export function Visualizador({tipo, id,data, extras}) {
     const botonAutoGiro=()=>{
         return <div className="button-escena_navigation-item" onClick={()=>handleAutoPlay()}>
             <button  data-for='soclose' data-tip="Girar" className={`button-escena-btn`} >
-                <img src="../iconos/giro-carro.png" alt=""/>
+                <img src="/iconos/giro-carro.png" alt=""/>
             </button>
             <ReactTooltip id="soclose" place="top" effect="solid" getContent={(dataTip=>dataTip)}>
             </ReactTooltip>
@@ -1091,8 +1237,16 @@ export function Visualizador({tipo, id,data, extras}) {
         return <ToogleButton isEditMode={isEditMode} handleActivateEditMode={handleActivateEditMode}></ToogleButton>;
     }
 
+    const logoCompany = ()=>{
+        return <div className="logo-company">
+            <img src="/logo512.png" alt=""/>
+        </div>
+    }
+
     return (
         <div className="visualizador dragging">
+
+            {logoCompany()}
             {buttonOpenReel()}
             <ToastContainer />
 
@@ -1164,16 +1318,6 @@ export function Visualizador({tipo, id,data, extras}) {
                     : null
             }
 
-            <div className="visualizador_container-handle-buttons">
-                <OptionButtons /*onAddHotspot={handleAddHostpot}*/
-                    onPrev={handlePrev}
-                    onNext={handleNext}
-                    onZoomIn={handleZoomIn}
-                    onZoomOut={handleZoomOut}
-                    onAutoPlay={handleAutoPlay}
-                    isAutoPlayRunning={isAutoPlayRunning}
-                    isEditMode={isEditMode}></OptionButtons>
-            </div>
 
 
             {

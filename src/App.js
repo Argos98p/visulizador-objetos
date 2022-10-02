@@ -1,22 +1,25 @@
-import React, {useState} from "react";
+import React from "react";
 import "react-tridi/dist/index.css";
 import  "./styles/styles.scss";
 
 import Controller from "./components/Controller";
 
-import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import { Route,  Routes } from "react-router-dom";
+
 
 function App() {
-    const [loading, setLoading] = useState(true);
-
- 
     return (
-        <div >
+
+
             <Routes>
-                <Route path="/visualizador/:id"
-                    element={<Controller/>}/>
+                <Route index element={<h1>hola</h1>} />
+                {/* you ^ can add `index` prop to make it default route*/}
+                <Route path="/visualizador/view/:id" element={<Controller editMode={false}/>} />
+                <Route path="/visualizador/edit/:id" element={<Controller editMode={true}/>} />
+                <Route path="*" element={<h1>hola 2</h1>} />
             </Routes>
-        </div>
+
+
 
     );
 }

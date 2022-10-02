@@ -94,7 +94,7 @@
         }
       }
     }
-    @media screen and (max-width: 402px) {
+    @media screen and (max-width: 451px) {
       .buttons-container{
         flex-wrap: wrap;
         .button-type-extra{
@@ -116,7 +116,7 @@
         .icon{
           font-size: 5em;
         }
-        @media screen and (max-width: 402px) {
+        @media screen and (max-width: 451px) {
           .icon{
             font-size: 4em;
           }
@@ -144,7 +144,7 @@
       margin: auto;
       text-align: center;
       &>div{
-        width: 15%;
+        width: 20%;
         .button-cancel-container{
           cursor: pointer;
           background-color: $primary-color;
@@ -154,6 +154,16 @@
           justify-content: center;
           align-items: center;
           padding-left: 5px;
+          img{
+            width: 2.5em;
+            //height: 10%;
+
+          }
+          @media screen and (max-width: 451px) {
+            img{
+              width: 2em;
+            }
+          }
           button{
             border: none;
             background-color: transparent;
@@ -164,10 +174,11 @@
         }
 
       }
-      @media screen and (max-width: 402px) {
+      @media screen and (max-width: 451px) {
         &>div{
           width: 35%;
         }
+
       }
 
 
