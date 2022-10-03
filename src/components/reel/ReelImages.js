@@ -1,16 +1,14 @@
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import React, {useState, useEffect, useCallback, memo, forwardRef, useImperativeHandle} from 'react';
-import Carousel from 'react-grid-carousel';
+
 import ImageUploading from 'react-images-uploading';
 import axios from "axios";
 import ImageViewer from 'react-simple-image-viewer';
 import {ImagePath} from '../../Api/apiRoutes'
-import {FaTrash} from "react-icons/fa/index.js";
 import {deleteExtra,getExtrasUrl,uploadExtraUrl} from "../../Api/apiRoutes";
 import './ReelImages.css'
 import Slider from "react-slick";
-import {FaChevronCircleDown} from "react-icons/fa/index.js"
 
 const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
@@ -20,34 +18,62 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   const [imagesExtras, setImagesExtras] = useState(extrasImages);
   const [currentImage, setCurrentImage] = useState(0);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
+  let dragging = false;
   var settings = {
     dots: false,
     infinite: false,
     speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    draggable:false,
+    slidesToShow: 5,
+    slidesToScroll: 3,
+    draggable:true,
     centered:true,
     adaptiveHeight:false,
     centerMode:false,
     centerPadding:"10px",
     rows:1,
+    beforeChange: () => dragging = true,
+    afterChange: () => dragging = false,
     responsive: [
+      {
+        breakpoint: 1920,
+        settings: {
+          slidesToShow: 10,
+        }
+      },
+      {
+        breakpoint: 1680,
+        settings: {
+          slidesToShow: 7,
+        }
+      },
+      {
+        breakpoint: 1440,
+        settings: {
+          slidesToShow: 6,
+        }
+      },
+
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 4,
+          slidesToShow: 5,
 
         }
       },
       {
         breakpoint: 800,
         settings: {
+          slidesToShow: 4,
+        }
+      },
+      {
+        breakpoint: 618,
+        settings: {
           slidesToShow: 3,
         }
       },
       {
-        breakpoint: 475,
+        breakpoint: 445,
         settings: {
           slidesToShow: 2,
         }
@@ -237,7 +263,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
                 :null
             */}
             <img className='cursor-pointer reel_borde-redondo ' src={src[0]} key={index} alt={'hola'}
-                 onClick={() => openImageViewer(index)}/>
+                 onClick={() => dragging ? null : openImageViewer(index)}/>
 
           </div>
 

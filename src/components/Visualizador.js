@@ -32,10 +32,12 @@ import PopupInfoObjetct from "./popup/PopupInfoObjetct";
 import {BsChevronDown, BsChevronUp} from "react-icons/bs";
 import PopupCompartir from "./popup/PopupCompartir";
 import ToogleButton from "./botones/ToogleButton";
-
+import {isMobile} from 'react-device-detect';
+import { useNavigate } from 'react-router-dom';
 
 export function Visualizador({tipo, id,data, extras,edit}) {
 
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent)
     const [objetoData,setObjetoData] = useState({escenas:{}});
     const [frames, setFrames] = useState([]);
     const [hotspotsMap, setHotspotsMap] = useState([]);
@@ -74,6 +76,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     const extraInViewRef = useRef();
     const tridiRef = useRef(null);
     const tridiContainerRef = useRef(null);
+    const tridiModalInfo = useRef(null);
 
     let zooom=1;
 
@@ -473,7 +476,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                         idExtra:extraSelected.idextra,
                         x:originalX+move*aux,
                         y:parseFloat(originalY),
-                        //type:hotspotType
                     }
                     if(j===0){
                         newPin={
@@ -541,7 +543,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                         idframe:i,
                         nombreHotspot:nameHotspot,
                         idExtra:extraSelected.idextra,
-                        x:originalX+move*k,
+                        x:originalX-move*k,
                         y:parseFloat(originalY),
                         //type:hotspotType
                     }
@@ -559,7 +561,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                             idframe:h,
                             nombreHotspot:nameHotspot,
                             idExtra:extraSelected.idextra,
-                            x:originalX+move*k,
+                            x:originalX-move*k,
                             y:parseFloat(originalY),
                             //type:hotspotType
                         }
@@ -913,10 +915,25 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     const handleOpenModalInfoObject = () => {
         setOpenModalInfoObject(false);
     }
+    let navigate = useNavigate();
+
+/*
+    useEffect(() => {
+        tridiModalInfo.current.addEventListener( 'click', function( e ) {
+            //history.pushState({ state: 'someElement was clicked' }, 'title', 'some-element.html' );
+            navigate('/');
+        })
+    }, []);*/
+
+
     const botonInfoObject=()=>{
         return <>
             <PopupInfoObjetct imgForInfoModal={imgForInfoModal} infoObjectData={infoObjectData} handleOpenModalInfoObject={()=>handleOpenModalInfoObject()} openModalInfoObject={openModalInfoObject}></PopupInfoObjetct>
-            <img className="visualizador_btn-share-img cursor-pointer btn-info-margin" src="/iconos/btn-informacion.png" alt="" onClick={()=>setOpenModalInfoObject(true)}/>
+            <img ref={tridiModalInfo} className="visualizador_btn-share-img cursor-pointer btn-info-margin" src="/iconos/btn-informacion.png" alt=""
+                 onClick={()=> {
+                     setOpenModalInfoObject(true);
+                 }
+            }/>
         </>
     }
     const botonCompartir=()=>{
@@ -1044,10 +1061,10 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             if (tridiRef.current !== null && newHotspot === true) {
                 if (longPressed === true) {
                      tridiRef.current.toggleRecording(false);
-                    console.log('entra1');
+                    //console.log('entra1');
                 } else {
                      tridiRef.current.toggleRecording(true);
-                    console.log('entra2');
+                    //console.log('entra2');
                 }
             }
         }
@@ -1220,12 +1237,13 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         }
     }
 
+
     const botonAutoGiro=()=>{
         return <div className="button-escena_navigation-item" onClick={()=>handleAutoPlay()}>
-            <button  data-for='soclose' data-tip="Girar" className={`button-escena-btn`} >
+            <button  data-for='soclose1' data-tip="Girar" className={`button-escena-btn`} >
                 <img src="/iconos/giro-carro.png" alt=""/>
             </button>
-            <ReactTooltip id="soclose" place="top" effect="solid" getContent={(dataTip=>dataTip)}>
+            <ReactTooltip  id="soclose1" place="right" effect="solid"  disable={isMobile}> Girar
             </ReactTooltip>
         </div>
     }

@@ -7,7 +7,7 @@ const ButtonEscena = memo(({escenaInfo, onClick , activo})=>{
 
 
     let icono =null;
-
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent)
 
     switch (escenaInfo[1].nombre) {
         case "puertas_cerradas":
@@ -25,10 +25,10 @@ const ButtonEscena = memo(({escenaInfo, onClick , activo})=>{
             break;
     }
     return <div className="button-escena_navigation-item">
-    <button  data-for='soclose' data-tip={escenaInfo[1].nombre}  className={`button-escena-btn ${activo ? "activo":""}`} onClick={()=>onClick(escenaInfo)}>
+    <button  data-for='soclose2' data-tip={escenaInfo[1].nombre}  className={`button-escena-btn ${activo ? "activo":""}`} onClick={()=>onClick(escenaInfo)}>
       {icono}
     </button>
-    <ReactTooltip id="soclose" place="top" effect="solid" getContent={(dataTip=>dataTip)}>
+    <ReactTooltip id="soclose2" place="right" disable={isMobile} effect="solid" getContent={(dataTip=>dataTip)}>
     </ReactTooltip>
   </div>
 }

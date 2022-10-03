@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 
 const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleCreateHotpotsExtra,addPdfVis}) =>{
 
+
     const [imageSelected, setImageSelected] = useState(null);
     const [noImageSelected, setNoImageSelected] = useState(false);
     const [open, setOpen] = useState(false);
