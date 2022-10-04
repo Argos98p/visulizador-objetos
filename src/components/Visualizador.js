@@ -1183,7 +1183,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     const modalPdf = ()=>{
 
         let url = getPDF(id,extraPdfOrVideo.path);
-        url = url.replace("pdf",".pdf")
 
         //console.log(url);
         return (
@@ -1257,7 +1256,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
 
     const logoCompany = ()=>{
         return <div className="logo-company">
-            <img src="/logo512.png" alt=""/>
+            <img src="/icono.png" alt=""/>
         </div>
     }
 

@@ -263,7 +263,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
                 :null
             */}
             <img className='cursor-pointer reel_borde-redondo ' src={src[0]} key={index} alt={'hola'}
-                 onClick={() => dragging ? null : openImageViewer(index)}/>
+                 onClick={() => dragging ? null : openImageViewer(index)} />
 
           </div>
 
@@ -283,6 +283,18 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
 
         {isViewerOpen && (
+            /*
+            <ImageViewer
+                showPreview={true}
+                showIndex={true}
+                activeIndex={currentImage}
+                images={[
+                  { src: 'https://unsplash.it/800/300?image=1', title: 'title', content: 'content' },
+                  { src: 'https://unsplash.it/300/800?image=2', title: 'title', content: 'content' },
+                  { src: 'https://unsplash.it/1800/300?image=3', title: 'title', content: 'content' },
+                  { src: 'https://unsplash.it/800/1800?image=4', title: 'title', content: 'content' }
+                ]}/>*/
+
             <ImageViewer
                 src={ imagesListSrc.map((item,index)=>item[0]) }
                 currentIndex={ currentImage }
@@ -336,38 +348,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
           ImagesReel()
         }
 
-        {/*
 
-      <Carousel cols={6} rows={1} gap={10} loop containerStyle={{height:"100%"}} responsiveLayout={[
-              {
-                breakpoint: 1200,
-                cols: 5
-              },
-              {
-                breakpoint: 990,
-                cols: 4
-              },
-
-
-            ]}>
-      {imagesListSrc.map((src, index) => (
-
-
-        <Carousel.Item key={index} >
-
-          <div className='reel-image-extra-container'>
-            {isEditMode
-          ?<button className='btn-eliminar-extra' onClick={()=>onClickDeleteExtra(src)}> <FaTrash/></button>
-          :null
-          }
-          <img className='cursor-pointer imgReel' src={src[0]} key={index} alt={'hola'} onClick={ () => openImageViewer(index)}/>
-
-          </div>
-
-          </Carousel.Item>
-
-      ))}
-        </Carousel>*/}
 
 
 

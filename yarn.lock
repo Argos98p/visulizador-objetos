@@ -2548,6 +2548,13 @@
   "resolved" "https://registry.npmjs.org/@types/range-parser/-/range-parser-1.2.4.tgz"
   "version" "1.2.4"
 
+"@types/react-dom@^0.14.23":
+  "integrity" "sha512-EMCa3IEBSOE5weypSBxATxKZTAGil/hU48k/fW0jeW+Fj5ZeNGPNtbshVUygKTmvcq6IARZOi9lHJpLgjpkk9A=="
+  "resolved" "https://registry.npmjs.org/@types/react-dom/-/react-dom-0.14.23.tgz"
+  "version" "0.14.23"
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-dom@^18.0.0":
   "integrity" "sha512-/5OFZgfIPSwy+YuIBP/FgJnQnsxhZhjjrnxudMddeblOouIodEQ75X14Rr4wGSG/bknL+Omy9iWlLo1u/9GzAA=="
   "resolved" "https://registry.npmjs.org/@types/react-dom/-/react-dom-18.0.6.tgz"
@@ -2570,6 +2577,11 @@
     "@types/prop-types" "*"
     "@types/scheduler" "*"
     "csstype" "^3.0.2"
+
+"@types/react@^15.0.14":
+  "integrity" "sha512-icKkK8Zw/cmXJWO7entbT6P2A8MFjGW4W5/D5Q0dFImkItvbdAoCJX49xjEELcykvxcyoMLb+vTYis4RRG8MZQ=="
+  "resolved" "https://registry.npmjs.org/@types/react/-/react-15.7.10.tgz"
+  "version" "15.7.10"
 
 "@types/resolve@1.17.1":
   "integrity" "sha512-yy7HuzQhj0dhGpD8RLXSZWEkLsV9ibvxvi6EiJ3bkqLAO1RGo0WbkWQiwpRlSFymTJRz0d3k5LM3kkx8ArDbLw=="
@@ -9797,6 +9809,15 @@
   "resolved" "https://registry.npmjs.org/react-id-generator/-/react-id-generator-3.0.2.tgz"
   "version" "3.0.2"
 
+"react-image-viewer-zoom@^1.0.36":
+  "integrity" "sha512-jPx4GjNzi2iXaVqN+XdZOh0V7Y6ONqhe6m+zK47IizGkfzOwDl0LIAptLSU8hwpCa8T+gDtHojKJEOziLNdkqQ=="
+  "resolved" "https://registry.npmjs.org/react-image-viewer-zoom/-/react-image-viewer-zoom-1.0.36.tgz"
+  "version" "1.0.36"
+  dependencies:
+    "@types/react" "^15.0.14"
+    "@types/react-dom" "^0.14.23"
+    "typescript" "^2.2.1"
+
 "react-images-uploading@^3.1.7":
   "integrity" "sha512-woET50eCezm645iIeP4gCoN7HjdR3T64UXC5l53yd+2vHFp+pwABH8Z/aAO5IXDeC1aP6doQ+K738L701zswAw=="
   "resolved" "https://registry.npmjs.org/react-images-uploading/-/react-images-uploading-3.1.7.tgz"
@@ -9831,6 +9852,11 @@
   "integrity" "sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA=="
   "resolved" "https://registry.npmjs.org/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz"
   "version" "3.0.4"
+
+"react-loading-skeleton@^3.1.0":
+  "integrity" "sha512-j1U1CWWs68nBPOg7tkQqnlFcAMFF6oEK6MgqAo15f8A5p7mjH6xyKn2gHbkcimpwfO0VQXqxAswnSYVr8lWzjw=="
+  "resolved" "https://registry.npmjs.org/react-loading-skeleton/-/react-loading-skeleton-3.1.0.tgz"
+  "version" "3.1.0"
 
 "react-lottie@^1.2.3":
   "integrity" "sha512-qLCERxUr8M+4mm1LU0Ruxw5Y5Fn/OmYkGfnA+JDM/dZb3oKwVAJCjwnjkj9TMHtzR2U6sMEUD3ZZ1RaHagM7kA=="
@@ -11694,6 +11720,11 @@
   "version" "3.1.5"
   dependencies:
     "is-typedarray" "^1.0.0"
+
+"typescript@^2.2.1":
+  "integrity" "sha512-Gr4p6nFNaoufRIY4NMdpQRNmgxVIGMs4Fcu/ujdYk3nAZqk7supzBE9idmvfZIlH/Cuj//dvi+019qEue9lV0w=="
+  "resolved" "https://registry.npmjs.org/typescript/-/typescript-2.9.2.tgz"
+  "version" "2.9.2"
 
 "typescript@^3.2.1 || ^4", "typescript@^4.6.4", "typescript@>= 2.7", "typescript@>=2.7", "typescript@>=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta", "typescript@>=3":
   "integrity" "sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ=="
