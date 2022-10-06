@@ -1,7 +1,7 @@
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import React, {useState, useEffect, useCallback, memo, forwardRef, useImperativeHandle} from 'react';
-
+import useWindowDimensions from '../../hooks/useWindowSize';
 import ImageUploading from 'react-images-uploading';
 import axios from "axios";
 import ImageViewer from 'react-simple-image-viewer';
@@ -18,8 +18,117 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   const [imagesExtras, setImagesExtras] = useState(extrasImages);
   const [currentImage, setCurrentImage] = useState(0);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
+  const { height, width } = useWindowDimensions();
   let dragging = false;
-  var settings = {
+  let breakPointsDektop =  [
+    {
+      breakpoint: 1920,
+      settings: {
+        slidesToShow: 10,
+      }
+    },
+    {
+      breakpoint: 1680,
+      settings: {
+        slidesToShow: 7,
+      }
+    },
+    {
+      breakpoint: 1440,
+      settings: {
+        slidesToShow: 6,
+      }
+    },
+
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 6,
+
+      }
+    },
+    {
+      breakpoint: 800,
+      settings: {
+        slidesToShow: 5,
+      }
+    },
+    {
+      breakpoint: 618,
+      settings: {
+        slidesToShow: 3,
+      }
+    },
+    {
+      breakpoint: 445,
+      settings: {
+        slidesToShow: 2,
+      }
+    },
+    {
+      breakpoint: 318,
+      settings: {
+        slidesToShow: 1,
+      }
+    },
+
+  ];
+
+  let breakPointsMobile = [
+    {
+      breakpoint: 1920,
+      settings: {
+        slidesToShow: 10,
+      }
+    },
+    {
+      breakpoint: 1680,
+      settings: {
+        slidesToShow: 9,
+      }
+    },
+    {
+      breakpoint: 1440,
+      settings: {
+        slidesToShow: 8,
+      }
+    },
+
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 7,
+
+      }
+    },
+    {
+      breakpoint: 800,
+      settings: {
+        slidesToShow: 7,
+      }
+    },
+    {
+      breakpoint: 618,
+      settings: {
+        slidesToShow: 6,
+      }
+    },
+    {
+      breakpoint: 445,
+      settings: {
+        slidesToShow: 4,
+      }
+    },
+    {
+      breakpoint: 318,
+      settings: {
+        slidesToShow: 3,
+      }
+    },
+
+  ];
+
+  let  settings = {
     dots: false,
     infinite: false,
     speed: 500,
@@ -33,61 +142,11 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     rows:1,
     beforeChange: () => dragging = true,
     afterChange: () => dragging = false,
-    responsive: [
-      {
-        breakpoint: 1920,
-        settings: {
-          slidesToShow: 10,
-        }
-      },
-      {
-        breakpoint: 1680,
-        settings: {
-          slidesToShow: 7,
-        }
-      },
-      {
-        breakpoint: 1440,
-        settings: {
-          slidesToShow: 6,
-        }
-      },
-
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 5,
-
-        }
-      },
-      {
-        breakpoint: 800,
-        settings: {
-          slidesToShow: 4,
-        }
-      },
-      {
-        breakpoint: 618,
-        settings: {
-          slidesToShow: 3,
-        }
-      },
-      {
-        breakpoint: 445,
-        settings: {
-          slidesToShow: 2,
-        }
-      },
-      {
-        breakpoint: 318,
-        settings: {
-          slidesToShow: 1,
-        }
-      },
-
-    ]
+    responsive: (width>height && height<490)? breakPointsMobile : breakPointsDektop
 
   };
+
+
 
   useImperativeHandle(ref, () => ({
 
@@ -155,7 +214,6 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     });
   }
 
-
   function uploadExtra(imagenFile){
     const payload = new FormData();
     payload.append('extra',imagenFile)
@@ -197,7 +255,6 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
                         temp.push([srcImage,item.idextra])
                       }
 
-                      //temp.push( <Carousel.Item key={index} ><img width="100%" src={srcImage} key={index}  onClick={ () => openImageViewer(index)}/> </Carousel.Item>)
                     }
                 );
                 setImagesListSrc(temp)
@@ -283,17 +340,6 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
 
         {isViewerOpen && (
-            /*
-            <ImageViewer
-                showPreview={true}
-                showIndex={true}
-                activeIndex={currentImage}
-                images={[
-                  { src: 'https://unsplash.it/800/300?image=1', title: 'title', content: 'content' },
-                  { src: 'https://unsplash.it/300/800?image=2', title: 'title', content: 'content' },
-                  { src: 'https://unsplash.it/1800/300?image=3', title: 'title', content: 'content' },
-                  { src: 'https://unsplash.it/800/1800?image=4', title: 'title', content: 'content' }
-                ]}/>*/
 
             <ImageViewer
                 src={ imagesListSrc.map((item,index)=>item[0]) }

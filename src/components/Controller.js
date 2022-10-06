@@ -7,7 +7,6 @@ import {infoObjectUrl,getExtrasUrl} from "../Api/apiRoutes";
 import LottieServerError from "../Animations/lottieServerError";
 
 
-//cambiar por una funciona que devuelva solo true o false
 function Controller({editMode}) {
     let {id} = useParams();
     const [myObjeto, setMyObjeto] = useState(null);
@@ -16,7 +15,7 @@ function Controller({editMode}) {
 
     useEffect(() => {
         axios.get(infoObjectUrl(id)).then(response => {
-            //return response.data
+
             if(response.data !== "NOT_FOUND"){
                 if(Object.keys(response.data.escenas).length===0){
                     setNoEscenas(true)

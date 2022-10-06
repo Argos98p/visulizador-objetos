@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState} from "react";
 import Tridi from "react-tridi";
-import OptionButtons from "./botones/buttonsOptions";
 import axios from "axios";
 import ReelImages from "./reel/ReelImages";
 import 'react-modal-video/scss/modal-video.scss';
@@ -32,8 +31,7 @@ import PopupInfoObjetct from "./popup/PopupInfoObjetct";
 import {BsChevronDown, BsChevronUp} from "react-icons/bs";
 import PopupCompartir from "./popup/PopupCompartir";
 import ToogleButton from "./botones/ToogleButton";
-import {isMobile} from 'react-device-detect';
-import { useNavigate } from 'react-router-dom';
+import {FaFile,  FaFilm, FaImage} from "react-icons/fa";
 
 export function Visualizador({tipo, id,data, extras,edit}) {
 
@@ -47,15 +45,16 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     const [isEditMode, setIsEditMode] = useState(edit);
     const [pins, setPins] = useState([]);
     const [visibleExtras, setVisibleExtras] = useState(true);
+
+
     const [addHotspotMode, setAddHotspotMode] = useState(false); //variable para definir cuando con el click se agrega un nuevo hotspot  y para mostrar inicio y fin
     const [nameHotspot, setNameHotspot] = useState("holis");
     const [extraSelected, setExtraSelected] = useState(null);
-    const [newHotspot, setNewHotspot] = useState(false); // para el use effect que usa pins.legth
+
+
     const [loadStatus, setLoadStatus] = useState(false);
     const [loadPercentage, setLoadPercentage] = useState(0);
     const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
-    const [hotspotInit, setHotspotInit] = useState(false);
-    const [hotspotEnd, setHotspotEnd] = useState(false);
     const [sphereImageInView, setSphereImageInView] = useState(false);
 
     const [activeEscena, setActiveEscena] = useState("0"); //escena que esta activa lo hace con
@@ -72,19 +71,22 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     const [updateExtras, setUpdateExtras] = useState(false);
     const [hotspotType, setHotspotType] = useState("imagen");
     const [longPressed, setLongPressed] = useState(false);
+
     const extraContainerRef=useRef();
     const extraInViewRef = useRef();
     const tridiRef = useRef(null);
     const tridiContainerRef = useRef(null);
     const tridiModalInfo = useRef(null);
+    const containerRef = useRef(null);
 
     let zooom=1;
 
+    /*
     const handlers = useSwipeable({
         onSwiping: (eventData) => leftSwip(eventData),
         delta: { left: 1, right: 1 }
-    });
-
+    });*/
+/*
     const leftSwip=(eventData)=>{
         if(prevDelta > eventData.deltaX){
             tridiRef.current.next();
@@ -102,7 +104,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         }
         setPrevDelta(eventData.deltaX);
         setLongPressed(false);
-    }
+    }*/
 
     // Recibe toda la info del objeto
     useEffect(() => {
@@ -210,40 +212,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         return(setLoadStatus(false))
     }, []);
 
-    /*
-    useEffect(() => {
-        if(updateHotspots===true){
-            console.log('recibe nuevamente pins')
-            let promesass=[];
-            let mapHotspots={};
-            for(let escena in objetoData.escenas){
-                let nombreEscena=objetoData.escenas[escena].nombre
-                promesass.push(
-                    axios.get(getHotspots(id,nombreEscena))
-                        .then(response=>{
-                            mapHotspots[nombreEscena]=response.data;
-                        }).catch(error => {
-                        if(error.response){
-                            console.log(error.response);
-                        }else if(error.request){
-                            console.log(error.request)
-                        }else{
-                            console.log('Error ',error.message);
-                        }
-                        console.log(error.config);
-                    })
-                )
-            }
-            Promise.all(promesass).then(()=> {
-                setHotspotsMap(mapHotspots);
-                prepararPins(mapHotspots)
-                setPins(mapHotspots[currentEscena.nombre])
-            });
-        }
-        return () => {
-            setUpdateHotspots(false)
-        };
-    }, [updateHotspots]);*/
 
     const prepararPins = (fetchedPinsObject) => {
 
@@ -259,25 +227,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             return newPins;
         }
         return [];
-
     }
-
-    /*
-    useEffect(() => {
-        let timer1 = setTimeout(()=>{},10)
-        if(currentEscena.imagenes!== undefined) {
-            setLoadStatus(false)
-            timer1=setTimeout(() => setLoadStatus(true), 3000);
-            setFrames(getArraySrcPath(currentEscena));
-            setPins(hotspotsMap[currentEscena.nombre]);
-            setSphereImageInView(false);
-            //setAux(currentEscena.nombre)
-        }
-        return () => {
-            clearTimeout(timer1);
-        };
-
-    }, [currentEscena]);*/
 
     function getArraySrcPath(escena){
         let n = Object.keys(escena.imagenes).length;
@@ -303,18 +253,12 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         return arrayFrames;
     }
 
-
     function handleClickExtras() {
         console.log(!visibleExtras);
         setVisibleExtras(!visibleExtras);
         extraContainerRef.current.classList.toggle("no-visible");
     }
 
-
-    const recordStartHandler = (recordingSessionId) => /*console.log("on record start", {recordingSessionId, pins})*/
-        console.log();
-    const recordStopHandler = (recordingSessionId) => /* console.log("on record stop", {recordingSessionId, pins})*/
-        console.log();
     const pinClickHandler = (pin) => {
         console.log(pin);
         let extraInHotspot = searchExtra(pin.idExtra);
@@ -380,6 +324,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         }
     }
     const handleAutoPlay = () => {
+        setIsAutoPlayRunning(!isAutoPlayRunning);
         tridiRef.current.toggleAutoplay(!isAutoPlayRunning);
     }
     const handleWheel = (e) => {
@@ -388,12 +333,10 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         }
     }
 
-
     const handleButtonEscena=useCallback((escena)=>{
         setActiveEscena(escena.toString())
         setPins(prepararPins(hotspotsMap[escena]));
     },[activeEscena,hotspotsMap]);
-
 
     useEffect(() => {
         async function fetchData() {
@@ -415,374 +358,45 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             }
         }
         fetchData();
-    }, [activeEscena]);
 
+        if(tridiRef.current!== null){
+            tridiRef.current.toggleAutoplay(isAutoPlayRunning)
+        }
+
+
+    }, [activeEscena]);
 
     const frameChangeHandler = (currentFrameIndex) => {
         setCurrentFrameIndex(currentFrameIndex);
     };
 
-    /****** Inicio ---- HOTSPOTS UNA REFERENCIA ******/
-
-    const handleCreateHotspot=(imgExtra,info)=>{
-
-        if (info === "" || imgExtra == null
-        ) {
-            console.log('Informacion erronea')
-        } else {
-
-            setExtraSelected(imgExtra);
-            setNameHotspot(info);
-            setAddHotspotMode(true);
-            setNewHotspot(true);
-        }
-    }
-
     useEffect(() => {
-        if(newHotspot===true){
-            toast.info('clicke o pulse sobre la pantalla para crear el hotspot',{autoClose: 3000,
+        if(addHotspotMode===true){
+            toast.info('Doble Click sobre la pantalla para crear el hotspot',{autoClose: 3000,
                 hideProgressBar: true,theme:"dark"});
         }
-    }, [newHotspot]);
-
-    const clickOnTridiContainer = () => {
-
-        if (addHotspotMode) {
-            //tridiRef.current.toggleRecording(false);
-            console.log('on tridi container')
-        }
-    }
-
-    const frameReplicateOneReference=()=>{
-
-        const replicateFrames = (indexEscena) => {
-
-            let lastPin= pins[pins.length-1];
-            let move = 0.014;
-            let j=20;
-            let aux=j;
-            let arrayHotspots=[];
-
-            let originalX = parseFloat(lastPin.x);
-            let originalY = lastPin.y;
-
-            if(lastPin.frameId -j > 0  && lastPin.frameId + j <=frames[indexEscena]){
-
-                console.log('entra 1');
-                for(let i=lastPin.frameId-j;i<=lastPin.frameId+j;i++){
-                    let newPin={
-                        idframe:i,
-                        nombreHotspot:nameHotspot,
-                        idExtra:extraSelected.idextra,
-                        x:originalX+move*aux,
-                        y:parseFloat(originalY),
-                    }
-                    if(j===0){
-                        newPin={
-                            idframe:i,
-                            nombreHotspot:nameHotspot,
-                            idExtra:extraSelected.idextra,
-                            x:originalX,
-                            y:parseFloat(originalY),
-                            //type:hotspotType
-                        }
-                    }
-                    arrayHotspots.push(newPin)
-                    aux--;
-                }
-
-
-            }else if(lastPin.frameId - j < 0 ){
-                console.log('entra 2');
-
-                let k=0;
-                for(let i=lastPin.frameId;i<=j+lastPin.frameId;i++){
-                    let newPin={
-                        idframe:i,
-                        nombreHotspot:nameHotspot,
-                        idExtra:extraSelected.idextra,
-                        x:originalX+move*-k,
-                        y:parseFloat(originalY),
-                    }
-                    if(newPin.idframe===0){
-
-                    }else{
-                        arrayHotspots.push(newPin)
-                    }
-                    k++;
-                }
-                k=-j;
-                let h= lastPin.frameId -j +frames[indexEscena]
-                for(let i = lastPin.frameId -j;i<lastPin.frameId;i++){
-                    if(h===frames[indexEscena]){
-                        h=0;
-                    }
-                    if(h!==0){
-                        let newPin={
-                            idframe:h,
-                            nombreHotspot:nameHotspot,
-                            idExtra:extraSelected.idextra,
-                            x:originalX+move*-k,
-                            y:parseFloat(originalY),
-                            //type: hotspotType
-                        }
-                        arrayHotspots.push(newPin)
-                    }
-
-                    h++;
-                    k++;
-
-                }
-
-            }
-            else if(lastPin.frameId+j > frames[indexEscena]){
-                console.log('entra 3');
-                let k=0;
-                for(let i=lastPin.frameId;i>lastPin.frameId-j;i--){
-                    let newPin={
-                        idframe:i,
-                        nombreHotspot:nameHotspot,
-                        idExtra:extraSelected.idextra,
-                        x:originalX-move*k,
-                        y:parseFloat(originalY),
-                        //type:hotspotType
-                    }
-                    arrayHotspots.push(newPin)
-                    k--;
-                }
-                k=0
-                let h= lastPin.frameId +1;
-                for(let i = lastPin.frameId ;i<lastPin.frameId+j;i++){
-                    if(h===frames[indexEscena]){
-                        h=0;
-                    }
-                    if(h!==0){
-                        let newPin={
-                            idframe:h,
-                            nombreHotspot:nameHotspot,
-                            idExtra:extraSelected.idextra,
-                            x:originalX-move*k,
-                            y:parseFloat(originalY),
-                            //type:hotspotType
-                        }
-                        arrayHotspots.push(newPin)
-                    }
-
-                    h++;
-                    k++;
-
-                }
-
-            }
-
-            return arrayHotspots;
-        }
-
-        if(objetoData.escenas[activeEscena].nombre === "puertas_cerradas" || objetoData.escenas[activeEscena].nombre === "puertas_abiertas"){
-            let arrayPuertasCerradas =  replicateFrames("0");
-            let arrayPuertasAbiertas =  replicateFrames("1");
-
-            postNewHotspots(id,"puertas_cerradas",arrayPuertasCerradas).then(
-                response=>{
-                    console.log(response);
-                    postNewHotspots(id, "puertas_abiertas",arrayPuertasAbiertas).then(
-                        response => {
-                            toast.success(`Hotspot  ${nameHotspot} creado`,{autoClose: 2000,
-                                hideProgressBar: true,theme:"dark"});
-                            setUpdateObjectData(true);
-                            setUpdateExtras(true);
-                            setAwaitAddHotspot(false);
-                            setAddHotspotMode(false)
-                            setUpdateHotspots(true);
-                            setNewHotspot(false);
-                            tridiRef.current.toggleRecording(false);
-                            setLongPressed(false);
-                    }).catch(
-                        (e)=>{
-                            toast.error('ha ocurrido un error',{autoClose: 3000,
-                                hideProgressBar: true,theme:"dark"});
-                            console.log(e)
-                            setAwaitAddHotspot(false);
-                        }
-                    )
-                }
-            ).catch(
-                (e)=>{
-
-                    toast.error('ha ocurrido un error',{autoClose: 3000,
-                        hideProgressBar: true,theme:"dark"});
-                    console.log(e)
-                    setAwaitAddHotspot(false);
-                }
-            )
-        }else{
-            let arrayEscena = replicateFrames(activeEscena);
-
-            postNewHotspots(id, objetoData.escenas[activeEscena].nombre ,arrayEscena).then(
-                response => {
-                    console.log(response);
-                    setUpdateObjectData(true);
-                    setUpdateExtras(true);
-                    setAwaitAddHotspot(false);
-                    setAddHotspotMode(false)
-                    setUpdateHotspots(true);
-                    setNewHotspot(false);
-                    tridiRef.current.toggleRecording(false);
-                    setLongPressed(false);
-                    toast.success(`Hotspot  ${nameHotspot} creado`,{autoClose: 2000,
-                        hideProgressBar: true,theme:"dark"});
-                }).catch(
-                (e)=>{
-                    toast.error('ha ocurrido un error',{autoClose: 3000,
-                        hideProgressBar: true,theme:"dark"});
-                    console.log(e)
-                    setAwaitAddHotspot(false);
-                }
-            )
-        }
-
-    }
-
-    useEffect(() => {
-        if (pins.length !== 0 && newHotspot === true) {
-            setAwaitAddHotspot(true);
-            frameReplicateOneReference(pins[pins.length-1]);
-        }
-    }, [pins]);
+    }, [addHotspotMode]);
 
     const postNewHotspots = (id, nombreEscena,arrayHotspots) => {
         return axios.post(postAddHotspot(id,nombreEscena),arrayHotspots);
     }
 
-    /****** Fin ---- HOTSPOTS UNA REFERENCIA ******/
-
-
-    /****** Inicio ---- FUNCIONALIDAD PARA AGREGAR HOTSPOTS******/
-
-    /*
-        function postNewHotspots(id, nombreEscena,arrayHotspots){
-            return axios.post(postAddHotspot(id,currentEscena.nombre),arrayHotspots);
-        }
-
-
-        function frameReplicateV2() {
-            console.log('entra en replicate')
-            let init=pins.slice(-2)[0];
-            let end=pins.slice(-2)[1];
-            let incre=0;
-            let arrayHotspots = [];
-            let newPin={};
-
-            if(init.frameId>end.frameId){
-                let n=frames.length-init.frameId+end.frameId;
-                let k=(init.x-end.x)/n
-                let temp = init.frameId+n;
-                let desY= (parseFloat(init.y)-parseFloat(end.y))/n;
-                for(let i= init.frameId;i < temp; i++){
-                    if(i === frames.length){
-                        i=0
-                        temp=end.frameId
-                    }
-                    newPin = {
-                        idframe:i+1,
-                        nombreHotspot:nameHotspot,
-                        x: parseFloat(init.x) - k*incre,
-                        y: parseFloat(init.y) -desY*incre,
-                        idExtra:extraSelected.idextra
-                    }
-                    incre++;
-                    arrayHotspots.push(newPin);
-                    if(i!==0){
-                    }
-
-                }
-
-            }else{
-                let numFrames=end.frameId - init.frameId;
-                let k= (parseFloat(init.x)-parseFloat(end.x))/numFrames;
-                let desY= (parseFloat(init.y)-parseFloat(end.y))/numFrames;
-                for(let i= init.frameId;i < end.frameId; i++){
-                    newPin = {
-                        idframe:i+1,
-                        nombreHotspot:nameHotspot,
-                        x: parseFloat(init.x) - k*incre,
-                        y: parseFloat(init.y) -desY*incre,
-                        idExtra:extraSelected.idextra
-                    }
-                    incre++;
-                    arrayHotspots.push(newPin);
-                    if(i!==0){
-                    }
-                }
-
-            }
-
-            postNewHotspots(id,currentEscena.nombre,arrayHotspots).then(
-                response=>{
-                    console.log(response)
-                    setAwaitAddHotspot(false);
-                    setAddHotspotMode(false)
-                    setHotspotInit(false);
-                    setHotspotEnd(false)
-                    setUpdateHotspots(true);
-                    setNewHotspot(false);
-
-                }
-            ).catch(
-                (e)=>console.log(e)
-            )
-        }
-
-
-
-        function handleCreateHotspot(imgExtra, info) {
-            // FUNCION PARA CONTROLAR SELECCION DE EXTRAS
-
-            if (info === "" || imgExtra == null
-            ) {
-                console.log('Informacion erronea')
-            } else {
-                console.log(imgExtra)
-                setExtraSelected(imgExtra);
-                setNameHotspot(info);
-                setAddHotspotMode(true);
-                setNewHotspot(true);
-            }
-        }
-
-        function handleHotspotInit(){
-            setHotspotInit(true);
-            tridiRef.current.toggleRecording(true);
-        }
-
-        function handleHotspotEnd(){
-            setHotspotEnd(true);
-            tridiRef.current.toggleRecording(true);
-        }
-
-        function clickOnTridiContainer() {
-            if (addHotspotMode) {
-                tridiRef.current.toggleRecording(false);
-            }
-        }
-
-        useEffect(() => {
-            if (pins.length !== 0 && newHotspot === true) {
-                if(hotspotInit && hotspotEnd){
-                    setAwaitAddHotspot(true);
-                    frameReplicateV2();
-                }
-            }
-        }, [pins.length]);
-
-
-
-
-    */
-    /****** Fin ---- FUNCIONALIDAD PARA AGREGAR HOTSPOTS******/
     const myRenderPin = (pin) => {
 
-        //console.log(pin)
+        let aux ;
+        if(pin.tipo === "imagen" ){
+            aux= <FaImage></FaImage>;
+        }
+        else if(pin.tipo === "pdf"){
+            aux = <FaFile></FaFile>;
+        }
+        else if(pin.tipo === "youtube"){
+            aux = <FaFilm></FaFilm>;
+        }
+        else{
+            aux= "+"
+        }
+
         ReactTooltip.rebuild()
         return (
             <>
@@ -793,7 +407,9 @@ export function Visualizador({tipo, id,data, extras,edit}) {
 
                              className="button-hotspot"
                         >
-                            +
+                            {
+                                aux
+                            }
                         </div>
 
                     </label>
@@ -809,9 +425,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         );
     }
 
-    useEffect(() => {
-        ReactTooltip.rebuild();
-    });
+
     function handleOnLoad(load_success, percentage) {
         console.log(load_success,percentage)
         setLoadPercentage(percentage);
@@ -832,6 +446,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                     }
                 }
             }
+            console.log(arrayFramesId);
 
             return arrayFramesId;
         }
@@ -845,7 +460,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             let hotspotsDeleteCerradas = searchHotspot("1");
             axios.post(deleteHotspot(id,"puertas_abiertas",nameHotspot),hotspotsDeleteAbiertas)
                 .then((response)=>{
-
                     axios.post(deleteHotspot(id,"puertas_cerradas",nameHotspot),hotspotsDeleteCerradas)
                         .then(response =>{
                             toast.success(`Hotspot  ${nameHotspot} eliminado`,{autoClose: 2000,
@@ -858,7 +472,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                         setAwaitAddHotspot(false);
                         toast.error(`Error: + ${error}`,{autoClose: 3000,
                             hideProgressBar: true,theme:"dark"});
-
                     });
                 })
                 .catch(error => {
@@ -890,8 +503,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                 setAwaitAddHotspot(false);
             });
         }
-
-
     }
 
     const botonesEscenas=useMemo(()=>
@@ -915,16 +526,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     const handleOpenModalInfoObject = () => {
         setOpenModalInfoObject(false);
     }
-    let navigate = useNavigate();
-
-/*
-    useEffect(() => {
-        tridiModalInfo.current.addEventListener( 'click', function( e ) {
-            //history.pushState({ state: 'someElement was clicked' }, 'title', 'some-element.html' );
-            navigate('/');
-        })
-    }, []);*/
-
 
     const botonInfoObject=()=>{
         return <>
@@ -950,10 +551,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     </>
 
     }
-    const addPdfVis=(file)=>{
-        console.log(file)
-
-    }
+    const addPdfVis=(file)=>{console.log(file)}
     const convertToSlug=(Text)=> {
         return Text.toLowerCase()
             .replace(/ /g, '-')
@@ -974,17 +572,13 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                     if(response.status === 200){
                         console.log(response)
                         setHotspotType('pdf');
-                        tridiRef.current.toggleRecording(true);
-                        setLongPressed(false);
+                        //setLongPressed(false);
                         setExtraSelected(response.data);
                         setNameHotspot(titulo);
                         setAddHotspotMode(true);
-                        setNewHotspot(true);
-
                     }
                 })
                 .catch(function (response) {
-                    //handle error
                     console.log(response);
                     toast.error('Error en el envio',{autoClose: 2000,
                         hideProgressBar: true,theme:"dark"});
@@ -996,11 +590,9 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                 .then(res => {
                     if(res.status===200){
                         setHotspotType('youtube');
-                        tridiRef.current.toggleRecording(true)
                         setExtraSelected(res.data);
                         setNameHotspot(titulo);
                         setAddHotspotMode(true);
-                        setNewHotspot(true);
                     }
                 })
                 .catch(function (response) {
@@ -1013,11 +605,9 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                 if(extra!== null){
                     console.log(extra);
                     setHotspotType('imagen');
-                    tridiRef.current.toggleRecording(true)
                     setExtraSelected(extra);
                     setNameHotspot(titulo);
                     setAddHotspotMode(true);
-                    setNewHotspot(true);
                 }else{
                     toast.error('Porfavor seleccione un extra',{autoClose: 2000,
                         hideProgressBar: true,theme:"dark"});
@@ -1025,52 +615,40 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         }
     }
 
-
     const onLongPress = () => {
-        if(newHotspot === true){
+        /*if(newHotspot === true){
             setLongPressed(true);
-        }
+        }*/
     };
+
     const onClick = () => {
+        /*
         if (addHotspotMode) {
             tridiRef.current.toggleRecording(false);
             console.log('onclick')
-        }
+        }*/
     }
     const onPressEnd = () => {
+        /*
         if(newHotspot === true){
             setLongPressed(false)
             tridiRef.current.toggleRecording(true)
-        }
+        }*/
 
     }
     const defaultOptions = {
         shouldPreventDefault: false,
         delay: 100,
     };
+
     const longPressEvent = useLongPress(onLongPress, onClick,onPressEnd, defaultOptions);
     const onMouseUp = (ev) => {
+        /*
         if(newHotspot === true){
             //ev.stopPropagation()
             setLongPressed(false);
-        }
+        }*/
     }
-
-    useEffect(() => {
-         function handleEdit() {
-            if (tridiRef.current !== null && newHotspot === true) {
-                if (longPressed === true) {
-                     tridiRef.current.toggleRecording(false);
-                    //console.log('entra1');
-                } else {
-                     tridiRef.current.toggleRecording(true);
-                    //console.log('entra2');
-                }
-            }
-        }
-        handleEdit();
-
-    }, [longPressed, newHotspot]);
 
     const loadAllTridiComponents=()=>{
         if(objetoData){
@@ -1090,10 +668,9 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                     )
                 }else{
                     escenasSrcImages.push(
-
                         <Tridi ref={  show  ? tridiRef :null}
                                key={index}
-                               className={show && loadStatus? "visible" : "oculto" }
+                               className={` ${ addHotspotMode ? " addHotspotCursor " : ""}  +${show && loadStatus? " visible" : " oculto"} `}
                                images={imagesSrcOneScene}
                                autoplaySpeed={70}
                                zoom={1}
@@ -1101,39 +678,28 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                                minZoom={1}
                                onZoom={zoomValueHandler}
                                onFrameChange={frameChangeHandler}
-                               touch={false}
+                               touch={true}
+                               touchDragInterval={3}
                                onAutoplayStart={
-                                   () => setIsAutoPlayRunning(true)
+                                   () => show ? setIsAutoPlayRunning(true):null
                                }
                                onAutoplayStop={
-                                   () => setIsAutoPlayRunning(false)
+                                   () => show ? setIsAutoPlayRunning(false):null
                                }
-                               onRecordStart={
-                                   recordStartHandler
-                               }
-                               onRecordStop={
-                                   recordStopHandler
-                               }
+
                                onPinClick={pinClickHandler}
                                setPins={setPins}
                                renderPin={myRenderPin}
                                showStatusBar={true}
                                pins={pins}
                                showControlBar={false}
-                            //hintOnStartup
-                            //hintText="Arrastre para mover"
-                            //onLoadChange={(e,y)=>console.log(e,y)}
                         />
                     )
                 }
-
             }
 
             return (
-
-
-
-                <div className={`tridi-container`}  {...longPressEvent} {...handlers}  onMouseUp={onMouseUp}  onWheel={handleWheel} onClick={clickOnTridiContainer}>
+                <div className={`tridi-container`}    onMouseUp={onMouseUp}  onWheel={handleWheel} >
                     {
                         /*...longPressEvent*/
                         loadStatus === false ? <div className="sweet-loading">
@@ -1147,39 +713,234 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                         </h1>*/}
                         </div> : null
                     }
-                    <div className="visualizador_container-handle-buttons">
-                        <OptionButtons /*onAddHotspot={handleAddHostpot}*/
-                            onPrev={handlePrev}
-                            onNext={handleNext}
-                            onZoomIn={handleZoomIn}
-                            onZoomOut={handleZoomOut}
-                            onAutoPlay={handleAutoPlay}
-                            isAutoPlayRunning={isAutoPlayRunning}
-                            isEditMode={isEditMode}></OptionButtons>
+                    <div className={"imagesContainer"} onDoubleClick={clickOnTridi} ref={containerRef}>
+                        {escenasSrcImages}
                     </div>
-                    {escenasSrcImages}
                 </div>
             );
         }
         return <h1>holaa</h1>
     }
 
-    function youtube_parser(url=""){
+    const replicateFrames = (indexEscena, lastPin) => {
+        let move = 0.014;
+        let j=20;
+        let aux=j;
+        let arrayHotspots=[];
+
+        let originalX = parseFloat(lastPin.x);
+        let originalY = lastPin.y;
+
+        if(lastPin.frameId -j > 0  && lastPin.frameId + j <=frames[indexEscena]){
+
+            console.log('entra 1');
+            for(let i=lastPin.frameId-j;i<=lastPin.frameId+j;i++){
+                let newPin={
+                    idframe:i,
+                    nombreHotspot:nameHotspot,
+                    idExtra:extraSelected.idextra,
+                    tipo: hotspotType,
+                    x:originalX+move*aux,
+                    y:parseFloat(originalY),
+                }
+                if(j===0){
+                    newPin={
+                        idframe:i,
+                        nombreHotspot:nameHotspot,
+                        idExtra:extraSelected.idextra,
+                        x:originalX,
+                        y:parseFloat(originalY),
+                        tipo:hotspotType,
+                        //type:hotspotType
+                    }
+                }
+                arrayHotspots.push(newPin)
+                aux--;
+            }
+
+
+        }else if(lastPin.frameId - j < 0 ){
+            console.log('entra 2');
+
+            let k=0;
+            for(let i=lastPin.frameId;i<=j+lastPin.frameId;i++){
+                let newPin={
+                    idframe:i,
+                    nombreHotspot:nameHotspot,
+                    idExtra:extraSelected.idextra,
+                    tipo:hotspotType,
+                    x:originalX+move*-k,
+                    y:parseFloat(originalY),
+                }
+                if(newPin.idframe===0){
+
+                }else{
+                    arrayHotspots.push(newPin)
+                }
+                k++;
+            }
+            k=-j;
+            let h= lastPin.frameId -j +frames[indexEscena]
+            for(let i = lastPin.frameId -j;i<lastPin.frameId;i++){
+                if(h===frames[indexEscena]){
+                    h=0;
+                }
+                if(h!==0){
+                    let newPin={
+                        idframe:h,
+                        nombreHotspot:nameHotspot,
+                        idExtra:extraSelected.idextra,
+                        x:originalX+move*-k,
+                        y:parseFloat(originalY),
+                        tipo:hotspotType
+                        //type: hotspotType
+                    }
+                    arrayHotspots.push(newPin)
+                }
+
+                h++;
+                k++;
+
+            }
+
+        }
+        else if(lastPin.frameId+j > frames[indexEscena]){
+            console.log('entra 3');
+            let k=0;
+            for(let i=lastPin.frameId;i>lastPin.frameId-j;i--){
+                let newPin={
+                    idframe:i,
+                    nombreHotspot:nameHotspot,
+                    idExtra:extraSelected.idextra,
+                    x:originalX-move*k,
+                    y:parseFloat(originalY),
+                    tipo:hotspotType,
+                    //type:hotspotType
+                }
+                arrayHotspots.push(newPin)
+                k--;
+            }
+            k=0
+            let h= lastPin.frameId +1;
+            for(let i = lastPin.frameId ;i<lastPin.frameId+j;i++){
+                if(h===frames[indexEscena]){
+                    h=0;
+                }
+                if(h!==0){
+                    let newPin={
+                        idframe:h,
+                        nombreHotspot:nameHotspot,
+                        idExtra:extraSelected.idextra,
+                        x:originalX-move*k,
+                        y:parseFloat(originalY),
+                        tipo:hotspotType
+                        //type:hotspotType
+                    }
+                    arrayHotspots.push(newPin)
+                }
+
+                h++;
+                k++;
+
+            }
+
+        }
+
+        return arrayHotspots;
+    }
+    const frameReplicateOneReference=(lastPin)=>{
+        if(objetoData.escenas[activeEscena].nombre === "puertas_cerradas" || objetoData.escenas[activeEscena].nombre === "puertas_abiertas"){
+            let arrayPuertasCerradas =  replicateFrames("0",lastPin);
+            let arrayPuertasAbiertas =  replicateFrames("1",lastPin);
+
+            postNewHotspots(id,"puertas_cerradas",arrayPuertasCerradas).then(
+                response=>{
+                    console.log(response);
+                    postNewHotspots(id, "puertas_abiertas",arrayPuertasAbiertas).then(
+                        response => {
+                            toast.success(`Hotspot  ${nameHotspot} creado`,{autoClose: 2000,
+                                hideProgressBar: true,theme:"dark"});
+                            setUpdateObjectData(true);
+                            setUpdateExtras(true);
+                            setAwaitAddHotspot(false);
+                            setAddHotspotMode(false)
+                            setUpdateHotspots(true);
+                            //setLongPressed(false);
+                        }).catch(
+                        (e)=>{
+                            toast.error('ha ocurrido un error',{autoClose: 3000,
+                                hideProgressBar: true,theme:"dark"});
+                            console.log(e)
+                            setAwaitAddHotspot(false);
+                        }
+                    )
+                }
+            ).catch(
+                (e)=>{
+
+                    toast.error('ha ocurrido un error',{autoClose: 3000,
+                        hideProgressBar: true,theme:"dark"});
+                    console.log(e)
+                    setAwaitAddHotspot(false);
+                }
+            )
+        }else{
+            let arrayEscena = replicateFrames(activeEscena);
+
+            postNewHotspots(id, objetoData.escenas[activeEscena].nombre ,arrayEscena).then(
+                response => {
+                    console.log(response);
+                    setUpdateObjectData(true);
+                    setUpdateExtras(true);
+                    setAwaitAddHotspot(false);
+                    setAddHotspotMode(false)
+                    setUpdateHotspots(true);
+                    //setLongPressed(false);
+                    toast.success(`Hotspot  ${nameHotspot} creado`,{autoClose: 2000,
+                        hideProgressBar: true,theme:"dark"});
+                }).catch(
+                (e)=>{
+                    toast.error('ha ocurrido un error',{autoClose: 3000,
+                        hideProgressBar: true,theme:"dark"});
+                    console.log(e)
+                    setAwaitAddHotspot(false);
+                }
+            )
+        }
+
+    }
+    const clickOnTridi = (e) => {
+        if(addHotspotMode){
+            setAwaitAddHotspot(true);
+            let viewerWidth = containerRef.current.clientWidth;
+            let viewerHeight = containerRef.current.clientHeight;
+            let clientX = e.clientX - (viewerWidth - viewerWidth) / 2;
+            let clientY = e.clientY - (viewerHeight - viewerHeight) / 2;
+            let viewerOffsetLeft = containerRef.current.getBoundingClientRect().left;
+            let viewerOffsetTop = containerRef.current.getBoundingClientRect().top;
+            let x = ((clientX - viewerOffsetLeft) / viewerWidth).toFixed(6);
+            let y = ((clientY - viewerOffsetTop) / viewerHeight).toFixed(6);
+            let newPin = {
+                x: x,
+                y: y,
+                frameId:currentFrameIndex,
+                idFrame:currentFrameIndex,
+            };
+            frameReplicateOneReference(newPin);
+        }
+    }
+    const youtube_parser = (url="") => {
 
         var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
         var match = url.match(regExp);
         return (match&&match[7].length===11)? match[7] : false;
     }
-
     const modalVideoYoutube=useCallback(()=>{
         return (
             <ModalVideo channel='youtube' autoplay isOpen={openYoutubeModal} videoId={youtube_parser(extraPdfOrVideo.enlace)} onClose={() => setOpenYoutubeModal(false)} />
         );
 
-    },[openYoutubeModal]
-)
-
-
+    },[openYoutubeModal])
     const modalPdf = ()=>{
 
         let url = getPDF(id,extraPdfOrVideo.path);
@@ -1204,7 +965,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                     <div className="visualizador_close_container_icon">
                         <BsChevronDown className="visualizador_close-reel-icon"></BsChevronDown>
                     </div>
-
                 </div>
         </>
 
@@ -1221,10 +981,8 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         else return "";
 
     }
-
     const botonAgregarHotspot=()=>{
         if(isEditMode){
-
             return <div>
                 <PopupNewHotspot id={id} extras={extras} addPdfVis={addPdfVis} handleCreateHotpotsExtra={handleCreateHotpotsExtra}
                                  listaHotspots={hotspotsMap[activeEscena]} onClickDeleteHotspot={handleDeleteHotspot}
@@ -1235,25 +993,21 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             return null;
         }
     }
-
-
     const botonAutoGiro=()=>{
-        return <div className="button-escena_navigation-item" onClick={()=>handleAutoPlay()}>
-            <button  data-for='soclose1' data-tip="Girar" className={`button-escena-btn`} >
+        return <div className={`button-escena_navigation-item`}  onClick={()=>handleAutoPlay()}>
+            <button  data-for='soclose1' data-tip="Girar" className={`button-escena-btn ${isAutoPlayRunning ? "activo":""}`} >
                 <img src="/iconos/giro-carro.png" alt=""/>
             </button>
             <ReactTooltip  id="soclose1" place="right" effect="solid"  disable={isMobile}> Girar
             </ReactTooltip>
         </div>
     }
-
     const botonModoEdicion =()=>{
         function handleActivateEditMode() {
             setIsEditMode(!isEditMode)
         }
         return <ToogleButton isEditMode={isEditMode} handleActivateEditMode={handleActivateEditMode}></ToogleButton>;
     }
-
     const logoCompany = ()=>{
         return <div className="logo-company">
             <img src="/icono.png" alt=""/>
@@ -1262,45 +1016,18 @@ export function Visualizador({tipo, id,data, extras,edit}) {
 
     return (
         <div className="visualizador dragging">
-
             {logoCompany()}
             {buttonOpenReel()}
             <ToastContainer />
-
             <div className="visualizador_top-buttons ">
                 {botonCompartir()}
                 {botonInfoObject()}
                 {botonAgregarHotspot()}
             </div>
-
-
-            {
-                botonModoEdicion()
-            }
-
-            {
-                /*
-                <button className="button-option"
-                    onClick={handleActivateEditMode}>
-                Modo Edicion
-            </button>
-                * */
-            }
-
-
-
+            {botonModoEdicion()}
             {modalPdf()}
+            {modalVideoYoutube()}
 
-            {
-                modalVideoYoutube()
-            }
-
-            {/*
-            addHotspotMode ? <div className="start-end-hotspot-buttons">
-                <button className="button-option" onClick={handleHotspotInit}>Inicio</button>
-                <button className="button-option" onClick={handleHotspotEnd}>Fin</button>
-            </div> : null*/
-            }
 
             <div ref={extraContainerRef} className="visualizador_reel">
                 {buttonCloseReel()}
@@ -1309,24 +1036,15 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                             extrasImages={extras}
                             isEditMode={isEditMode}></ReelImages>
             </div>
-
-
             <div  ref={tridiContainerRef} className="tridi-container">
                 {
-                    /*getVisualizador()*/
                     loadAllTridiComponents()
                 }
             </div>
 
-
-
             <div className="visualizador_navigation-container">
-                {
-                    botonesEscenas
-                }
-                {
-                    botonAutoGiro()
-                }
+                {botonesEscenas}
+                {botonAutoGiro()}
             </div>
 
             {
@@ -1334,7 +1052,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                     ?  <div className="await-hotspot"><DotLoader color="#16A085 "></DotLoader> </div>
                     : null
             }
-
 
 
             {
