@@ -446,8 +446,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                     }
                 }
             }
-            console.log(arrayFramesId);
-
             return arrayFramesId;
         }
 
@@ -458,6 +456,8 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         if( escenas[activeEscena].nombre === "puertas_abiertas" || escenas[activeEscena].nombre === "puertas_cerradas"){
             let hotspotsDeleteAbiertas = searchHotspot("0");
             let hotspotsDeleteCerradas = searchHotspot("1");
+            console.log(hotspotsDeleteAbiertas)
+            console.log(hotspotsDeleteCerradas)
             axios.post(deleteHotspot(id,"puertas_abiertas",nameHotspot),hotspotsDeleteAbiertas)
                 .then((response)=>{
                     axios.post(deleteHotspot(id,"puertas_cerradas",nameHotspot),hotspotsDeleteCerradas)
@@ -467,6 +467,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                             setUpdateHotspots(true);
                             setAwaitAddHotspot(false);
                     }).catch(error => {
+                        console.log(error)
                         console.log(error.config);
                         setUpdateHotspots(true);
                         setAwaitAddHotspot(false);
@@ -731,6 +732,14 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         let originalX = parseFloat(lastPin.x);
         let originalY = lastPin.y;
 
+        console.log(frames[indexEscena])
+
+        if(lastPin.frameId > frames[indexEscena]){
+            lastPin.frameId = frames[indexEscena]-1;
+            lastPin.idFrame = frames[indexEscena]-1;
+        }
+        console.log(lastPin)
+
         if(lastPin.frameId -j > 0  && lastPin.frameId + j <=frames[indexEscena]){
 
             console.log('entra 1');
@@ -845,13 +854,19 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             }
 
         }
-
+        console.log(lastPin.frameId);
+        console.log(arrayHotspots);
         return arrayHotspots;
     }
     const frameReplicateOneReference=(lastPin)=>{
         if(objetoData.escenas[activeEscena].nombre === "puertas_cerradas" || objetoData.escenas[activeEscena].nombre === "puertas_abiertas"){
-            let arrayPuertasCerradas =  replicateFrames("0",lastPin);
-            let arrayPuertasAbiertas =  replicateFrames("1",lastPin);
+
+            let ultimoPin= {...lastPin};
+            let ultimoPinV2 = {...lastPin};
+            let arrayPuertasCerradas =  replicateFrames("0",ultimoPin);
+            let arrayPuertasAbiertas =  replicateFrames("1",ultimoPinV2);
+
+
 
             postNewHotspots(id,"puertas_cerradas",arrayPuertasCerradas).then(
                 response=>{
@@ -884,6 +899,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                     setAwaitAddHotspot(false);
                 }
             )
+            setAwaitAddHotspot(false);
         }else{
             let arrayEscena = replicateFrames(activeEscena);
 
@@ -909,6 +925,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         }
 
     }
+
     const clickOnTridi = (e) => {
         if(addHotspotMode){
             setAwaitAddHotspot(true);
