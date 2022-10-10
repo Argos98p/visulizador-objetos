@@ -3,16 +3,21 @@ import React from "react";
 import "./popupInfoObject.css";
 import {FaUserCircle} from "react-icons/fa";
 import {MdCancel} from "react-icons/md";
-const PopupInfoObjetct = ({ imgForInfoModal, infoObjectData, handleOpenModalInfoObject, openModalInfoObject}) => {
+import {Outlet} from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+
+const PopupInfoObjetct = ({ imgForInfoModal, infoObjectData}) => {
+
+    const navigate = useNavigate();
+
     const handleInfo = ()=>{
         if(infoObjectData !== undefined){
             let info = infoObjectData.split(",");
             return  <Popup className="popup-info-container"
-                onClose={()=>handleOpenModalInfoObject()}
-                open={openModalInfoObject}
+                onClose={()=>navigate(-1)}
+                open={true}
                 modal
                 nested >
-
                 <div className={"popup-info-div-container"}>
 
                 <div className="popup-info-der">
@@ -55,7 +60,7 @@ const PopupInfoObjetct = ({ imgForInfoModal, infoObjectData, handleOpenModalInfo
                 </div>*/}
                 </div>
                 <div className={"button-container"}>
-                    <MdCancel className={"button"} fontSize={54} onClick={()=>handleOpenModalInfoObject()}/>
+                    <MdCancel className={"button"} fontSize={54} onClick={()=>navigate(-1)}/>
 
                 </div>
 
@@ -63,6 +68,12 @@ const PopupInfoObjetct = ({ imgForInfoModal, infoObjectData, handleOpenModalInfo
         }
         return "";
     }
-    return( handleInfo() );
+    return(
+        <>
+
+            {handleInfo()}
+            <Outlet/>
+        </>
+         );
 }
 export default PopupInfoObjetct;

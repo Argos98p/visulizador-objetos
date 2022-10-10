@@ -16,14 +16,21 @@
   outline: none;
 }
 
-/*
-.slick-arrow .slick-prev{
-  z-index: 1000;
 
-}
-.slick-next {
-  right: 25px;
-}*/
+
+
+
+
+
+
+   /*
+   .slick-arrow .slick-prev{
+     z-index: 1000;
+
+   }
+   .slick-next {
+     right: 25px;
+   }*/
 .slick-prev{
   left: 0 !important;
   z-index: 1;
@@ -38,6 +45,11 @@
 
 .reel_container {
   max-height: 70%;
+
+
+  .styles-module_wrapper__1I_qj {
+    z-index: 10000 !important;
+  }
 
   .slick-slider {
     height: 100%;

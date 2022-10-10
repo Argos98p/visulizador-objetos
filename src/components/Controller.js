@@ -13,6 +13,7 @@ function Controller({editMode}) {
     const [extras, setExtras] = useState([]);
     const [noEscenas,setNoEscenas] = useState(false);
 
+
     useEffect(() => {
         axios.get(infoObjectUrl(id)).then(response => {
 

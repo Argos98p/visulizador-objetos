@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 
 const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleCreateHotpotsExtra,addPdfVis}) =>{
 
-
+    const navigate = useNavigate();
     const [imageSelected, setImageSelected] = useState(null);
     const [noImageSelected, setNoImageSelected] = useState(false);
     const [open, setOpen] = useState(false);
@@ -30,46 +30,7 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
     const [extrasOnlyImages, setExtrasOnlyImages]= useState(extras.filter(extra => extra.hasOwnProperty("imagen")))
     const [ inputTituloHotspotValue, setInputTituloHotspotValue ] = useState("")
 
-    const navigate = useNavigate();
 
-
-    useEffect(() => {
-
-        window.history.pushState(null, null, document.URL);
-        window.addEventListener('popstate', function(event) {
-            event.preventDefault()
-            window.location.replace(`www.google.com`);
-        });
-        document.addEventListener("popstate", (ev)=>{
-            ev.preventDefault()
-            console.log('holaaadddd');
-        });
-        window.onbeforeunload = function() {
-            console.log('holaaaa')
-            window.onbeforeunload = false;
-        }
-
-        /*
-        window.addEventListener('beforeunload', (event) => {
-            // Cancel the event as stated by the standard.
-
-            if(open===true){
-                event.preventDefault();
-                console.log('holaa');
-                event.returnValue = null;
-                window.onbeforeunload = null;
-            }else{
-                window.onbeforeunload =function() {
-                    return null;
-                };
-            }
-        });*/
-
-
-        return () => {
-            window.removeEventListener('beforeunload', ()=>{});
-        };
-    }, [open]);
 
 
     //const [extras, setExtras] = useState([])
@@ -113,6 +74,7 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
         if(extraType==="video_youtube"){
             handleCreateHotpotsExtra(inputTituloHotspotValue,'video_youtube',null,linkYoutube);
             setOpen(false)
+
         }else if(extraType ==="vincular_extra"){
             handleCreateHotpotsExtra(inputTituloHotspotValue,"vincular_extra",null,null,imageSelected);
             setOpen(false)
@@ -121,6 +83,7 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
             handleCreateHotpotsExtra(inputTituloHotspotValue,"pdf",acceptedFiles[0]);
             setOpen(false)
         }
+        navigate(-1);
     }
 
 
@@ -243,17 +206,16 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
     return (
         <>
             <div >
-            <img onClick={onClickHotspotPopup} className="cursor-pointer visualizador_btn-share-img popupAddHotspot_btn_hotspot" src="/iconos/btn-editar-hotspot.png" alt=""/>
             <Popup className="popup-add-hotspot"
 
-                onClose={onCancelHotspotModal}
-                open={open}
+                onClose={()=>navigate(-1)}
+                open={true}
                 modal
                 nested >
                 <div className="modalp">
                     <div className="header">
                         <div className="icono-anadir">
-                            <TiArrowBack className="icon cursor-pointer" onClick={onCancelHotspotModal} fontSize={40}></TiArrowBack>
+                            <TiArrowBack className="icon cursor-pointer" onClick={()=>navigate(-1)} fontSize={40}></TiArrowBack>
                             <h5>Añadir hotspot</h5>
                         </div>
 

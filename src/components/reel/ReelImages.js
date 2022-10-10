@@ -9,6 +9,8 @@ import {ImagePath} from '../../Api/apiRoutes'
 import {deleteExtra,getExtrasUrl,uploadExtraUrl} from "../../Api/apiRoutes";
 import './ReelImages.css'
 import Slider from "react-slick";
+import {Link, Outlet, Route, Routes, useNavigate} from "react-router-dom";
+import PopupCompartir from "../popup/PopupCompartir";
 
 const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
@@ -20,6 +22,8 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const { height, width } = useWindowDimensions();
   let dragging = false;
+  let navigate  = useNavigate()
+
   let breakPointsDektop =  [
     {
       breakpoint: 1920,
@@ -73,7 +77,6 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     },
 
   ];
-
   let breakPointsMobile = [
     {
       breakpoint: 1920,
@@ -127,7 +130,6 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     },
 
   ];
-
   let  settings = {
     dots: false,
     infinite: false,
@@ -146,20 +148,18 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
   };
 
-
-
   useImperativeHandle(ref, () => ({
 
     onExtra(extraId) {
       setCurrentImage(searchExtraById(extraId));
-      setIsViewerOpen(true);
+      //setIsViewerOpen(true);
+      navigate('extra');
     }
   }));
 
   const searchExtraById=(idExtra)=>{
     for(let i = 0 ; i<imagesListSrc.length;i++){
       let aux=imagesListSrc[i]
-
       if(  aux[1]===idExtra){
         return i;
       }
@@ -175,12 +175,13 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
   const openImageViewer = useCallback((index) => {
     setCurrentImage(index);
-    setIsViewerOpen(true);
+    navigate('extra');
+    //setIsViewerOpen(true);
   }, []);
 
   const closeImageViewer = () => {
     setCurrentImage(0);
-    setIsViewerOpen(false);
+    //setIsViewerOpen(false);
   };
 
   const getExtras = async() => {
@@ -254,7 +255,6 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
                         let srcImage=ImagePath(item.imagen.path);
                         temp.push([srcImage,item.idextra])
                       }
-
                     }
                 );
                 setImagesListSrc(temp)
@@ -319,8 +319,10 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
                 ?<button className='btn-eliminar-extra' onClick={()=>onClickDeleteExtra(src)}> <FaTrash/></button>
                 :null
             */}
+
+
             <img className='cursor-pointer reel_borde-redondo ' src={src[0]} key={index} alt={'hola'}
-                 onClick={() => dragging ? null : openImageViewer(index)} />
+                 onClick={() => dragging ? null :  openImageViewer(index)} />
 
           </div>
 
@@ -339,7 +341,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
 
 
-        {isViewerOpen && (
+        {/*isViewerOpen && (
 
             <ImageViewer
                 src={ imagesListSrc.map((item,index)=>item[0]) }
@@ -351,7 +353,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
                   backgroundColor: "rgba(0,0,0,0.9)"
                 }}
             />
-        )}
+        )*/}
         {
           isEditMode
               ? <ImageUploading
@@ -394,11 +396,25 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
           ImagesReel()
         }
 
+        <Outlet></Outlet>
 
 
 
-
+        <Routes>
+          <Route path="/extra" element={<ImageViewer
+              src={ imagesListSrc.map((item,index)=>item[0]) }
+              currentIndex={ currentImage }
+              disableScroll={ false }
+              closeOnClickOutside={ true }
+              onClose={ ()=>navigate(-1) }
+              backgroundStyle={{
+                backgroundColor: "rgba(0,0,0,0.9)"
+              }}
+          />
+          }/>
+        </Routes>
       </div>
+
 
   )
 })

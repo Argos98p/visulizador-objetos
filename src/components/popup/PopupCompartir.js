@@ -3,12 +3,13 @@ import React from "react";
 import {FacebookIcon, FacebookMessengerIcon, TelegramIcon, WhatsappIcon} from "react-share";
 import copy from 'copy-to-clipboard';
 import {MdClose} from "react-icons/md";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {toast} from "react-toastify";
 
 
-const PopupCompartir = ({openModalCompartir,handleCloseModalCompartir}) =>{
+const PopupCompartir = () =>{
     let {id} = useParams();
+    const navigate = useNavigate();
 
     const onClickCopy= () =>{
         copy(`http://173.255.114.112:3000/visualizador/${id}`);
@@ -16,13 +17,13 @@ const PopupCompartir = ({openModalCompartir,handleCloseModalCompartir}) =>{
             hideProgressBar: true,theme:"dark"});
     }
     return <Popup
-        onClose={()=>handleCloseModalCompartir()}
+        onClose={()=>navigate(-1)}
         className="popup-compartir_container"
-        open={openModalCompartir}
+        open={true}
         modal
         nested >
         <div className="popup-compartir-relative">
-            <button className="popup-compartir-close" onClick={()=>handleCloseModalCompartir()}>
+            <button className="popup-compartir-close" onClick={()=>navigate(-1)}>
                 <MdClose/>
             </button>
 

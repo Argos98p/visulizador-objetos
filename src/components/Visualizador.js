@@ -32,6 +32,10 @@ import {BsChevronDown, BsChevronUp} from "react-icons/bs";
 import PopupCompartir from "./popup/PopupCompartir";
 import ToogleButton from "./botones/ToogleButton";
 import {FaFile,  FaFilm, FaImage} from "react-icons/fa";
+import {Route, Link, Routes, Outlet, Navigate} from "react-router-dom";
+import Controller from "./Controller";
+import PopupImageViewer from "./popup/PopupImageViewer";
+
 
 export function Visualizador({tipo, id,data, extras,edit}) {
 
@@ -71,6 +75,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     const [updateExtras, setUpdateExtras] = useState(false);
     const [hotspotType, setHotspotType] = useState("imagen");
     const [longPressed, setLongPressed] = useState(false);
+    const [extrasImagesForView, setExtrasImagesForView] = useState([]);
 
     const extraContainerRef=useRef();
     const extraInViewRef = useRef();
@@ -260,10 +265,9 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     }
 
     const pinClickHandler = (pin) => {
-        console.log(pin);
+
         let extraInHotspot = searchExtra(pin.idExtra);
-        console.log(extraInHotspot)
-        //setVisibleExtras(true);
+
 
         if(extraContainerRef.current.classList.contains("no-visible")){
             extraContainerRef.current.classList.toggle("no-visible");
@@ -524,33 +528,31 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         ,[handleButtonEscena,objetoData]
     )
 
-    const handleOpenModalInfoObject = () => {
-        setOpenModalInfoObject(false);
-    }
 
     const botonInfoObject=()=>{
         return <>
-            <PopupInfoObjetct imgForInfoModal={imgForInfoModal} infoObjectData={infoObjectData} handleOpenModalInfoObject={()=>handleOpenModalInfoObject()} openModalInfoObject={openModalInfoObject}></PopupInfoObjetct>
-            <img ref={tridiModalInfo} className="visualizador_btn-share-img cursor-pointer btn-info-margin" src="/iconos/btn-informacion.png" alt=""
-                 onClick={()=> {
-                     setOpenModalInfoObject(true);
-                 }
-            }/>
+            <Link to={'info'}>
+                <img ref={tridiModalInfo} className="visualizador_btn-share-img cursor-pointer btn-info-margin" src="/iconos/btn-informacion.png" alt=""
+                     />
+            </Link>
+
         </>
     }
     const botonCompartir=()=>{
-        const handleCloseModalCompartir = ()=>{
-            setOpenModalCompartir(false);
-        }
-        const handleOpenModalCompartir = ()=>{
-            setOpenModalCompartir(true);
-        }
 
     return <>
-        <PopupCompartir openModalCompartir = {openModalCompartir} handleCloseModalCompartir={()=>handleCloseModalCompartir()}></PopupCompartir>
-        <img className="visualizador_btn-share-img cursor-pointer" onClick={() =>handleOpenModalCompartir()} src="/iconos/btn-compartir.png" alt=""/>
+        <Link to={"compartir"}>
+            <img className="visualizador_btn-share-img cursor-pointer"  src="/iconos/btn-compartir.png" alt=""/>
+        </Link>
     </>
-
+    }
+    const botonAgregarHotspot=()=>{
+        if(isEditMode){
+            return   <Link to={'agregarHotspot'}><img className="visualizador_btn-add-hotspot cursor-pointer"  src="/iconos/btn-editar-hotspot.png" alt=""/></Link>
+        }
+        else{
+            return null;
+        }
     }
     const addPdfVis=(file)=>{console.log(file)}
     const convertToSlug=(Text)=> {
@@ -998,18 +1000,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         else return "";
 
     }
-    const botonAgregarHotspot=()=>{
-        if(isEditMode){
-            return <div>
-                <PopupNewHotspot id={id} extras={extras} addPdfVis={addPdfVis} handleCreateHotpotsExtra={handleCreateHotpotsExtra}
-                                 listaHotspots={hotspotsMap[activeEscena]} onClickDeleteHotspot={handleDeleteHotspot}
-                ></PopupNewHotspot>
-        </div>
-        }
-        else{
-            return null;
-        }
-    }
+
     const botonAutoGiro=()=>{
         return <div className={`button-escena_navigation-item`}  onClick={()=>handleAutoPlay()}>
             <button  data-for='soclose1' data-tip="Girar" className={`button-escena-btn ${isAutoPlayRunning ? "activo":""}`} >
@@ -1031,7 +1022,12 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         </div>
     }
 
+    const setExtrasSrc=(images) =>{
+        setExtrasImagesForView(images);
+    }
+
     return (
+        <>
         <div className="visualizador dragging">
             {logoCompany()}
             {buttonOpenReel()}
@@ -1074,5 +1070,19 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             {
                 tipo === "vehiculo" ? null /*<NavigationCarButtons onOpenDoors={handleOpenDoors} onCloseDoors={handleCloseDoors}  onInterior={handleInterior}></NavigationCarButtons>*/ : null /*<NavigationObjectButttons ></NavigationObjectButttons>*/
             } </div>
-    );
+            <Outlet/>
+            <Routes>
+                <Route exact path="/info" element={<PopupInfoObjetct imgForInfoModal={imgForInfoModal} infoObjectData={infoObjectData}></PopupInfoObjetct>
+                }/>
+                <Route path="/compartir" element={<PopupCompartir ></PopupCompartir>
+                }/>
+                <Route path="/agregarHotspot" element = {<PopupNewHotspot id={id} extras={extras} addPdfVis={addPdfVis} handleCreateHotpotsExtra={handleCreateHotpotsExtra}
+                                                                          listaHotspots={hotspotsMap[activeEscena]} onClickDeleteHotspot={handleDeleteHotspot}
+                ></PopupNewHotspot>}/>
+            </Routes>
+
+
+        </>
+
+);
 }
