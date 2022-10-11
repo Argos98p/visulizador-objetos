@@ -52,9 +52,15 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
       }
     },
     {
+      breakpoint: 850,
+      settings: {
+        slidesToShow: 4,
+      }
+    },
+    {
       breakpoint: 800,
       settings: {
-        slidesToShow: 5,
+        slidesToShow: 4,
       }
     },
     {

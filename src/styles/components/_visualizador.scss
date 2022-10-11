@@ -94,15 +94,17 @@
   .pdf-modal-content{
     background: $border-dark !important;
     border: transparent;
-    height: 80vh;
+    height: 20vh;
     .container-iframe-modal{
       width: 100%;
-      height: 80vh;
+      height: 20vh;
+      text-align: center;
       .button-option-pdf-modal{
         background-color: $primary-color;
         border: none;
         border-radius: 5px;
-        margin-top: 1em;
+        margin-top: -20px;
+        position: absolute;
         padding: 5px;
         font-size: 0.8em;
         color: $secondary-color;
