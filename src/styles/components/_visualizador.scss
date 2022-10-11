@@ -26,16 +26,27 @@
   z-index: 100;
   height: 3em;
   width: 3em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   img{
-    width: 100%;
-    height: 100%;
+    //width: 100%;
+    //height: 100%;
+
   }
+
+  label{
+    font-family: 'Universal Knowledge', sans-serif !important;
+    color: $secondary-color;
+    font-size: 1.2em;
+  }
+
 }
 .icon-bold{
   font-size:20px;
 }
 .status-info{
-  color: white;
+  color: transparent;
 }
 .shadow-buttons{
   box-shadow: 8px 12px 12px -4px rgba(18,17,17,0.75);

@@ -963,6 +963,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     const logoCompany = ()=>{
         return <div className="logo-company">
             <img src="/icono.png" alt=""/>
+            <label>MOTOR'S</label>
         </div>
     }
 
