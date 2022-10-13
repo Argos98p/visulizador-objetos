@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import carInterior from "../360images/360.jpg"
 import Tridi from "react-tridi";
 import axios from "axios";
 import ReelImages from "./reel/ReelImages";
@@ -32,11 +33,14 @@ import PopupCompartir from "./popup/PopupCompartir";
 import ToogleButton from "./botones/ToogleButton";
 import {FaFile, FaFilm, FaImage} from "react-icons/fa";
 import {Link, Outlet, Route, Routes, useNavigate} from "react-router-dom";
+import {Pannellum} from "pannellum-react";
+import useWindowDimensions from "../hooks/useWindowSize";
 
 
 export function Visualizador({tipo, id,data, extras,edit}) {
 
     const isMobile = /Mobi|Android/i.test(navigator.userAgent)
+    const { height, width } = useWindowDimensions();
     const [objetoData,setObjetoData] = useState({escenas:{}});
     const [frames, setFrames] = useState([]);
     const [hotspotsMap, setHotspotsMap] = useState([]);
@@ -47,10 +51,10 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     const [pins, setPins] = useState([]);
     const [visibleExtras, setVisibleExtras] = useState(true);
 
-
     const [addHotspotMode, setAddHotspotMode] = useState(false); //variable para definir cuando con el click se agrega un nuevo hotspot  y para mostrar inicio y fin
     const [nameHotspot, setNameHotspot] = useState("holis");
     const [extraSelected, setExtraSelected] = useState(null);
+
 
 
     const [loadStatus, setLoadStatus] = useState(false);
@@ -80,12 +84,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     const navigate = useNavigate();
 
     let zooom=1;
-
-    /*
-    const handlers = useSwipeable({
-        onSwiping: (eventData) => leftSwip(eventData),
-        delta: { left: 1, right: 1 }
-    });*/
 
 
     // Recibe toda la info del objeto
@@ -280,25 +278,36 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     }
 
     const  handleZoomIn = () => {
-        zooom=zooom+0.3;
-        tridiRef.current.setZoom(zooom);
-        if (zooom > 1) {
-            tridiRef.current.toggleMoving(true)
-        }
-        if (zooom === 1) {
-            tridiRef.current.toggleMoving(false)
+        if(activeEscena!=="2") {
+            zooom = zooom + 0.3;
+            if(tridiRef !==null || tridiRef.current !==null){
+                tridiRef.current.setZoom(zooom);
+                if (zooom > 1) {
+                    tridiRef.current.toggleMoving(true)
+                }
+                if (zooom === 1) {
+                    tridiRef.current.toggleMoving(false)
+                }
+            }
+
         }
     }
     const handleZoomOut = () => {
-        //setZooom(zooom-0.1);
-        zooom = zooom -0.1
-        tridiRef.current.setZoom(zooom );
-        if (zooom > 1) {
-            tridiRef.current.toggleMoving(true)
+        if(activeEscena!=="2"){
+            zooom = zooom -0.1;
+            if(tridiRef !==null || tridiRef.current !==null){
+                tridiRef.current.setZoom(zooom );
+                if (zooom > 1) {
+                    tridiRef.current.toggleMoving(true)
+                }
+                if (zooom === 1) {
+                    tridiRef.current.toggleMoving(false)
+                }
+            }
+
+
         }
-        if (zooom === 1) {
-            tridiRef.current.toggleMoving(false)
-        }
+
     }
     const handleAutoPlay = () => {
         setIsAutoPlayRunning(!isAutoPlayRunning);
@@ -311,6 +320,10 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     }
 
     const handleButtonEscena=useCallback((escena)=>{
+        if(escena.toString() === "2"){
+            console.log('entra')
+            window.resizeBy(width/2, height);
+        }
         setActiveEscena(escena.toString())
         setPins(prepararPins(hotspotsMap[escena]));
     },[activeEscena,hotspotsMap]);
@@ -603,6 +616,10 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             let escenas=objetoData.escenas;
             let escenasSrcImages=[];
             let show=false;
+
+            let myHeight = height.toString()+'px';
+            let myWidth = width.toString()+'px';
+
             for (let index in escenas){
                 show=activeEscena===index
                 let imagesSrcOneScene = getArraySrcPath(escenas[index]);
@@ -613,12 +630,36 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                             <br></br>
                             <LottieEmptyEscenas></LottieEmptyEscenas>
                         </div>
-                    )
-                }else{
+                    )}
+                else{
                     escenasSrcImages.push(
+                        (index==='2')
+                            ? <div className={show && loadStatus ? "visible" : "oculto"} key={index}>
+                                <Pannellum
+                                width={"100%"}
+                                height={"100%"}
+                                image={carInterior}
+                                pitch={10}
+                                yaw={180}
+                                hfov={110}
+                                autoLoad
+                                onRender={()=>{}}
+                                showFullscreenCtrl={false}
+                                showZoomCtrl={false}
+                                onLoad={() => {
+                                    console.log("panorama loaded");
+                                }}
+                                onError={err => {
+                                    console.log("Error", err);
+                                }}
+                            >
+
+                            </Pannellum>
+                            </div>
+                    :
                         <Tridi ref={  show  ? tridiRef :null}
                                key={index}
-                               className={` ${ addHotspotMode ? " addHotspotCursor " : ""}  +${show && loadStatus? " visible" : " oculto"} `}
+                               className={`${ addHotspotMode===true ? " addHotspotCursor " : ""} ${show && loadStatus? "visible" : "oculto"}`}
                                images={imagesSrcOneScene}
                                autoplaySpeed={70}
                                zoom={1}
