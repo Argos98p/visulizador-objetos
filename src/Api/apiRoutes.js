@@ -33,10 +33,9 @@ function deleteExtra(idObjeto,idExtra){
     return `${BaseURL}:8084/api/objects/deleteextra?idobjeto=${idObjeto}&idextra=${idExtra}`;
 }
 
-function uploadExtraUrl(id,archivo){
-    return `${BaseURL}:8084/api/objects/addextra/imagen?idobjeto=${id}&archivo=${archivo}`
+function uploadExtraUrl(id,archivo,descripcion){
+    return `${BaseURL}:8084/api/objects/addextra/imagen?idobjeto=${id}&archivo=${archivo}&descripcion=${descripcion}`;
 }
-
 function getHotspots(id, nombreEscena){
     return `${BaseURL}:8084/api/objects/gethotspots?idobjeto=${id}&nombre_escena=${nombreEscena}`
 }

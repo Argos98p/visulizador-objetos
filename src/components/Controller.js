@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import {Route, Routes, useNavigate, useParams} from "react-router-dom";
 import {Visualizador} from "./Visualizador";
 import axios from "axios";
 import NoEncontrado from "./publicidad/paginaNoEncontrado";
@@ -12,6 +12,7 @@ function Controller({editMode}) {
     const [myObjeto, setMyObjeto] = useState(null);
     const [extras, setExtras] = useState([]);
     const [noEscenas,setNoEscenas] = useState(false);
+    const navigate=useNavigate();
 
 
     useEffect(() => {
@@ -30,48 +31,75 @@ function Controller({editMode}) {
                             }
                         });
                 }
-
-
             }
             else{
-                console.log("NOT FOUND");
+                console.log("NOT_FOUND");
                 setMyObjeto("NOT_FOUND");
+
             }
         }).catch(error => {
             if(error.response){
                 console.log(error.response);
-                setMyObjeto("errorGET");
+                //setMyObjeto("errorGET");
                 //entra aqui cuando el sesrvidor esta caido
             }else if(error.request){
                 console.log(error.request)
-                setMyObjeto("errorGET");
+                //setMyObjeto("errorGET");
             }else{
                 console.log('Error ',error.message);
-                setMyObjeto("errorGET");
+                //setMyObjeto("errorGET");
             }
-            setMyObjeto("errorGET");
+            navigate("/serverError");
             console.log(error.config);
         })
-    }, []);
+    }, [id,navigate]);
 
-
+/*
     if(myObjeto ==="errorGET"){
         return <LottieServerError/>
     }
     if(myObjeto==="NOT_FOUND"){
         return <NoEncontrado idObjeto={id}></NoEncontrado>
+
     }
 
     if(noEscenas){
         return <h3>No existen escenas</h3>
-    }
+    }*/
 
+
+
+
+/*
     return myObjeto !== null ? (
-        <Visualizador data={myObjeto}
-                      edit={editMode}
-            tipo="vehiculo"
-            id={id} extras={extras}></Visualizador>
-    ) : null
-}
 
+
+        <Routes>
+            <Route>
+                <Route path="/404" element={<NoEncontrado idObjeto={id}></NoEncontrado>} >
+            </Route>
+        </Routes>
+    ) : null*/
+
+
+    return (
+        <><Routes>
+            <Route path="/404" element={<NoEncontrado idObjeto={id}></NoEncontrado>} />
+            <Route path="/serverError" element={<LottieServerError/>}/>
+        </Routes>
+            {
+                (myObjeto ==="NOT_FOUND")
+                    ? <NoEncontrado idObjeto={id}></NoEncontrado>
+                    :null
+            }
+            { (myObjeto !=="NOT_FOUND" && myObjeto !== null )?
+            <Visualizador data={myObjeto}
+                          edit={editMode}
+                          tipo="vehiculo"
+                          id={id} extras={extras}></Visualizador>
+            : null}
+
+        </>
+);
+}
   export default Controller;

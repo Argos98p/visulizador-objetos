@@ -11,6 +11,10 @@ import './ReelImages.css'
 import Slider from "react-slick";
 import {Link, Outlet, Route, Routes, useNavigate} from "react-router-dom";
 import PopupCompartir from "../popup/PopupCompartir";
+import {FaPlusCircle} from "react-icons/fa";
+import {MdClose} from "react-icons/md";
+import {FacebookIcon, FacebookMessengerIcon, TelegramIcon, WhatsappIcon} from "react-share";
+import Popup from "reactjs-popup";
 
 const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
@@ -179,6 +183,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   };
 
 
+
   const openImageViewer = useCallback((index) => {
     setCurrentImage(index);
     navigate('extra');
@@ -224,20 +229,20 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   function uploadExtra(imagenFile){
     const payload = new FormData();
     payload.append('extra',imagenFile)
-
-    fetch(uploadExtraUrl(id,imagenFile.name), {
+    fetch(uploadExtraUrl(id,imagenFile.name,'hola'), {
       method: "POST",
       body: payload
-    }).then(function (res) {
+    }
+    ).then(function (res) {
       if (res.ok) {
         console.log('imagen cargada');
         setImageList([...imageList])
         getExtras();
       } else if (res.status === 401) {
-        alert("Oops! ");
+        console.log("error")
       }
     }, function (e) {
-      alert("Error submitting form!"+e);
+      console.log("Error submitting form!"+e);
     }).catch(error => {
       if(error.response){
         console.log(error.response);
@@ -318,6 +323,47 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
     return <Slider className="reel_image-extra-container" {...settings}>
 
+      {
+        (isEditMode) ?
+            <div className='reel_div-img div-subirExtra cursor-pointer reel_borde-redondo'>
+              <ImageUploading
+                  multiple
+                  value={images}
+
+                  onChange={onChange}
+                  dataURLKey="data_url"
+              >
+                {({
+                    imageListUpload,
+                    onImageUpload,
+                    onImageRemoveAll,
+                    onImageUpdate,
+                    onImageRemove,
+                    isDragging,
+                    dragProps,
+                  }) => (
+
+                    <div className="upload__image-wrapper">
+
+                      <button className={"btn-addExtra"}
+                              style={isDragging ? { color: 'red' } : undefined}
+                              onClick={onImageUpload}
+                              {...dragProps}
+                      >
+                        <FaPlusCircle color={"#fff"} fontSize={"30px"}></FaPlusCircle>
+                      </button>
+                      &nbsp;
+
+
+
+                    </div>
+                )}
+              </ImageUploading>
+            </div>
+            :null
+      }
+
+
       {imagesListSrc.map((src, index) => (
 
           <div className='reel_div-img' key={index}>
@@ -345,67 +391,11 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
             imagesListSrc.length===0 && <div className="extra-vacio"><h4>No hay extras</h4></div>
         }
 
-
-
-        {/*isViewerOpen && (
-
-            <ImageViewer
-                src={ imagesListSrc.map((item,index)=>item[0]) }
-                currentIndex={ currentImage }
-                disableScroll={ false }
-                closeOnClickOutside={ true }
-                onClose={ closeImageViewer }
-                backgroundStyle={{
-                  backgroundColor: "rgba(0,0,0,0.9)"
-                }}
-            />
-        )*/}
-        {
-          isEditMode
-              ? <ImageUploading
-                  multiple
-                  value={images}
-                  onChange={onChange}
-                  dataURLKey="data_url"
-              >
-                {({
-                    imageListUpload,
-                    onImageUpload,
-                    onImageRemoveAll,
-                    onImageUpdate,
-                    onImageRemove,
-                    isDragging,
-                    dragProps,
-                  }) => (
-
-                    <div className="upload__image-wrapper">
-                      {/*
-                    <button
-                        style={isDragging ? { color: 'red' } : undefined}
-                        onClick={onImageUpload}
-                        {...dragProps}
-                    >
-                      Agregar extra
-                    </button>
-                    &nbsp;
-                    */}
-
-
-                    </div>
-                )}
-              </ImageUploading>
-              : null
-
-        }
-
         {
           ImagesReel()
         }
 
         <Outlet></Outlet>
-
-
-
         <Routes>
           <Route path="/extra" element={<ImageViewer
               src={ imagesListSrc.map((item,index)=>item[0]) }
@@ -417,6 +407,20 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
                 backgroundColor: "rgba(0,0,0,0.9)"
               }}
           />
+          }/>
+          <Route path="/subirextra" element={
+            <Popup
+                onClose={()=>navigate(-1)}
+                className="popup-compartir_container"
+                open={true}
+                modal
+                nested >
+              <div className="popup-compartir-relative">
+
+
+              </div>
+
+            </Popup>
           }/>
         </Routes>
       </div>
