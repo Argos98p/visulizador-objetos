@@ -54,32 +54,6 @@ function Controller({editMode}) {
         })
     }, [id,navigate]);
 
-/*
-    if(myObjeto ==="errorGET"){
-        return <LottieServerError/>
-    }
-    if(myObjeto==="NOT_FOUND"){
-        return <NoEncontrado idObjeto={id}></NoEncontrado>
-
-    }
-
-    if(noEscenas){
-        return <h3>No existen escenas</h3>
-    }*/
-
-
-
-
-/*
-    return myObjeto !== null ? (
-
-
-        <Routes>
-            <Route>
-                <Route path="/404" element={<NoEncontrado idObjeto={id}></NoEncontrado>} >
-            </Route>
-        </Routes>
-    ) : null*/
 
 
     return (

@@ -327,11 +327,12 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
   function ImagesReel(){
 
+    /*
     if (imagesListSrc.length === 0){
       return (
           <Slider key="0" />
       )
-    }
+    }*/
 
     return <Slider className="reel_image-extra-container" {...settings}>
 
@@ -404,7 +405,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     <ToastContainer/>
       <div className='reel_container'>
         {
-            imagesListSrc.length===0 && <div className="extra-vacio"><h4>No hay extras</h4></div>
+            /*imagesListSrc.length===0 && <div className="extra-vacio"><h4>No hay extras</h4></div>*/
         }
 
         {

@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import { useLongPress } from 'use-long-press';
 import carInterior from "../360images/360.jpg"
 import Tridi from "react-tridi";
 import axios from "axios";
@@ -16,7 +17,7 @@ import {
     getPDF,
     infoObjectUrl,
     deleteHotspot,
-    postAddHotspot,
+    postAddHotspot, img360CompleteUrl,
 } from "../Api/apiRoutes";
 import ButtonEscena from "./botones/buttonEscena";
 import LottieEmptyEscenas from "../Animations/lottieEmptyEscena";
@@ -35,7 +36,6 @@ import {FaFile, FaFilm, FaImage} from "react-icons/fa";
 import {Link, Outlet, Route, Routes, useNavigate} from "react-router-dom";
 import {Pannellum} from "pannellum-react";
 import useWindowDimensions from "../hooks/useWindowSize";
-import { type } from "@testing-library/user-event/dist/type";
 
 
 export function Visualizador({tipo, id,data, extras,edit}) {
@@ -72,6 +72,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     const [extrasList, setExtrasList] = useState(extras);
     const [updateExtras, setUpdateExtras] = useState(false);
     const [hotspotType, setHotspotType] = useState("imagen");
+    const [interior360, setInterior360] = useState(false);
 
     const [extrasImagesForView, setExtrasImagesForView] = useState([]);
 
@@ -99,7 +100,9 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                     for(let index in response.data.escenas){
                         numberOfFrames[index] = Object.keys(response.data.escenas[index].imagenes).length;
                     }
-
+                    if(numberOfFrames[2]===1){
+                        setInterior360(true)
+                    }
                     setFrames(numberOfFrames)
                 }
 
@@ -200,8 +203,8 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         {
             let newPins=[]
             for (let hotspot of fetchedPinsObject ){
-                hotspot.frameId=hotspot.idFrame;
-                hotspot.id=hotspot.idHotspot;
+                hotspot.frameId=hotspot.idFrame -1;
+                hotspot.id=hotspot.idHotspot-1;
                 hotspot.recordingSessionId=null;
                 newPins.push(hotspot)
             }
@@ -211,26 +214,31 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     }
 
     function getArraySrcPath(escena){
+
+        if(escena.nombre==="interior" && interior360){
+            return ([img360CompleteUrl(escena.imagenes[0].path)])
+        }
+
         let n = Object.keys(escena.imagenes).length;
         let [aux,escenaNumber,temp,frames,nameImage]= [];
+
+        let arrayFrames=[]
+
+
         if(n!==0){
             [aux,escenaNumber,temp,frames,nameImage]= escena.imagenes[1].path.split("/");
 
         }
 
-
-        let arrayFrames=[]
         for(let i=1;i<=n;i++){
 
             arrayFrames.push(completeImageUrl(`/${id}/${escenaNumber}/frames_compresos/${i}.jpg`));
         }
-
         if(imgForInfoModal === ""){
             if(arrayFrames.length>0){
                 setImgForModal(arrayFrames[0]);
             }
         }
-
         return arrayFrames;
     }
 
@@ -378,7 +386,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     }
 
     const myRenderPin = (pin) => {
-
         let aux ;
         if(pin.tipo === "imagen" ){
             aux= <FaImage></FaImage>;
@@ -630,14 +637,13 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                             <LottieEmptyEscenas></LottieEmptyEscenas>
                         </div>
                     )}
-                else{
+                else if(imagesSrcOneScene.length === 1){
                     escenasSrcImages.push(
-                        (index==='2')
-                            ? <div className={show && loadStatus ? "visible" : "oculto"} key={index}>
-                                <Pannellum
+                        <div className={show && loadStatus ? "visible" : "oculto"} key={index}>
+                            <Pannellum
                                 width={"100%"}
                                 height={"100%"}
-                                image={carInterior}
+                                image={imagesSrcOneScene[0]}
                                 pitch={10}
                                 yaw={180}
                                 hfov={110}
@@ -654,9 +660,12 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                             >
 
                             </Pannellum>
-                            </div>
-                    :
-                        <Tridi ref={  show  ? tridiRef :null}
+                        </div>
+                    )
+                }
+                else{
+                    escenasSrcImages.push(
+                         <Tridi ref={  show  ? tridiRef :null}
                                key={index}
                                className={`${ addHotspotMode===true ? " addHotspotCursor " : ""} ${show && loadStatus? "visible" : "oculto"}`}
                                images={imagesSrcOneScene}
@@ -688,7 +697,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             return (
                 <div className={`tridi-container`}    onWheel={handleWheel} >
                     {
-                        /*...longPressEvent*/
+
                         loadStatus === false ? <div className="sweet-loading">
                             <DotLoader color="#3F3F3F"
                                        loading={
@@ -698,20 +707,19 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                             {/*<h1>{loadPercentage}
                             %
                         </h1>*/}
-                        </div> : null
+                        </div> :   <div className={"imagesContainer"}
+                                        onClick={clickOnTridi}
+                                        onDoubleClick={doubleClickOnTridi}
+                                        ref={containerRef}>
+                            {escenasSrcImages}
+                        </div>
                     }
-                    <div className={"imagesContainer"}
-                        onClick={clickOnTridi}
-                         onDoubleClick={doubleClickOnTridi}
-                         ref={containerRef}>
-                        {escenasSrcImages}
-                    </div>
+
                 </div>
             );
         }
         return <h1>holaa</h1>
     }
-
     const replicateFrames = (indexEscena, lastPin) => {
         let move = 0.014;
         let j=20;
@@ -922,8 +930,9 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         let clientY = e.clientY - (viewerHeight - viewerHeight) / 2;
         let viewerOffsetLeft = containerRef.current.getBoundingClientRect().left;
         let viewerOffsetTop = containerRef.current.getBoundingClientRect().top;
-        let x = ((clientX - viewerOffsetLeft) / viewerWidth).toFixed(6);
-        let y = ((clientY - viewerOffsetTop) / viewerHeight).toFixed(6);
+        let x = ((clientX - viewerOffsetLeft) / viewerWidth).toFixed(6) - 0.002;
+        let y = ((clientY - viewerOffsetTop) / viewerHeight).toFixed(6) -0.005 ;
+
         if(currentFrameIndex === 0){
             return {
                 x: x,
@@ -975,7 +984,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     const buttonOpenReel = ()=>{
         if(!visibleExtras)
         return (
-            <div className={"visualizador_open-reel-button "} onClick={handleClickExtras}>
+            <div key={"open-reel"} className={"visualizador_open-reel-button "} onClick={handleClickExtras}>
                 <div className="visualizador_open_container_icon">
                     <BsChevronUp></BsChevronUp>
                 </div>
@@ -1001,7 +1010,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         return <ToogleButton isEditMode={isEditMode} handleActivateEditMode={handleActivateEditMode}></ToogleButton>;
     }
     const logoCompany = ()=>{
-        return <div className="logo-company">
+        return <div key={"logo"} className="logo-company">
             <img src="/icono.png" alt=""/>
             <label>MOTOR'S</label>
         </div>
@@ -1011,75 +1020,106 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         setExtrasImagesForView(images);
     }
 
-    const [pulsed, setPulsed] = useState(false);
-    const [pos,setPos] = useState([])
-    useEffect(() => {
-        if(pulsed===true)
-        {
-            setTimeout(() => {
-                console.log('ok');
-            setPulsed(false)
-        }, 5000);
-        }else{
+    /*
+    const [enabled, setEnabled] = useState(true);
+    const [pulsa, setPulsa] = useState(false);
+    const callback = useCallback(event => {
+        console.log('long pressed')
+    }, []);
+    const aux= 3;
 
+    const bind = useLongPress(enabled ? callback : null, {
+        onStart: event => {
+            console.log('Press started');
+            setTimeout(() => {
+                setPulsa(true)
+            }, 400);
+
+        },
+        onFinish: event => {
+            console.log('Long press finished');
+            setPulsa(false);
+            setCounter(3)
+        },
+        onCancel: event => {
+            console.log('Press cancelled');
+            setPulsa(false);
+            setTimeout(() => {
+                setPulsa(false)
+            }, 400);
+            setCounter(3)
+        },
+        onMove: event => {
+            console.log('Detected mouse or touch movement');
+            setPulsa(false);
+            setCounter(3)
+        },
+        filterEvents: event => true, // All events can potentially trigger long press
+        threshold: 4000,
+        captureEvent: true,
+        cancelOnMovement: true,
+        detect: 'both',
+    });
+
+    const [counter, setCounter] = useState(3);
+    useEffect(() => {
+        if(counter > 0 && pulsa===true){
+            setTimeout(() => setCounter(counter - 1), 1000)
         }
-        
-    }, [pulsed])
-    
-    const pulseEffect =() =>{
-        
-        return <div style={{ width:"30px", height:"30px", color: 'blue', position : "absolute", left:pos[0]-15+"px", top:pos[1]-15+"px"}} className="pulseEffect"></div>
-    }   
-    const handleOnClick = (e)=>{
-        e.preventDefault();
-        e.stopPropagation();
-        setPos([e.clientX,e.clientY]);
-        setPulsed(true);
+    }, [counter, pulsa]);
+
+
+    const counterTimer = () =>{
+
+        if(pulsa){
+            return <div key={"counter"} className={"counter"}>{counter}</div>
+        }
+        return  null;
+
     }
 
+    */
     return (
         <>
-        <div className="visualizador dragging">
-
-            {pulsed ? pulseEffect() : null}
+        <div className="visualizador dragging" onContextMenu={(e)=> {e.preventDefault();e.stopImmediatePropagation();}}>
+            {/*counterTimer()*/}
             {logoCompany()}
             {buttonOpenReel()}
             <ToastContainer />
-            <div className="visualizador_top-buttons ">
+            <div key={"buttons"} className="visualizador_top-buttons ">
                 {botonCompartir()}
                 {botonInfoObject()}
                 {botonAgregarHotspot()}
             </div>
             {botonModoEdicion()}
 
-            <div ref={extraContainerRef} className="visualizador_reel">
+            <div key={"reel"} ref={extraContainerRef} className="visualizador_reel">
                 {buttonCloseReel()}
                 <ReelImages id={id}
                             ref={extraInViewRef}
                             extrasImages={extras}
                             isEditMode={isEditMode}></ReelImages>
             </div>
-            <div  ref={tridiContainerRef} onMouseDown={handleOnClick} onMouseUp={()=>setPulsed(false)} onMouseLeave={console.log('mouseleave')} onMouseOut={console.log("mouseLEave")} className="tridi-container">
+            <div  key={"tridi-container"} ref={tridiContainerRef}  className="tridi-container">
+                {/*...bind()*/}
                 {
                     loadAllTridiComponents()
                 }
             </div>
 
-            <div className="visualizador_navigation-container">
+            <div className="visualizador_navigation-container" key={"escenas-giro"}>
                 {botonesEscenas}
                 {botonAutoGiro()}
             </div>
 
             {
                 awaitAddHotspot
-                    ?  <div className="await-hotspot"><DotLoader color="#16A085 "></DotLoader> </div>
+                    ?  <div key={"await-hotspot"} className="await-hotspot"><DotLoader color="#16A085 "></DotLoader> </div>
                     : null
             }
 
 
-            {
-                tipo === "vehiculo" ? null /*<NavigationCarButtons onOpenDoors={handleOpenDoors} onCloseDoors={handleCloseDoors}  onInterior={handleInterior}></NavigationCarButtons>*/ : null /*<NavigationObjectButttons ></NavigationObjectButttons>*/
-            } </div>
+        </div>
             <Outlet/>
             <Routes>
                 <Route exact path="/info" element={<PopupInfoObjetct imgForInfoModal={imgForInfoModal} infoObjectData={infoObjectData}></PopupInfoObjetct>
