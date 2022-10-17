@@ -558,12 +558,12 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             .replace(/ /g, '-')
             .replace(/[^\w-]+/g, '');
     }
-    const handleCreateHotpotsExtra=(titulo="",type,file=null,linkYoutube="",extra=null)=>{
-
+    const handleCreateHotpotsExtra=(titulo="test",type,file=null,linkYoutube="",extra=null)=>{
         if(type==="pdf"){
             setAwaitAddHotspot(true);
             let bodyFormData = new FormData();
             bodyFormData.append('extra', file);
+            const toastHotspot = toast.loading("Subiendo PDF")
             axios({
                 method: "post",
                 url: addExtraPdf(id,convertToSlug(file.name),titulo, titulo),
@@ -578,13 +578,14 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                         setNameHotspot(titulo);
                         setAddHotspotMode(true);
                         setAwaitAddHotspot(false);
+                        toast.update(toastHotspot, { render: "PDF subido", type: "success", isLoading: false, autoClose: 1000,draggable: true});
                     }
                 })
                 .catch(function (response) {
                     setAwaitAddHotspot(false);
                     console.log(response);
-                    toast.error('Error en el envio',{autoClose: 2000,
-                        hideProgressBar: true,theme:"dark"});
+                    toast.update(toastHotspot, { render: "Error subiendo PDF", type: "success", isLoading: false, autoClose: 1000,draggable: true});
+
                 });
         }
         else if(type==="video_youtube"){
@@ -854,6 +855,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         return arrayHotspots;
     }
     const frameReplicateOneReference=(lastPin)=>{
+        const newHotspotToast = toast.loading("Creando hotspot");
         if(objetoData.escenas[activeEscena].nombre === "puertas_cerradas" || objetoData.escenas[activeEscena].nombre === "puertas_abiertas"){
 
             let ultimoPin= {...lastPin};
@@ -868,8 +870,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                         postNewHotspots(id, "puertas_abiertas",arrayPuertasAbiertas).then(
                             response => {
                                 if(response.status === 200){
-                                    toast.success(`Hotspot  ${nameHotspot} creado`,{autoClose: 2000,
-                                        hideProgressBar: true,theme:"dark"});
+                                    toast.update(newHotspotToast, { render:`Hotspot  ${nameHotspot} creado`, type: "success", isLoading: false, autoClose: 2000,draggable: true});
                                     setUpdateObjectData(true);
                                     setUpdateExtras(true);
                                     setAwaitAddHotspot(false);
@@ -879,8 +880,9 @@ export function Visualizador({tipo, id,data, extras,edit}) {
 
                             }).catch(
                             (e)=>{
-                                toast.error('ha ocurrido un error',{autoClose: 3000,
-                                    hideProgressBar: true,theme:"dark"});
+
+                                toast.update(newHotspotToast, { render:`Error creando hotspot`, type: "error", isLoading: false, autoClose: 2000,draggable: true});
+
                                 console.log(e)
                                 setAwaitAddHotspot(false);
                             }

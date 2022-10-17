@@ -28,37 +28,8 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
     const [acceptedFiles,setAcceptedFiles] = useState([])
     const [linkYoutube, setLinkYoutube] = useState("");
     const [extrasOnlyImages, setExtrasOnlyImages]= useState(extras.filter(extra => extra.hasOwnProperty("imagen")))
-    const [ inputTituloHotspotValue, setInputTituloHotspotValue ] = useState("")
+    const [ inputTituloHotspotValue, setInputTituloHotspotValue ] = useState("sin-nombre")
 
-
-
-
-    //const [extras, setExtras] = useState([])
-    /*
-        useEffect(() => {
-            console.log('render tirir')
-            axios.get(getExtrasUrl(id))
-                .then((response)=>{
-                        if(response.status===200){
-                            console.log(response.data)
-                            setExtras(response.data)
-                        }else{
-                            console.log('error al recibir las imagenes');
-                        }
-                    }
-                ).catch(error => {
-                if(error.response){
-                    console.log(error.response);
-                }else if(error.request){
-                    console.log(error.request)
-                }else{
-                    console.log('Error ',error.message);
-                }
-                console.error("Error obteniendo las imagenes:"+error);
-                setExtras([]);
-            });
-        }, []);
-*/
 
     function handleClickOnImageModal(event, item){
         if(imageSelected===item)
@@ -70,17 +41,24 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
     }
 
     function onCrear(){
+        let aux;
+        if(inputTituloHotspotValue===""){
+            aux="hotspot";
+        }else{
+            aux= inputTituloHotspotValue
+        }
+
 
         if(extraType==="video_youtube"){
-            handleCreateHotpotsExtra(inputTituloHotspotValue,'video_youtube',null,linkYoutube);
+            handleCreateHotpotsExtra(aux ,'video_youtube',null,linkYoutube);
             setOpen(false)
 
         }else if(extraType ==="vincular_extra"){
-            handleCreateHotpotsExtra(inputTituloHotspotValue,"vincular_extra",null,null,imageSelected);
+            handleCreateHotpotsExtra(aux,"vincular_extra",null,null,imageSelected);
             setOpen(false)
         }else if(extraType ==="pdf"){
 
-            handleCreateHotpotsExtra(inputTituloHotspotValue,"pdf",acceptedFiles[0]);
+            handleCreateHotpotsExtra(aux,"pdf",acceptedFiles[0]);
             setOpen(false)
         }
         navigate(-1);
@@ -106,6 +84,7 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
     }
 
     const loadPopupContent=()=>{
+
 
         if(extraType==="video_youtube"){
             return <AddYoutubeVideo onHandleInputYoutube={onHandleInputYoutube} addPdfVis={addPdfVis}></AddYoutubeVideo>
@@ -188,8 +167,11 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
     }
 
     const onChangeInputTitulo = (e)=>{
-        setInputTituloHotspotValue(e.target.value);
-        console.log(e.target.value);
+
+
+            setInputTituloHotspotValue(e.target.value);
+
+
     }
 
     const inputTituloHotspot = () => {
