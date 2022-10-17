@@ -35,6 +35,7 @@ import {FaFile, FaFilm, FaImage} from "react-icons/fa";
 import {Link, Outlet, Route, Routes, useNavigate} from "react-router-dom";
 import {Pannellum} from "pannellum-react";
 import useWindowDimensions from "../hooks/useWindowSize";
+import { type } from "@testing-library/user-event/dist/type";
 
 
 export function Visualizador({tipo, id,data, extras,edit}) {
@@ -270,8 +271,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         console.log(extrasList);
         return extrasList.find(x => x.idextra === extraId);
     }
-
-
 
     const zoomValueHandler = (valorZoom) => {
         zooom=valorZoom;
@@ -1012,9 +1011,37 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         setExtrasImagesForView(images);
     }
 
+    const [pulsed, setPulsed] = useState(false);
+    const [pos,setPos] = useState([])
+    useEffect(() => {
+        if(pulsed===true)
+        {
+            setTimeout(() => {
+                console.log('ok');
+            setPulsed(false)
+        }, 5000);
+        }else{
+
+        }
+        
+    }, [pulsed])
+    
+    const pulseEffect =() =>{
+        
+        return <div style={{ width:"30px", height:"30px", color: 'blue', position : "absolute", left:pos[0]-15+"px", top:pos[1]-15+"px"}} className="pulseEffect"></div>
+    }   
+    const handleOnClick = (e)=>{
+        e.preventDefault();
+        e.stopPropagation();
+        setPos([e.clientX,e.clientY]);
+        setPulsed(true);
+    }
+
     return (
         <>
         <div className="visualizador dragging">
+
+            {pulsed ? pulseEffect() : null}
             {logoCompany()}
             {buttonOpenReel()}
             <ToastContainer />
@@ -1032,7 +1059,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                             extrasImages={extras}
                             isEditMode={isEditMode}></ReelImages>
             </div>
-            <div  ref={tridiContainerRef} className="tridi-container">
+            <div  ref={tridiContainerRef} onMouseDown={handleOnClick} onMouseUp={()=>setPulsed(false)} onMouseLeave={console.log('mouseleave')} onMouseOut={console.log("mouseLEave")} className="tridi-container">
                 {
                     loadAllTridiComponents()
                 }

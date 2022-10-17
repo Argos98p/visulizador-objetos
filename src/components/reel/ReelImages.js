@@ -1,6 +1,6 @@
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import React, {useState, useEffect, useCallback, memo, forwardRef, useImperativeHandle} from 'react';
+import React, {useState, useEffect, useCallback, memo, forwardRef, useImperativeHandle, useRef} from 'react';
 import useWindowDimensions from '../../hooks/useWindowSize';
 import ImageUploading from 'react-images-uploading';
 import axios from "axios";
@@ -9,12 +9,11 @@ import {ImagePath} from '../../Api/apiRoutes'
 import {deleteExtra,getExtrasUrl,uploadExtraUrl} from "../../Api/apiRoutes";
 import './ReelImages.css'
 import Slider from "react-slick";
-import {Link, Outlet, Route, Routes, useNavigate} from "react-router-dom";
-import PopupCompartir from "../popup/PopupCompartir";
+import {Outlet, Route, Routes, useNavigate} from "react-router-dom";
 import {FaPlusCircle} from "react-icons/fa";
-import {MdClose} from "react-icons/md";
-import {FacebookIcon, FacebookMessengerIcon, TelegramIcon, WhatsappIcon} from "react-share";
 import Popup from "reactjs-popup";
+import ImagenComponent from "../imagen/ImagenComponent";
+import { toast, ToastContainer } from "react-toastify";
 
 const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
@@ -25,8 +24,17 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   const [currentImage, setCurrentImage] = useState(0);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const { height, width } = useWindowDimensions();
+  const [loading, setLoading] = useState(true);
+  const counter = useRef(0);
   let dragging = false;
+  
   let navigate  = useNavigate()
+  const imageLoaded = () => {
+    counter.current += 1;
+    if (counter.current >= imagesListSrc.length) {
+      setLoading(false);
+    }
+  }
 
   let breakPointsDektop =  [
     {
@@ -227,6 +235,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   }
 
   function uploadExtra(imagenFile){
+    const idToast = toast.loading("Subiendo extra...")
     const payload = new FormData();
     payload.append('extra',imagenFile)
     fetch(uploadExtraUrl(id,imagenFile.name,'hola'), {
@@ -235,7 +244,8 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     }
     ).then(function (res) {
       if (res.ok) {
-        console.log('imagen cargada');
+        toast.update(idToast, { render: "Extra subido", type: "success", isLoading: false, autoClose: 1000,draggable: true});
+
         setImageList([...imageList])
         getExtras();
       } else if (res.status === 401) {
@@ -243,6 +253,8 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
       }
     }, function (e) {
       console.log("Error submitting form!"+e);
+      toast.update(idToast, { render: "Error", type: "error", isLoading: false, autoClose: 1000,draggable: true});
+
     }).catch(error => {
       if(error.response){
         console.log(error.response);
@@ -366,15 +378,17 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
       {imagesListSrc.map((src, index) => (
 
-          <div className='reel_div-img' key={index}>
+          <div className='reel_div-img' key={index} onClick={() => dragging ? null :  openImageViewer(index)}>
             {/*isEditMode
                 ?<button className='btn-eliminar-extra' onClick={()=>onClickDeleteExtra(src)}> <FaTrash/></button>
                 :null
             */}
 
 
-            <img className='cursor-pointer reel_borde-redondo ' src={src[0]} key={index} alt={'hola'}
-                 onClick={() => dragging ? null :  openImageViewer(index)} />
+<ImagenComponent key={index}    imgURL={src[0]}></ImagenComponent>
+
+
+            
 
           </div>
 
@@ -386,6 +400,8 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
 
   return (
+    <>
+    <ToastContainer/>
       <div className='reel_container'>
         {
             imagesListSrc.length===0 && <div className="extra-vacio"><h4>No hay extras</h4></div>
@@ -424,7 +440,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
           }/>
         </Routes>
       </div>
-
+      </>
 
   )
 })

@@ -149,7 +149,12 @@
   width: 100vw;
     background-color: #111111;
 
-
+  .pulseEffect{
+    z-index: 100;
+    
+    border-radius: 100%;
+    border: red 5px solid;
+  }
   /*
   .modal-pdf-container {
     .popup-content{
