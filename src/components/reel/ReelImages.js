@@ -27,7 +27,8 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   const [loading, setLoading] = useState(true);
   const counter = useRef(0);
   let dragging = false;
-  
+  let token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzZWFtYW4yIiwiaWF0IjoxNjY2MTIyODcwLCJleHAiOjE2NjYyMDkyNzB9.Z2B7moMe6ODFNGaYDs4KhEjVqfPL13beUxhnvN8vVrA9UMte0WscQulmXFe_awVm9GRYrCFRWXxd8rsO6dbhBA"
+
   let navigate  = useNavigate()
   const imageLoaded = () => {
     counter.current += 1;
@@ -240,15 +241,21 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     payload.append('extra',imagenFile)
     fetch(uploadExtraUrl(id,imagenFile.name,'hola'), {
       method: "POST",
-      body: payload
+      body: payload,
+          headers: {
+            'Authorization': token,
+          }
     }
     ).then(function (res) {
       if (res.ok) {
+
         toast.update(idToast, { render: "Extra subido", type: "success", isLoading: false, autoClose: 1000,draggable: true});
 
         setImageList([...imageList])
         getExtras();
       } else if (res.status === 401) {
+        toast.update(idToast, { render: "Error user not authorized", type: "error", isLoading: false, autoClose: 1000,draggable: true});
+
         console.log("error")
       }
     }, function (e) {
@@ -264,6 +271,8 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
         console.log('Error ',error.message);
       }
       console.log(error.config);
+      toast.update(idToast, { render: "Error", type: "error", isLoading: false, autoClose: 1000,draggable: true});
+
     })
   }
 
@@ -303,7 +312,9 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
   function onClickDeleteExtra(src){
 
-    axios.post(deleteExtra(id,src[1]))
+    axios.post(deleteExtra(id,src[1]),{},{headers: {
+        'Authorization': `${token}`
+      }})
         .then((response)=>{
           if(response.status === 200){
             console.log(response);

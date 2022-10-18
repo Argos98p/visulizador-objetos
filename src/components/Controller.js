@@ -5,7 +5,7 @@ import axios from "axios";
 import NoEncontrado from "./publicidad/paginaNoEncontrado";
 import {infoObjectUrl,getExtrasUrl} from "../Api/apiRoutes";
 import LottieServerError from "../Animations/lottieServerError";
-
+import {Helmet} from "react-helmet";
 
 function Controller({editMode}) {
     let {id} = useParams();
@@ -16,7 +16,11 @@ function Controller({editMode}) {
 
 
     useEffect(() => {
+
+
+
         axios.get(infoObjectUrl(id)).then(response => {
+            console.log(response)
 
             if(response.data !== "NOT_FOUND"){
                 if(Object.keys(response.data.escenas).length===0){
@@ -57,7 +61,21 @@ function Controller({editMode}) {
 
 
     return (
-        <><Routes>
+        <>
+            {
+                /*
+                <Helmet>
+                <meta charSet="utf-8" />
+                <title>My Title holaaa</title>
+                <meta name="description" content="Helmet application" />
+                <meta property="og:title" content="MyApp" />
+                <meta property="og:image" content="https://kinsta.com/es/wp-content/uploads/sites/8/2020/10/tipos-de-archivos-de-imagen.png" />
+            </Helmet>
+                * */
+            }
+
+
+            <Routes>
             <Route path="/404" element={<NoEncontrado idObjeto={id}></NoEncontrado>} />
             <Route path="/serverError" element={<LottieServerError/>}/>
         </Routes>
@@ -65,6 +83,9 @@ function Controller({editMode}) {
                 (myObjeto ==="NOT_FOUND")
                     ? <NoEncontrado idObjeto={id}></NoEncontrado>
                     :null
+            }
+            {
+                noEscenas ? <h3>No hay escenas</h3>: null
             }
             { (myObjeto !=="NOT_FOUND" && myObjeto !== null )?
             <Visualizador data={myObjeto}

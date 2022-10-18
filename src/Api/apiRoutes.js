@@ -1,4 +1,5 @@
 let BaseURL="http://173.255.114.112";
+let idUsuario = "11";
 
 function statusEsceneUrl(id,escenaNombre){
     return `${BaseURL}:8084/api/objects/getstatusescene?idobjeto=${id}&nombre_escena=${escenaNombre}`
@@ -26,15 +27,15 @@ function ImagePath(pathImage){
 
 
 function  postAddHotspot(id,nombreEscena){
-    return `${BaseURL}:8084/api/objects/addhotspot?idobjeto=${id}&nombre_escena=${nombreEscena}`;
+    return `${BaseURL}:8084/api/objects/addhotspot?idobjeto=${id}&nombre_escena=${nombreEscena}&idusuario=${idUsuario}`;
 }
 
 function deleteExtra(idObjeto,idExtra){
-    return `${BaseURL}:8084/api/objects/deleteextra?idobjeto=${idObjeto}&idextra=${idExtra}`;
+    return `${BaseURL}:8084/api/objects/deleteextra?idobjeto=${idObjeto}&idextra=${idExtra}&idusuario=${idUsuario}`;
 }
 
 function uploadExtraUrl(id,archivo,descripcion){
-    return `${BaseURL}:8084/api/objects/addextra/imagen?idobjeto=${id}&archivo=${archivo}&descripcion=${descripcion}`;
+    return `${BaseURL}:8084/api/objects/addextra/imagen?idobjeto=${id}&archivo=${archivo}&descripcion=${descripcion}&idusuario=${idUsuario}`;
 }
 
 function img360CompleteUrl(path){
@@ -45,14 +46,14 @@ function getHotspots(id, nombreEscena){
 }
 
 function deleteHotspot(id, nombreEscena,nombreHotspot){
-    return `${BaseURL}:8084/api/objects/deletehotspot?idobjeto=${id}&nombre_escena=${nombreEscena}&nombreHotspot=${nombreHotspot}`
+    return `${BaseURL}:8084/api/objects/deletehotspot?idobjeto=${id}&nombre_escena=${nombreEscena}&nombreHotspot=${nombreHotspot}&idusuario=${idUsuario}`
 }
 function addExtraPdf(id,nombre_doc,titulo, descripcion){
-    return `${BaseURL}:8084/api/objects/addextra/pdf?idobjeto=${id}&archivo=${nombre_doc}&titulo=${titulo}&descripcion=${descripcion}`;
+    return `${BaseURL}:8084/api/objects/addextra/pdf?idobjeto=${id}&archivo=${nombre_doc}&titulo=${titulo}&descripcion=${descripcion}&idusuario=${idUsuario}`;
 }
 
 function addLinkYoutube(id,nombreArchivo, link, titulo, descripcion){
-    return `${BaseURL}:8084/api/objects/addextra/link?idobjeto=${id}&nombre=${nombreArchivo}&link=${link}&titulo=${titulo}&descripcion=${descripcion}`;
+    return `${BaseURL}:8084/api/objects/addextra/link?idobjeto=${id}&nombre=${nombreArchivo}&link=${link}&titulo=${titulo}&descripcion=${descripcion}&idusuario=${idUsuario}`;
 }
 function getPDF(id,path){
     return `${BaseURL}:8085/api/images/getresource?path=${path}`

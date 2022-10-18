@@ -26,6 +26,7 @@
     "react-dropzone": "^14.2.2",
     "react-grid-carousel": "^1.0.1",
     "react-grid-gallery": "^0.5.5",
+    "react-helmet": "^6.1.0",
     "react-icons": "^4.4.0",
     "react-id-generator": "^3.0.2",
     "react-image-viewer-zoom": "^1.0.36",

@@ -36,6 +36,7 @@ import {FaFile, FaFilm, FaImage} from "react-icons/fa";
 import {Link, Outlet, Route, Routes, useNavigate} from "react-router-dom";
 import {Pannellum} from "pannellum-react";
 import useWindowDimensions from "../hooks/useWindowSize";
+import {Helmet} from "react-helmet";
 
 
 export function Visualizador({tipo, id,data, extras,edit}) {
@@ -86,6 +87,8 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     const navigate = useNavigate();
 
     let zooom=1;
+
+    let token ="eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzZWFtYW4yIiwiaWF0IjoxNjY2MTIyODcwLCJleHAiOjE2NjYyMDkyNzB9.Z2B7moMe6ODFNGaYDs4KhEjVqfPL13beUxhnvN8vVrA9UMte0WscQulmXFe_awVm9GRYrCFRWXxd8rsO6dbhBA";
 
 
     // Recibe toda la info del objeto
@@ -382,7 +385,9 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     }, [addHotspotMode]);
 
     const postNewHotspots = (id, nombreEscena,arrayHotspots) => {
-        return axios.post(postAddHotspot(id,nombreEscena),arrayHotspots);
+        return axios.post(postAddHotspot(id,nombreEscena),arrayHotspots,{headers: {
+                'Authorization': `${token}`
+            }});
     }
 
     const myRenderPin = (pin) => {
@@ -460,9 +465,13 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             let hotspotsDeleteCerradas = searchHotspot("0");
 
 
-            axios.post(deleteHotspot(id,"puertas_abiertas",nameHotspot),hotspotsDeleteAbiertas)
+            axios.post(deleteHotspot(id,"puertas_abiertas",nameHotspot),hotspotsDeleteAbiertas,{headers: {
+                    'Authorization': `${token}`
+                }})
                 .then((response)=>{
-                    axios.post(deleteHotspot(id,"puertas_cerradas",nameHotspot),hotspotsDeleteCerradas)
+                    axios.post(deleteHotspot(id,"puertas_cerradas",nameHotspot),hotspotsDeleteCerradas,{headers: {
+                            'Authorization': `${token}`
+                        }})
                         .then(response =>{
                             toast.success(`Hotspot  ${nameHotspot} eliminado`,{autoClose: 2000,
                                 hideProgressBar: true,theme:"dark"});
@@ -493,7 +502,9 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                 });
         }else{
             let arrayHotspot = searchHotspot(activeEscena);
-            axios.post(deleteHotspot(id,activeEscena,nameHotspot),arrayHotspot)
+            axios.post(deleteHotspot(id,activeEscena,nameHotspot),arrayHotspot,{headers: {
+                    'Authorization': `${token}`
+                }})
                 .then(response =>{
                     toast.success(`Hotspot: + ${nameHotspot} creado`,{autoClose: 2000,
                         hideProgressBar: true,theme:"dark"});
@@ -568,7 +579,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                 method: "post",
                 url: addExtraPdf(id,convertToSlug(file.name),titulo, titulo),
                 data: bodyFormData,
-                headers: { "Content-Type": "multipart/form-data" },
+                headers: { "Content-Type": "multipart/form-data",'Authorization': token},
             })
                 .then(function (response) {
                     if(response.status === 200){
@@ -590,7 +601,9 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         }
         else if(type==="video_youtube"){
             console.log(linkYoutube)
-            axios.post(addLinkYoutube(id, 'test', linkYoutube))
+            axios.post(addLinkYoutube(id, 'test', linkYoutube),{},{headers: {
+                    'Authorization': `${token}`
+                }})
                 .then(res => {
                     if(res.status===200){
                         setHotspotType('youtube');
@@ -1083,6 +1096,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     */
     return (
         <>
+
         <div className="visualizador dragging" onContextMenu={(e)=> {e.preventDefault();e.stopImmediatePropagation();}}>
             {/*counterTimer()*/}
             {logoCompany()}
