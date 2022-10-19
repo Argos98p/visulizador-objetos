@@ -62,7 +62,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     const [loadStatus, setLoadStatus] = useState(false);
     const [loadPercentage, setLoadPercentage] = useState(0);
     const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
-    const [sphereImageInView, setSphereImageInView] = useState(false);
 
     const [activeEscena, setActiveEscena] = useState("0"); //escena que esta activa lo hace con
 
@@ -219,7 +218,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     function getArraySrcPath(escena){
 
         if(escena.nombre==="interior" && interior360){
-            return ([img360CompleteUrl(escena.imagenes[0].path)])
+            return ([img360CompleteUrl(escena.imagenes[1].path,id)])
         }
 
         let n = Object.keys(escena.imagenes).length;
@@ -324,9 +323,8 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         tridiRef.current.toggleAutoplay(!isAutoPlayRunning);
     }
     const handleWheel = (e) => {
-        if(!sphereImageInView){
+
             e.deltaY > 0 ? handleZoomOut() : handleZoomIn();
-        }
     }
 
     const handleButtonEscena=useCallback((escena)=>{
@@ -405,7 +403,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             aux= "+"
         }
 
-        ReactTooltip.rebuild()
         return (
             <>
                 <div data-tip={"test"} data-for='test'>
@@ -653,18 +650,19 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                     )}
                 else if(imagesSrcOneScene.length === 1){
                     escenasSrcImages.push(
-                        <div className={show && loadStatus ? "visible" : "oculto"} key={index}>
+                        <div className={show && loadStatus ? "arriba" : "abajo"} key={index}>
                             <Pannellum
-                                width={"100%"}
-                                height={"100%"}
+                                width={"100vw"}
+                                height={"100vh"}
                                 image={imagesSrcOneScene[0]}
                                 pitch={10}
                                 yaw={180}
                                 hfov={110}
-                                autoLoad
+                                autoLoad = {true}
                                 onRender={()=>{}}
                                 showFullscreenCtrl={false}
                                 showZoomCtrl={false}
+                                autoRotate={isAutoPlayRunning ? 1 : 0}
                                 onLoad={() => {
                                     console.log("panorama loaded");
                                 }}

@@ -11,6 +11,18 @@
       height: 100%;
       width: 100%;
     }
+
+    .pnlm-container {
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain;
+    }
+  }
+  .arriba{
+    z-index: 10;
+  }
+  .abajo{
+    z-index: 8;
   }
 }
 

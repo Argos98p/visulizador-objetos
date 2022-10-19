@@ -38,8 +38,8 @@ function uploadExtraUrl(id,archivo,descripcion){
     return `${BaseURL}:8084/api/objects/addextra/imagen?idobjeto=${id}&archivo=${archivo}&descripcion=${descripcion}&idusuario=${idUsuario}`;
 }
 
-function img360CompleteUrl(path){
-    return `${BaseURL}:8085/api/images/getimage?path=${path}`;
+function img360CompleteUrl(path,id){
+    return `${BaseURL}:8085/api/images/getimage?path=/${id}/${path}`;
 }
 function getHotspots(id, nombreEscena){
     return `${BaseURL}:8084/api/objects/gethotspots?idobjeto=${id}&nombre_escena=${nombreEscena}`
@@ -58,4 +58,8 @@ function addLinkYoutube(id,nombreArchivo, link, titulo, descripcion){
 function getPDF(id,path){
     return `${BaseURL}:8085/api/images/getresource?path=${path}`
 }
-export {addLinkYoutube,img360CompleteUrl,getPDF,addExtraPdf,deleteHotspot,statusEsceneUrl,uploadExtraUrl,infoObjectUrl,getHotspots,numberFramesInScene,completeImageUrl,getExtrasUrl,ImagePath,postAddHotspot,deleteExtra}
+
+function loginUser(){
+    return `${BaseURL}:8086/api/auth/signin`
+}
+export {loginUser,addLinkYoutube,img360CompleteUrl,getPDF,addExtraPdf,deleteHotspot,statusEsceneUrl,uploadExtraUrl,infoObjectUrl,getHotspots,numberFramesInScene,completeImageUrl,getExtrasUrl,ImagePath,postAddHotspot,deleteExtra}
