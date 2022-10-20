@@ -1,6 +1,4 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import { useLongPress } from 'use-long-press';
-import carInterior from "../360images/360.jpg"
 import Tridi from "react-tridi";
 import axios from "axios";
 import ReelImages from "./reel/ReelImages";
@@ -8,16 +6,18 @@ import 'react-modal-video/scss/modal-video.scss';
 import ModalVideo from 'react-modal-video';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
+import ReactDom, {createPortal} from 'react-dom';
 import {
     addExtraPdf,
     addLinkYoutube,
     completeImageUrl,
+    deleteHotspot,
     getExtrasUrl,
     getHotspots,
     getPDF,
+    img360CompleteUrl,
     infoObjectUrl,
-    deleteHotspot,
-    postAddHotspot, img360CompleteUrl,
+    postAddHotspot,
 } from "../Api/apiRoutes";
 import ButtonEscena from "./botones/buttonEscena";
 import LottieEmptyEscenas from "../Animations/lottieEmptyEscena";
@@ -34,9 +34,10 @@ import PopupCompartir from "./popup/PopupCompartir";
 import ToogleButton from "./botones/ToogleButton";
 import {FaFile, FaFilm, FaImage} from "react-icons/fa";
 import {Link, Outlet, Route, Routes, useNavigate} from "react-router-dom";
-import {Pannellum} from "pannellum-react";
+
 import useWindowDimensions from "../hooks/useWindowSize";
-import {Helmet} from "react-helmet";
+import {Pannellum} from "pannellum-react";
+import {svgImagen, svgPdf, svgYoutube} from "../utils/iconsVisualizador";
 
 
 export function Visualizador({tipo, id,data, extras,edit}) {
@@ -73,6 +74,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     const [updateExtras, setUpdateExtras] = useState(false);
     const [hotspotType, setHotspotType] = useState("imagen");
     const [interior360, setInterior360] = useState(false);
+    const [hotspots360, setHotspots360] = useState([]);
 
     const [extrasImagesForView, setExtrasImagesForView] = useState([]);
 
@@ -82,16 +84,19 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     const tridiContainerRef = useRef(null);
     const tridiModalInfo = useRef(null);
     const containerRef = useRef(null);
+    const panellumRef = useRef(null);
 
     const navigate = useNavigate();
 
     let zooom=1;
 
-    let token ="eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzZWFtYW4yIiwiaWF0IjoxNjY2MTIyODcwLCJleHAiOjE2NjYyMDkyNzB9.Z2B7moMe6ODFNGaYDs4KhEjVqfPL13beUxhnvN8vVrA9UMte0WscQulmXFe_awVm9GRYrCFRWXxd8rsO6dbhBA";
+    let token = localStorage.getItem("token");
 
 
-    // Recibe toda la info del objeto
+
+    
     useEffect(() => {
+
         axios.get(infoObjectUrl(id)).then(
             response=>{
                 if (response.status===200){
@@ -157,7 +162,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             response=>{
                 if (response.status===200){
                     setObjetoData(response.data);
-
                 }
 
             }
@@ -266,10 +270,8 @@ export function Visualizador({tipo, id,data, extras,edit}) {
 
             setExtraPdfOrVideo(extraInHotspot);
             navigate("extravideo");
-            console.log('enlace video')
         }
         else if(extraInHotspot.hasOwnProperty("path")){
-            console.log("pdf")
             setExtraPdfOrVideo(extraInHotspot);
             navigate("extrapdf");
             //setOpenPdfModal(true);
@@ -580,7 +582,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             })
                 .then(function (response) {
                     if(response.status === 200){
-                        console.log(response)
                         setHotspotType('pdf');
                         setExtraSelected(response.data);
                         setNameHotspot(titulo);
@@ -649,9 +650,12 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                         </div>
                     )}
                 else if(imagesSrcOneScene.length === 1){
+
                     escenasSrcImages.push(
                         <div className={show && loadStatus ? "arriba" : "abajo"} key={index}>
                             <Pannellum
+                                doubleClickZoom={false}
+                                ref={panellumRef}
                                 width={"100vw"}
                                 height={"100vh"}
                                 image={imagesSrcOneScene[0]}
@@ -659,18 +663,46 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                                 yaw={180}
                                 hfov={110}
                                 autoLoad = {true}
+                                disableKeyboardCtrl={true}
                                 onRender={()=>{}}
                                 showFullscreenCtrl={false}
                                 showZoomCtrl={false}
-                                autoRotate={isAutoPlayRunning ? 1 : 0}
+                                autoRotate={10}
                                 onLoad={() => {
-                                    console.log("panorama loaded");
+
                                 }}
                                 onError={err => {
                                     console.log("Error", err);
                                 }}
-                            >
 
+                            >
+                                {
+                                    hotspotsMap["2"] ? hotspotsMap["2"].map(function (e){return <Pannellum.Hotspot
+                                            type="custom"
+                                            cssClass="button-hotspot"
+                                            tooltip = {(hotSpotDiv, args) => {
+                                            if(e.tipo === "imagen"){
+                                                hotSpotDiv.innerHTML+=svgImagen();
+                                            }else if(e.tipo === "pdf"){
+                                                hotSpotDiv.innerHTML+=svgPdf();
+                                            }else if(e.tipo === "youtube"){
+                                                hotSpotDiv.innerHTML+=svgYoutube();
+                                            }else{
+                                                hotSpotDiv.innerHTML+='+';
+                                            }
+
+                                        }}
+                                            handleClick={(evt , args) => pinClickHandler(args)}
+                                            handleClickArg={e}
+                                            pitch={e.x}
+                                            yaw={e.y}
+                                            text="Info Hotspot Text 3"
+                                            URL="https://github.com/farminf/pannellum-react"
+                                        /> }   )
+                                        : null
+
+                                    //hotspots360.map(function (e){return e})
+                                }
                             </Pannellum>
                         </div>
                     )
@@ -904,8 +936,8 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             ).catch(
                 (e)=>{
 
-                    toast.error('ha ocurrido un error',{autoClose: 3000,
-                        hideProgressBar: true,theme:"dark"});
+                    toast.update(newHotspotToast, { render:`Error creando hotspot`, type: "error", isLoading: false, autoClose: 2000,draggable: true});
+
                     console.log(e)
                     setAwaitAddHotspot(false);
                 }
@@ -965,6 +997,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     }
 
     const clickOnTridi = (e) => {
+
         if(addHotspotMode && isMobile){
             setAwaitAddHotspot(true);
            frameReplicateOneReference(calculaUbicacionHotspot(e));
@@ -972,7 +1005,50 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     }
 
     const doubleClickOnTridi = (e) =>{
-        if(addHotspotMode && isMobile ===false){
+        if(addHotspotMode && isMobile ===false && activeEscena === "2" && interior360===true ){
+            if(panellumRef.current!= null){
+                let coordenadas =  panellumRef.current.getViewer().mouseEventToCoords(e);
+                let newPin = {
+                    x: coordenadas[0],
+                    y: coordenadas[1],
+                    idframe: 1,
+                    tipo:hotspotType,
+                    nombreHotspot:nameHotspot,
+                    idExtra:extraSelected.idextra
+                }
+                let data = [];
+                data.push(newPin)
+                const newHotspots360 = toast.loading("Creando hotspot");
+
+
+                axios.post(postAddHotspot(id, "interior"), data,{headers:{'Authorization': `${token}`}}).then(r  =>{
+                    if (r.status === 200){
+                        toast.update(newHotspots360, { render:`Hotspot  ${nameHotspot} creado`, type: "success", isLoading: false, autoClose: 2000,draggable: true});
+                        setUpdateObjectData(true);
+                        setUpdateExtras(true);
+                        setAwaitAddHotspot(false);
+                        setAddHotspotMode(false)
+                        setUpdateHotspots(true);
+                    }
+                }).catch(e=>{
+                    toast.update(newHotspots360, { render:`Error creando hotspot`, type: "error", isLoading: false, autoClose: 2000,draggable: true});
+                });
+
+
+                //let pins = [...hotspots360]
+                /*pins.push(<Pannellum.Hotspot
+                    type="custom"
+                    handleClick={(evt , args) => console.log(args.name)}
+                    handleClickArg={{ "name":"testio" }}
+                    pitch={coordenadas[0]}
+                    yaw={coordenadas[1]}
+                    text="Info Hotspot Text 3"
+                    URL="https://github.com/farminf/pannellum-react"
+                />)*/
+                //setHotspots360(pins);
+            }
+        }
+        if(addHotspotMode && isMobile ===false && activeEscena !=="2" ){
             setAwaitAddHotspot(true);
             frameReplicateOneReference(calculaUbicacionHotspot(e));
         }

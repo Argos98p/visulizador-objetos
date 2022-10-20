@@ -7,6 +7,15 @@
   .imagesContainer{
     height: 100%;
     width: 100%;
+    .hotspot{
+
+      .in{
+        display: none !important;
+      }
+      .out {
+        display: none !important;
+      }
+    }
     & > div{
       height: 100%;
       width: 100%;

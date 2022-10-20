@@ -21,12 +21,12 @@ function Controller({editMode}) {
         axios.post(loginUser(),{ "username":"seaman2",
 
             "password":"123456789"}).then(response =>{
-            console.log(response.data)
+            //console.log(response.data)
             localStorage.setItem('token', response.data.accessToken)
             localStorage.setItem('user',response.data.id)
 
             axios.get(infoObjectUrl(id)).then(response => {
-                console.log(response)
+                //console.log(response)
 
                 if(response.data !== "NOT_FOUND"){
                     if(Object.keys(response.data.escenas).length===0){
