@@ -1,4 +1,6 @@
 let BaseURL="http://173.255.114.112";
+let test="http://redpanda.sytes.net";
+
 let idUsuario = "11";
 
 function statusEsceneUrl(id,escenaNombre){

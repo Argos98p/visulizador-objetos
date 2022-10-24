@@ -92,8 +92,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
 
     let token = localStorage.getItem("token");
 
-
-
     
     useEffect(() => {
 
@@ -152,8 +150,10 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                 setHotspotsMap(mapHotspots);
                 setPins(prepararPins(mapHotspots[activeEscena]));
             });
+
         }
         getDataHotspots();
+
         return ()=>setUpdateHotspots(false);
     }, [objetoData, updateHotspots]);
 
@@ -320,7 +320,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         }
 
     }
-    const handleAutoPlay = () => {
+     const handleAutoPlay = () => {
         setIsAutoPlayRunning(!isAutoPlayRunning);
         tridiRef.current.toggleAutoplay(!isAutoPlayRunning);
     }
@@ -618,7 +618,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         }
         else if(type==="vincular_extra" ){
                 if(extra!== null){
-                    console.log(extra);
                     setHotspotType('imagen');
                     setExtraSelected(extra);
                     setNameHotspot(titulo);
@@ -765,6 +764,8 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         return <h1>holaa</h1>
     }
     const replicateFrames = (indexEscena, lastPin) => {
+
+
         let move = 0.014;
         let j=20;
         let aux=j;
@@ -773,7 +774,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         let originalX = parseFloat(lastPin.x);
         let originalY = lastPin.y;
 
-        console.log(frames[indexEscena])
 
         if(lastPin.frameId > frames[indexEscena]){
             lastPin.frameId = frames[indexEscena]-1;
@@ -829,28 +829,33 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                 k++;
             }
             k=-j;
-            let h= lastPin.frameId -j +frames[indexEscena]
+            let h= lastPin.frameId -j +frames[indexEscena]+1
+            console.log(frames[indexEscena])
+
             for(let i = lastPin.frameId -j;i<lastPin.frameId;i++){
-                if(h===frames[indexEscena]){
+                let newPin={};
+                if(h===frames[indexEscena]+1){
                     h=0;
                 }
                 if(h!==0){
-                    let newPin={
+                     newPin={
                         idframe:h,
                         nombreHotspot:nameHotspot,
                         idExtra:extraSelected.idextra,
                         x:originalX+move*-k,
                         y:parseFloat(originalY),
                         tipo:hotspotType
-                        //type: hotspotType
+
                     }
-                    arrayHotspots.push(newPin)
+                    arrayHotspots.push(newPin);
                 }
+
 
                 h++;
                 k++;
 
             }
+
 
         }
         else if(lastPin.frameId+j > frames[indexEscena]){
@@ -1059,7 +1064,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         var match = url.match(regExp);
         return (match&&match[7].length===11)? match[7] : false;
     }
-
     const buttonCloseReel= () =>{
         return <>
                 <div className="visualizador_close-reel-button" onClick={handleClickExtras}>
@@ -1083,15 +1087,17 @@ export function Visualizador({tipo, id,data, extras,edit}) {
 
     }
 
-    const botonAutoGiro=()=>{
-        return <div className={`button-escena_navigation-item`}  onClick={()=>handleAutoPlay()}>
-            <button  data-for='soclose1' data-tip="Girar" className={`button-escena-btn ${isAutoPlayRunning ? "activo":""}`} >
+    const botonAutoGiro= useMemo(
+    ()=>{
+        return <div className={`button-escena_navigation-item`}  onClick={()=>handleAutoPlay()} >
+            <button  data-for='soclose1' data-tip="Girar" className={`button-escena-btn ${isAutoPlayRunning===true ? " activo":""}`} >
                 <img src="/iconos/giro-carro.png" alt=""/>
             </button>
             <ReactTooltip  id="soclose1" place="right" effect="solid"  disable={isMobile}> Girar
             </ReactTooltip>
         </div>
-    }
+    },[isAutoPlayRunning,isMobile]
+);
     const botonModoEdicion =()=>{
         function handleActivateEditMode() {
             setIsEditMode(!isEditMode)
@@ -1171,7 +1177,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     return (
         <>
 
-        <div className="visualizador dragging" onContextMenu={(e)=> {e.preventDefault();e.stopImmediatePropagation();}}>
+        <div className="visualizador dragging" onContextMenu={(e)=> {e.preventDefault();}}>
             {/*counterTimer()*/}
             {logoCompany()}
             {buttonOpenReel()}
@@ -1199,7 +1205,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
 
             <div className="visualizador_navigation-container" key={"escenas-giro"}>
                 {botonesEscenas}
-                {botonAutoGiro()}
+                {botonAutoGiro}
             </div>
 
             {

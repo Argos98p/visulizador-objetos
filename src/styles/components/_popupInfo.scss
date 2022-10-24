@@ -63,7 +63,7 @@
       margin-right: auto;
       left: 0;
       right: 0;
-      bottom: -4em;
+      bottom: 2em;
       text-align: center;
       color: $secondary-color;
       .button{
@@ -86,7 +86,7 @@
   }
   @media screen and (max-width: 720px) {
     .popup-info-container-content{
-      width: 95% !important;
+      width: 85% !important;
       .popup-info-div-container{
         display: flex;
         flex-direction: column;

@@ -27,15 +27,16 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   const [loading, setLoading] = useState(true);
   const counter = useRef(0);
   let dragging = false;
-  let token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzZWFtYW4yIiwiaWF0IjoxNjY2MTIyODcwLCJleHAiOjE2NjYyMDkyNzB9.Z2B7moMe6ODFNGaYDs4KhEjVqfPL13beUxhnvN8vVrA9UMte0WscQulmXFe_awVm9GRYrCFRWXxd8rsO6dbhBA"
-
+  let token = localStorage.getItem("token");
   let navigate  = useNavigate()
+
+  /*
   const imageLoaded = () => {
     counter.current += 1;
     if (counter.current >= imagesListSrc.length) {
       setLoading(false);
     }
-  }
+  }*/
 
   let breakPointsDektop =  [
     {
@@ -156,7 +157,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     slidesToShow: 5,
     slidesToScroll: 3,
     draggable:true,
-    centered:true,
+    centered:false,
     adaptiveHeight:false,
     centerMode:false,
     centerPadding:"10px",
@@ -190,7 +191,6 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     uploadExtra(imageListUpload[0].file)
     setImages([]);
   };
-
 
 
   const openImageViewer = useCallback((index) => {
