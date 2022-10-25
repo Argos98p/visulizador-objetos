@@ -274,7 +274,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         else if(extraInHotspot.hasOwnProperty("path")){
             setExtraPdfOrVideo(extraInHotspot);
             navigate("extrapdf");
-            //setOpenPdfModal(true);
+
         }
 
     };
@@ -908,6 +908,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
 
             let ultimoPin= {...lastPin};
             let ultimoPinV2 = {...lastPin};
+
             let arrayPuertasCerradas =  replicateFrames("0",ultimoPin);
             let arrayPuertasAbiertas =  replicateFrames("1",ultimoPinV2);
 
@@ -1234,7 +1235,10 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                             <button className={"button-option-pdf-modal"} onClick={()=>navigate(-1)}>Cerrar</button>
                         </div>
                     </Popup>
-                </div>}></Route>
+
+                </div>
+
+                }></Route>
             </Routes>
 
 

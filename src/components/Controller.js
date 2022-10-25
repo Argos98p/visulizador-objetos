@@ -5,7 +5,7 @@ import axios from "axios";
 import NoEncontrado from "./publicidad/paginaNoEncontrado";
 import {infoObjectUrl, getExtrasUrl, loginUser} from "../Api/apiRoutes";
 import LottieServerError from "../Animations/lottieServerError";
-import {Helmet} from "react-helmet";
+
 
 function Controller({editMode}) {
     let {id} = useParams();
