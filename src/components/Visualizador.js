@@ -981,8 +981,8 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         let clientY = e.clientY - (viewerHeight - viewerHeight) / 2;
         let viewerOffsetLeft = containerRef.current.getBoundingClientRect().left;
         let viewerOffsetTop = containerRef.current.getBoundingClientRect().top;
-        let x = ((clientX - viewerOffsetLeft) / viewerWidth).toFixed(6) - 0.002;
-        let y = ((clientY - viewerOffsetTop) / viewerHeight).toFixed(6) -0.005 ;
+        let x = ((clientX - viewerOffsetLeft) / viewerWidth).toFixed(6) ;
+        let y = ((clientY - viewerOffsetTop) / viewerHeight).toFixed(6) ;
 
         if(currentFrameIndex === 0){
             return {
