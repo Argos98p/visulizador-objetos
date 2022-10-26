@@ -222,7 +222,8 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     function getArraySrcPath(escena){
 
         if(escena.nombre==="interior" && interior360){
-            return ([img360CompleteUrl(escena.imagenes[1].path,id)])
+
+            return ([img360CompleteUrl(escena.imagenes[0].path,id)])
         }
 
         let n = Object.keys(escena.imagenes).length;
