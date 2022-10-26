@@ -41,7 +41,7 @@ function uploadExtraUrl(id,archivo,descripcion){
 }
 
 function img360CompleteUrl(path,id){
-    return `${BaseURL}:8085/api/images/getimage?path=/${id}/${path}`;
+    return `${BaseURL}:8085/api/images/getimage?path=/${path}`;
 }
 function getHotspots(id, nombreEscena){
     return `${BaseURL}:8084/api/objects/gethotspots?idobjeto=${id}&nombre_escena=${nombreEscena}`

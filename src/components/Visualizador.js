@@ -223,6 +223,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
 
         if(escena.nombre==="interior" && interior360){
 
+            console.log(escena.imagenes[0].path);
             return ([img360CompleteUrl(escena.imagenes[0].path,id)])
         }
 
