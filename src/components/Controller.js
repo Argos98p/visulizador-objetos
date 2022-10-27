@@ -26,12 +26,11 @@ function Controller({editMode}) {
             localStorage.setItem('user',response.data.id)
 
             axios.get(infoObjectUrl(id)).then(response => {
-                //console.log(response)
 
                 if(response.data !== "NOT_FOUND"){
                     if(Object.keys(response.data.escenas).length===0){
                         setNoEscenas(true)
-                        console.log(id)
+
                     }else{
                         setMyObjeto(response.data);
                         axios.get(getExtrasUrl(id))
@@ -42,25 +41,17 @@ function Controller({editMode}) {
                             });
                     }
                 }
+
+
                 else{
-                    console.log("NOT_FOUND");
                     setMyObjeto("NOT_FOUND");
 
                 }
             }).catch(error => {
-                if(error.response){
-                    console.log(error.response);
-                    //setMyObjeto("errorGET");
-                    //entra aqui cuando el sesrvidor esta caido
-                }else if(error.request){
-                    console.log(error.request)
-                    //setMyObjeto("errorGET");
-                }else{
-                    console.log('Error ',error.message);
-                    //setMyObjeto("errorGET");
+                console.log(error)
+                if(error.response.status === 404){
+                    setMyObjeto("NOT_FOUND");
                 }
-                navigate("/serverError");
-                console.log(error.config);
             })
         })
 
@@ -72,23 +63,10 @@ function Controller({editMode}) {
 
     return (
         <>
-            {
-                /*
-                <Helmet>
-                <meta charSet="utf-8" />
-                <title>My Title holaaa</title>
-                <meta name="description" content="Helmet application" />
-                <meta property="og:title" content="MyApp" />
-                <meta property="og:image" content="https://kinsta.com/es/wp-content/uploads/sites/8/2020/10/tipos-de-archivos-de-imagen.png" />
-            </Helmet>
-                * */
-            }
-
-
             <Routes>
-            <Route path="/404" element={<NoEncontrado idObjeto={id}></NoEncontrado>} />
-            <Route path="/serverError" element={<LottieServerError/>}/>
-        </Routes>
+                <Route path="/404" element={<NoEncontrado idObjeto={id}></NoEncontrado>} />
+                <Route path="/serverError" element={<LottieServerError/>}/>
+            </Routes>
             {
                 (myObjeto ==="NOT_FOUND")
                     ? <NoEncontrado idObjeto={id}></NoEncontrado>
@@ -98,13 +76,13 @@ function Controller({editMode}) {
                 noEscenas ? <h3>No hay escenas</h3>: null
             }
             { (myObjeto !=="NOT_FOUND" && myObjeto !== null )?
-            <Visualizador data={myObjeto}
-                          edit={editMode}
-                          tipo="vehiculo"
-                          id={id} extras={extras}></Visualizador>
-            : null}
+                <Visualizador data={myObjeto}
+                              edit={editMode}
+                              tipo="vehiculo"
+                              id={id} extras={extras}></Visualizador>
+                : null}
 
         </>
-);
+    );
 }
-  export default Controller;
+export default Controller;
