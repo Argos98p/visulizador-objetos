@@ -1,8 +1,5 @@
-import React, {memo, useState,useEffect} from "react";
-import Popup from "reactjs-popup";
-import {FaCrosshairs, FaTrash} from "react-icons/fa/index.js";
-//import "./PopupListaHotspotsStyle.css"
-import {MdOutlineCancel} from "react-icons/md";
+import React from "react";
+
 
     const PopupListaHotspot =({listaHotspots,onClickDeleteHotspot})=>{
 

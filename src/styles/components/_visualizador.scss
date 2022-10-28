@@ -5,6 +5,13 @@
   align-items: center;
   justify-content: center;
   .imagesContainer{
+    .addHotspotCursor{
+      cursor:url(http://www.rw-designer.com/cursor-extern.php?id=24819)22 14.5, pointer !important;
+    }
+    ._2kfM8{
+      cursor: url(https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin.svg
+      ) 22 14.5,url(https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin.png ) 22 14.5,url(	https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin.cur) 22 14.5,grab;
+    }
     height: 100%;
     width: 100%;
     .hotspot{
@@ -25,6 +32,16 @@
       width: 100vw;
       height: 100vh;
       object-fit: contain;
+    }
+
+    .error-scene{
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+
     }
   }
   .arriba{
@@ -198,13 +215,7 @@
   }*/
 
   .imagesContainer{
-    .addHotspotCursor{
-      cursor:url(http://www.rw-designer.com/cursor-extern.php?id=24819)22 14.5, pointer !important;
-    }
-    ._2kfM8{
-      cursor: url(https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin.svg
-      ) 22 14.5,url(https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin.png ) 22 14.5,url(	https://cdn.spincar.com/spincar-static/20190909/ui/spin_pano_cursors/cursor-spin.cur) 22 14.5,grab;
-    }
+
   }
   .visualizador_top-buttons{
     width: 100%;
@@ -266,6 +277,7 @@
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }
+
 .visualizador_reel{
   background-color: rgba(6, 72, 100, 0.44);
   z-index: 999;

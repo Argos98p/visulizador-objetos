@@ -1,10 +1,10 @@
 import Popup from 'reactjs-popup';
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useState} from 'react';
 import 'reactjs-popup/dist/index.css';
 import '../modal.css';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {ImagePath, getExtrasUrl} from '../../Api/apiRoutes'
+import {ImagePath} from '../../Api/apiRoutes'
 
 import AddYoutubeVideo from "./AddYoutubeVideo";
 
@@ -20,10 +20,6 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
 
     const navigate = useNavigate();
     const [imageSelected, setImageSelected] = useState(null);
-    const [noImageSelected, setNoImageSelected] = useState(false);
-    const [open, setOpen] = useState(false);
-    const [isEmpty, setIsEmpty] = useState(true);
-    const [nameValue, setNameValue] = useState("");
     const [extraType, setExtraType] = useState("video_youtube");
     const [acceptedFiles,setAcceptedFiles] = useState([])
     const [linkYoutube, setLinkYoutube] = useState("");
@@ -48,36 +44,17 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
             aux= inputTituloHotspotValue
         }
 
-
         if(extraType==="video_youtube"){
             handleCreateHotpotsExtra(aux ,'video_youtube',null,linkYoutube);
-            setOpen(false)
 
         }else if(extraType ==="vincular_extra"){
             handleCreateHotpotsExtra(aux,"vincular_extra",null,null,imageSelected);
-            setOpen(false)
         }else if(extraType ==="pdf"){
-
             handleCreateHotpotsExtra(aux,"pdf",acceptedFiles[0]);
-            setOpen(false)
         }
         navigate(-1);
     }
 
-
-    function onClickHotspotPopup(){
-        setOpen(true)
-    }
-
-    function onCancelHotspotModal(){
-        setOpen(false)
-        setNameValue("");
-        setImageSelected(null)
-    }
-
-    function onChangeInput(nombreHotspot){
-        setNameValue(nombreHotspot.target.value)
-    }
 
     const onHandleInputYoutube=(linkYoutube)=>{
         setLinkYoutube(linkYoutube);

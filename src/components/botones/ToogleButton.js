@@ -1,6 +1,6 @@
 import Switch from "react-switch";
 
-import React, {useState} from "react";
+import React from "react";
 const ToogleButton=({isEditMode,handleActivateEditMode})=>{
 
     return (

@@ -20,23 +20,16 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   const [imageList, setImageList]=useState([])
   const [images, setImages] = useState([]); //for upload with 
   const [imagesListSrc, setImagesListSrc]= useState([]);
-  const [imagesExtras, setImagesExtras] = useState(extrasImages);
+  //const [imagesExtras, setImagesExtras] = useState(extrasImages);
   const [currentImage, setCurrentImage] = useState(0);
-  const [isViewerOpen, setIsViewerOpen] = useState(false);
+  //const [isViewerOpen, setIsViewerOpen] = useState(false);
   const { height, width } = useWindowDimensions();
-  const [loading, setLoading] = useState(true);
-  const counter = useRef(0);
+  //const [loading, setLoading] = useState(true);
+  //onst counter = useRef(0);
   let dragging = false;
   let token = localStorage.getItem("token");
   let navigate  = useNavigate()
 
-  /*
-  const imageLoaded = () => {
-    counter.current += 1;
-    if (counter.current >= imagesListSrc.length) {
-      setLoading(false);
-    }
-  }*/
 
   let breakPointsDektop =  [
     {
@@ -152,7 +145,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   ];
   let  settings = {
     dots: false,
-    infinite: false,
+    infinite: true,
     speed: 500,
     slidesToShow: 5,
     slidesToScroll: 3,
@@ -197,12 +190,13 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     setCurrentImage(index);
     navigate('extra');
     //setIsViewerOpen(true);
-  }, []);
+  }, [navigate]);
 
+  /*
   const closeImageViewer = () => {
     setCurrentImage(0);
     //setIsViewerOpen(false);
-  };
+  };*/
 
   const getExtras = async() => {
     axios.get(getExtrasUrl(id))
@@ -309,7 +303,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
   },[id]);
 
-
+/*
   function onClickDeleteExtra(src){
 
     axios.post(deleteExtra(id,src[1]),{},{headers: {
@@ -333,27 +327,17 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
       console.log(error.config);
     })
 
-  }
+  }*/
 
 
   function ImagesReel(){
-
-    /*
-    if (imagesListSrc.length === 0){
-      return (
-          <Slider key="0" />
-      )
-    }*/
-
     return <Slider className="reel_image-extra-container" {...settings}>
-
       {
         (isEditMode) ?
             <div className='reel_div-img div-subirExtra cursor-pointer reel_borde-redondo'>
               <ImageUploading
                   multiple
                   value={images}
-
                   onChange={onChange}
                   dataURLKey="data_url"
               >
@@ -387,7 +371,6 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
             :null
       }
 
-
       {imagesListSrc.map((src, index) => (
 
           <div className='reel_div-img' key={index} onClick={() => dragging ? null :  openImageViewer(index)}>
@@ -415,9 +398,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     <>
     <ToastContainer/>
       <div className='reel_container'>
-        {
-            /*imagesListSrc.length===0 && <div className="extra-vacio"><h4>No hay extras</h4></div>*/
-        }
+
 
         {
           ImagesReel()

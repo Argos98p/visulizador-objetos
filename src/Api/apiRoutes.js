@@ -1,19 +1,20 @@
 let BaseURL="http://173.255.114.112";
-let test="http://redpanda.sytes.net";
 
 let idUsuario = "11";
 
+/*
 function statusEsceneUrl(id,escenaNombre){
     return `${BaseURL}:8084/api/objects/getstatusescene?idobjeto=${id}&nombre_escena=${escenaNombre}`
-}
+}*/
 
 function infoObjectUrl(id){
     return `${BaseURL}:8084/api/objects/getobject?idobjeto=${id}`;
 }
 
+/*
 function numberFramesInScene(id,escena){
     return `${BaseURL}:8084/api/objects/getnumberframes?idobjeto=${id}&nombre_escena=${escena}`
-}
+}*/
 
 function completeImageUrl(path){
     return `${BaseURL}:8085/api/images/getimage?path=${path}`;
@@ -41,7 +42,7 @@ function uploadExtraUrl(id,archivo,descripcion){
 }
 
 function img360CompleteUrl(path,id){
-    return `${BaseURL}:8085/api/images/getimage?path=/${path}`;
+    return `${BaseURL}:8085/api/images/getimage?path=${path}`;
 }
 function getHotspots(id, nombreEscena){
     return `${BaseURL}:8084/api/objects/gethotspots?idobjeto=${id}&nombre_escena=${nombreEscena}`
@@ -64,4 +65,4 @@ function getPDF(id,path){
 function loginUser(){
     return `${BaseURL}:8086/api/auth/signin`
 }
-export {loginUser,addLinkYoutube,img360CompleteUrl,getPDF,addExtraPdf,deleteHotspot,statusEsceneUrl,uploadExtraUrl,infoObjectUrl,getHotspots,numberFramesInScene,completeImageUrl,getExtrasUrl,ImagePath,postAddHotspot,deleteExtra}
+export {loginUser,addLinkYoutube,img360CompleteUrl,getPDF,addExtraPdf,deleteHotspot,uploadExtraUrl,infoObjectUrl,getHotspots,completeImageUrl,getExtrasUrl,ImagePath,postAddHotspot,deleteExtra}

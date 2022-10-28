@@ -6,7 +6,6 @@ import 'react-modal-video/scss/modal-video.scss';
 import ModalVideo from 'react-modal-video';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import ReactDom, {createPortal} from 'react-dom';
 import {
     addExtraPdf,
     addLinkYoutube,
@@ -38,9 +37,10 @@ import {Link, Outlet, Route, Routes, useNavigate} from "react-router-dom";
 import useWindowDimensions from "../hooks/useWindowSize";
 import {Pannellum} from "pannellum-react";
 import {svgImagen, svgPdf, svgYoutube} from "../utils/iconsVisualizador";
+import LottieErrorScene from "../Animations/lottieErrorScene";
 
 
-export function Visualizador({tipo, id,data, extras,edit}) {
+export function Visualizador({id, extras,edit}) {
 
     const isMobile = /Mobi|Android/i.test(navigator.userAgent)
     const { height, width } = useWindowDimensions();
@@ -53,17 +53,11 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     const [isEditMode, setIsEditMode] = useState(edit);
     const [pins, setPins] = useState([]);
     const [visibleExtras, setVisibleExtras] = useState(true);
-
     const [addHotspotMode, setAddHotspotMode] = useState(false); //variable para definir cuando con el click se agrega un nuevo hotspot  y para mostrar inicio y fin
     const [nameHotspot, setNameHotspot] = useState("holis");
     const [extraSelected, setExtraSelected] = useState(null);
-
-
-
     const [loadStatus, setLoadStatus] = useState(false);
-    const [loadPercentage, setLoadPercentage] = useState(0);
     const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
-
     const [activeEscena, setActiveEscena] = useState("0"); //escena que esta activa lo hace con
 
     const [extraPdfOrVideo, setExtraPdfOrVideo] = useState({});
@@ -74,9 +68,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     const [updateExtras, setUpdateExtras] = useState(false);
     const [hotspotType, setHotspotType] = useState("imagen");
     const [interior360, setInterior360] = useState(false);
-    const [hotspots360, setHotspots360] = useState([]);
 
-    const [extrasImagesForView, setExtrasImagesForView] = useState([]);
 
     const extraContainerRef=useRef();
     const extraInViewRef = useRef();
@@ -105,7 +97,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                     for(let index in response.data.escenas){
                         numberOfFrames[index] = Object.keys(response.data.escenas[index].imagenes).length;
                     }
-                    if(numberOfFrames[2]===1){
+                    if(numberOfFrames[2]===2){
                         setInterior360(true)
                     }
                     setFrames(numberOfFrames)
@@ -122,7 +114,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             }
             console.log(error.config);
         })
-    }, []);
+    }, [id]);
 
     useEffect(() => {
         async function getDataHotspots(){
@@ -157,6 +149,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         return ()=>setUpdateHotspots(false);
     }, [objetoData, updateHotspots]);
 
+
     useEffect(() => {
         axios.get(infoObjectUrl(id)).then(
             response=>{
@@ -178,7 +171,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         return () => {
             setUpdateObjectData(false);
         };
-    }, [updateObjectData]);
+    }, [updateObjectData,id]);
 
     useEffect(() => {
         axios.get(getExtrasUrl(id))
@@ -192,11 +185,11 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         return () => {
             setUpdateExtras(false);
         };
-    }, [updateExtras]);
+    }, [updateExtras,id]);
 
     useEffect(() => {
         setTimeout(()=>{
-            setLoadPercentage(100);
+            //setLoadPercentage(100);
             setLoadStatus(true);
         },6000);
         return(setLoadStatus(false))
@@ -220,24 +213,27 @@ export function Visualizador({tipo, id,data, extras,edit}) {
     }
 
     function getArraySrcPath(escena){
-
         if(escena.nombre==="interior" && interior360){
 
-            console.log(escena.imagenes[0].path);
-            return ([img360CompleteUrl(escena.imagenes[0].path,id)])
+            if(isMobile === true){
+
+                return [img360CompleteUrl(escena.imagenes[1].path,id)]
+            }else{
+                return [img360CompleteUrl(escena.imagenes[0].path,id)]
+            }
+
         }
 
-        let n = Object.keys(escena.imagenes).length;
-        let [aux,escenaNumber,temp,frames,nameImage]= [];
 
+        let n = Object.keys(escena.imagenes).length;
+        let escenaNumber;
         let arrayFrames=[]
 
 
         if(n!==0){
-            [aux,escenaNumber,temp,frames,nameImage]= escena.imagenes[1].path.split("/");
+            escenaNumber= escena.imagenes[1].path.split("/")[1];
 
         }
-
         for(let i=1;i<=n;i++){
 
             arrayFrames.push(completeImageUrl(`/${id}/${escenaNumber}/frames_compresos/${i}.jpg`));
@@ -249,6 +245,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         }
         return arrayFrames;
     }
+
 
     function handleClickExtras() {
         console.log(!visibleExtras);
@@ -322,10 +319,8 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         }
 
     }
-     const handleAutoPlay = () => {
-        setIsAutoPlayRunning(!isAutoPlayRunning);
-        tridiRef.current.toggleAutoplay(!isAutoPlayRunning);
-    }
+
+
     const handleWheel = (e) => {
 
             e.deltaY > 0 ? handleZoomOut() : handleZoomIn();
@@ -338,13 +333,12 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         }
         setActiveEscena(escena.toString())
         setPins(prepararPins(hotspotsMap[escena]));
-    },[activeEscena,hotspotsMap]);
+    },[hotspotsMap,height,width]);
 
     useEffect(() => {
         async function fetchData() {
             const myDiv = tridiContainerRef.current;
             let activeTridi = Array.from(myDiv.querySelectorAll('.visible .info-value '))[0];
-
             if(activeTridi !== undefined) {
                 let actualFrame = parseInt(activeTridi.innerHTML);
                 let previousFrame = currentFrameIndex;
@@ -360,13 +354,10 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             }
         }
         fetchData();
-
         if(tridiRef.current!== null){
             tridiRef.current.toggleAutoplay(isAutoPlayRunning)
         }
-
-
-    }, [activeEscena]);
+    }, [activeEscena,isMobile,isAutoPlayRunning]);
 
     const frameChangeHandler = (currentFrameIndex) => {
         setCurrentFrameIndex(currentFrameIndex);
@@ -384,7 +375,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             }
 
         }
-    }, [addHotspotMode]);
+    }, [addHotspotMode,isMobile]);
 
     const postNewHotspots = (id, nombreEscena,arrayHotspots) => {
         return axios.post(postAddHotspot(id,nombreEscena),arrayHotspots,{headers: {
@@ -422,25 +413,13 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                         </div>
 
                     </label>
-                    {
-                        /*
-                        *   <ReactTooltip id="test" place="top" effect="solid" getContent={(dataTip=>dataTip)}>
-                    </ReactTooltip>
-                        * */
-                    }
+
 
                 </div>
             </>
         );
     }
 
-    function handleOnLoad(load_success, percentage) {
-        console.log(load_success,percentage)
-        setLoadPercentage(percentage);
-        if (percentage === 100) {
-            setLoadStatus(true)
-        }
-    }
 
     function handleDeleteHotspot(nameHotspot) {
         let escenas=objetoData.escenas;
@@ -535,7 +514,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                         ></ButtonEscena>
                     ))}
             </>
-        ,[handleButtonEscena,objetoData]
+        ,[handleButtonEscena,objetoData,activeEscena]
     )
 
 
@@ -635,14 +614,13 @@ export function Visualizador({tipo, id,data, extras,edit}) {
             let escenas=objetoData.escenas;
             let escenasSrcImages=[];
             let show=false;
-
-            let myHeight = height.toString()+'px';
-            let myWidth = width.toString()+'px';
-
             for (let index in escenas){
                 show=activeEscena===index
                 let imagesSrcOneScene = getArraySrcPath(escenas[index]);
-                if(imagesSrcOneScene.length === 0 ){
+
+                try{
+
+                    if(imagesSrcOneScene.length === 0 ){
                     escenasSrcImages.push(
                         <div className="emptyEscena ">
                             <h2 className="texto-blanco">Escena vacia</h2>
@@ -651,7 +629,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                         </div>
                     )}
                 else if(imagesSrcOneScene.length === 1){
-
                     escenasSrcImages.push(
                         <div className={show && loadStatus ? "arriba" : "abajo"} key={index}>
                             <Pannellum
@@ -707,6 +684,8 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                             </Pannellum>
                         </div>
                     )
+
+
                 }
                 else{
                     escenasSrcImages.push(
@@ -723,10 +702,18 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                                touch={true}
                                touchDragInterval={1}
                                onAutoplayStart={
-                                   () => show ? setIsAutoPlayRunning(true):null
+                                    () => {
+                                       if (show ===true){
+                                           setIsAutoPlayRunning(true)
+                                       }
+                                   }
                                }
                                onAutoplayStop={
-                                   () => show ? setIsAutoPlayRunning(false):null
+                                   () =>{
+                                       if(show === true){
+                                           setIsAutoPlayRunning(false)
+                                       }
+                                   }
                                }
                                onPinClick={pinClickHandler}
                                setPins={setPins}
@@ -737,6 +724,12 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                         />
                     )
                 }
+                }catch (e) {
+                    escenasSrcImages.push(
+                        <LottieErrorScene></LottieErrorScene>
+                    );
+                }
+
             }
 
             return (
@@ -975,7 +968,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         }
 
     }
-
     const calculaUbicacionHotspot=(e)=>{
         let viewerWidth = containerRef.current.clientWidth;
         let viewerHeight = containerRef.current.clientHeight;
@@ -1003,7 +995,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         }
 
     }
-
     const clickOnTridi = (e) => {
 
         if(addHotspotMode && isMobile){
@@ -1011,7 +1002,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
            frameReplicateOneReference(calculaUbicacionHotspot(e));
         }
     }
-
     const doubleClickOnTridi = (e) =>{
         if(addHotspotMode && isMobile ===false && activeEscena === "2" && interior360===true ){
             if(panellumRef.current!= null){
@@ -1043,17 +1033,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                 });
 
 
-                //let pins = [...hotspots360]
-                /*pins.push(<Pannellum.Hotspot
-                    type="custom"
-                    handleClick={(evt , args) => console.log(args.name)}
-                    handleClickArg={{ "name":"testio" }}
-                    pitch={coordenadas[0]}
-                    yaw={coordenadas[1]}
-                    text="Info Hotspot Text 3"
-                    URL="https://github.com/farminf/pannellum-react"
-                />)*/
-                //setHotspots360(pins);
             }
         }
         if(addHotspotMode && isMobile ===false && activeEscena !=="2" ){
@@ -1092,7 +1071,8 @@ export function Visualizador({tipo, id,data, extras,edit}) {
 
     const botonAutoGiro= useMemo(
     ()=>{
-        return <div className={`button-escena_navigation-item`}  onClick={()=>handleAutoPlay()} >
+        return <div className={`button-escena_navigation-item`}  onClick={()=>{setIsAutoPlayRunning(!isAutoPlayRunning);
+            tridiRef.current.toggleAutoplay(!isAutoPlayRunning)}} >
             <button  data-for='soclose1' data-tip="Girar" className={`button-escena-btn ${isAutoPlayRunning===true ? " activo":""}`} >
                 <img src="/iconos/giro-carro.png" alt=""/>
             </button>
@@ -1114,74 +1094,17 @@ export function Visualizador({tipo, id,data, extras,edit}) {
         </div>
     }
 
+    /*
     const setExtrasSrc=(images) =>{
         setExtrasImagesForView(images);
-    }
-
-    /*
-    const [enabled, setEnabled] = useState(true);
-    const [pulsa, setPulsa] = useState(false);
-    const callback = useCallback(event => {
-        console.log('long pressed')
-    }, []);
-    const aux= 3;
-
-    const bind = useLongPress(enabled ? callback : null, {
-        onStart: event => {
-            console.log('Press started');
-            setTimeout(() => {
-                setPulsa(true)
-            }, 400);
-
-        },
-        onFinish: event => {
-            console.log('Long press finished');
-            setPulsa(false);
-            setCounter(3)
-        },
-        onCancel: event => {
-            console.log('Press cancelled');
-            setPulsa(false);
-            setTimeout(() => {
-                setPulsa(false)
-            }, 400);
-            setCounter(3)
-        },
-        onMove: event => {
-            console.log('Detected mouse or touch movement');
-            setPulsa(false);
-            setCounter(3)
-        },
-        filterEvents: event => true, // All events can potentially trigger long press
-        threshold: 4000,
-        captureEvent: true,
-        cancelOnMovement: true,
-        detect: 'both',
-    });
-
-    const [counter, setCounter] = useState(3);
-    useEffect(() => {
-        if(counter > 0 && pulsa===true){
-            setTimeout(() => setCounter(counter - 1), 1000)
-        }
-    }, [counter, pulsa]);
+    }*/
 
 
-    const counterTimer = () =>{
-
-        if(pulsa){
-            return <div key={"counter"} className={"counter"}>{counter}</div>
-        }
-        return  null;
-
-    }
-
-    */
     return (
         <>
 
         <div className="visualizador dragging" onContextMenu={(e)=> {e.preventDefault();}}>
-            {/*counterTimer()*/}
+
             {logoCompany()}
             {buttonOpenReel()}
             <ToastContainer />
@@ -1200,7 +1123,7 @@ export function Visualizador({tipo, id,data, extras,edit}) {
                             isEditMode={isEditMode}></ReelImages>
             </div>
             <div  key={"tridi-container"} ref={tridiContainerRef}  className="tridi-container">
-                {/*...bind()*/}
+
                 {
                     loadAllTridiComponents()
                 }
@@ -1242,8 +1165,6 @@ export function Visualizador({tipo, id,data, extras,edit}) {
 
                 }></Route>
             </Routes>
-
-
         </>
 
 );
