@@ -160,20 +160,28 @@
   .pdf-modal-content{
     background: $border-dark !important;
     border: transparent;
-    height: 20vh;
+    height: 85vh;
+    width: 90% !important;
     .container-iframe-modal{
       width: 100%;
-      height: 20vh;
+      height: 100%;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      iframe{
+        width: 100%;
+        height: 100%;
+      }
       .button-option-pdf-modal{
         background-color: $primary-color;
         border: none;
         border-radius: 5px;
-        margin-top: -20px;
-        position: absolute;
         padding: 5px;
         font-size: 0.8em;
         color: $secondary-color;
+        width: 30%
       }
     }
 

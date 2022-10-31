@@ -24,125 +24,130 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   const [currentImage, setCurrentImage] = useState(0);
   //const [isViewerOpen, setIsViewerOpen] = useState(false);
   const { height, width } = useWindowDimensions();
+  const [ breakpointsReel, setBreakpointsReel ] = useState([])
   //const [loading, setLoading] = useState(true);
   //onst counter = useRef(0);
   let dragging = false;
   let token = localStorage.getItem("token");
   let navigate  = useNavigate()
 
+  useEffect(() => {
+    if (width>height && height<490){
+      setBreakpointsReel([
+        {
+          breakpoint: 1920,
+          settings: {
+            slidesToShow: 10,
+          }
+        },
+        {
+          breakpoint: 1680,
+          settings: {
+            slidesToShow: 9,
+          }
+        },
+        {
+          breakpoint: 1440,
+          settings: {
+            slidesToShow: 8,
+          }
+        },
 
-  let breakPointsDektop =  [
-    {
-      breakpoint: 1920,
-      settings: {
-        slidesToShow: 10,
-      }
-    },
-    {
-      breakpoint: 1680,
-      settings: {
-        slidesToShow: 7,
-      }
-    },
-    {
-      breakpoint: 1440,
-      settings: {
-        slidesToShow: 6,
-      }
-    },
+        {
+          breakpoint: 1024,
+          settings: {
+            slidesToShow: 7,
 
-    {
-      breakpoint: 1024,
-      settings: {
-        slidesToShow: 6,
+          }
+        },
+        {
+          breakpoint: 800,
+          settings: {
+            slidesToShow: 7,
+          }
+        },
+        {
+          breakpoint: 618,
+          settings: {
+            slidesToShow: 6,
+          }
+        },
+        {
+          breakpoint: 445,
+          settings: {
+            slidesToShow: 4,
+          }
+        },
+        {
+          breakpoint: 318,
+          settings: {
+            slidesToShow: 3,
+          }
+        },
 
-      }
-    },
-    {
-      breakpoint: 850,
-      settings: {
-        slidesToShow: 4,
-      }
-    },
-    {
-      breakpoint: 800,
-      settings: {
-        slidesToShow: 4,
-      }
-    },
-    {
-      breakpoint: 618,
-      settings: {
-        slidesToShow: 3,
-      }
-    },
-    {
-      breakpoint: 445,
-      settings: {
-        slidesToShow: 2,
-      }
-    },
-    {
-      breakpoint: 318,
-      settings: {
-        slidesToShow: 1,
-      }
-    },
+      ])
+    }else{
+      setBreakpointsReel([
+        {
+          breakpoint: 1920,
+          settings: {
+            slidesToShow: 10,
+          }
+        },
+        {
+          breakpoint: 1680,
+          settings: {
+            slidesToShow: 7,
+          }
+        },
+        {
+          breakpoint: 1440,
+          settings: {
+            slidesToShow: 6,
+          }
+        },
 
-  ];
-  let breakPointsMobile = [
-    {
-      breakpoint: 1920,
-      settings: {
-        slidesToShow: 10,
-      }
-    },
-    {
-      breakpoint: 1680,
-      settings: {
-        slidesToShow: 9,
-      }
-    },
-    {
-      breakpoint: 1440,
-      settings: {
-        slidesToShow: 8,
-      }
-    },
+        {
+          breakpoint: 1024,
+          settings: {
+            slidesToShow: 6,
 
-    {
-      breakpoint: 1024,
-      settings: {
-        slidesToShow: 7,
+          }
+        },
+        {
+          breakpoint: 850,
+          settings: {
+            slidesToShow: 4,
+          }
+        },
+        {
+          breakpoint: 800,
+          settings: {
+            slidesToShow: 4,
+          }
+        },
+        {
+          breakpoint: 618,
+          settings: {
+            slidesToShow: 3,
+          }
+        },
+        {
+          breakpoint: 445,
+          settings: {
+            slidesToShow: 2,
+          }
+        },
+        {
+          breakpoint: 318,
+          settings: {
+            slidesToShow: 1,
+          }
+        },
+      ]);
+    }
+  }, [width,height]);
 
-      }
-    },
-    {
-      breakpoint: 800,
-      settings: {
-        slidesToShow: 7,
-      }
-    },
-    {
-      breakpoint: 618,
-      settings: {
-        slidesToShow: 6,
-      }
-    },
-    {
-      breakpoint: 445,
-      settings: {
-        slidesToShow: 4,
-      }
-    },
-    {
-      breakpoint: 318,
-      settings: {
-        slidesToShow: 3,
-      }
-    },
-
-  ];
   let  settings = {
     dots: false,
     infinite: true,
@@ -157,9 +162,11 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     rows:1,
     beforeChange: () => dragging = true,
     afterChange: () => dragging = false,
-    responsive: (width>height && height<490)? breakPointsMobile : breakPointsDektop
+    responsive: breakpointsReel
 
   };
+
+
 
   useImperativeHandle(ref, () => ({
 

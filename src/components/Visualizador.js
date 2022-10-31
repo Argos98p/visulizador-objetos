@@ -16,7 +16,7 @@ import {
     getPDF,
     img360CompleteUrl,
     infoObjectUrl,
-    postAddHotspot,
+    postAddHotspot, viewResource,
 } from "../Api/apiRoutes";
 import ButtonEscena from "./botones/buttonEscena";
 import LottieEmptyEscenas from "../Animations/lottieEmptyEscena";
@@ -174,6 +174,7 @@ export function Visualizador({id, extras,edit}) {
     }, [updateObjectData,id]);
 
     useEffect(() => {
+        console.log('update extas')
         axios.get(getExtrasUrl(id))
             .then((response)=>{
                 if(response.data !== []){
@@ -254,12 +255,15 @@ export function Visualizador({id, extras,edit}) {
     }
 
     const pinClickHandler = (pin) => {
+        console.log(pin)
 
         let extraInHotspot = searchExtra(pin.idExtra);
 
         if(extraContainerRef.current.classList.contains("no-visible")){
             extraContainerRef.current.classList.toggle("no-visible");
         }
+
+        console.log(extraInHotspot)
 
         if(extraInHotspot.hasOwnProperty("imagen")){
             setVisibleExtras(true);
@@ -278,10 +282,18 @@ export function Visualizador({id, extras,edit}) {
 
     };
 
-    const searchExtra=(extraId)=>{
+    const searchExtra=useCallback(
+        (extraId) => {
+            return extrasList.find(x => x.idextra === extraId);
+        },
+        [extrasList],
+    );
+
+    /*
+    const searchExtra=((extraId)=>{
         console.log(extrasList);
         return extrasList.find(x => x.idextra === extraId);
-    }
+    })*/
 
     const zoomValueHandler = (valorZoom) => {
         zooom=valorZoom;
@@ -329,7 +341,7 @@ export function Visualizador({id, extras,edit}) {
     const handleButtonEscena=useCallback((escena)=>{
         if(escena.toString() === "2"){
             console.log('entra')
-            window.resizeBy(width/2, height);
+            //window.resizeBy(width/2, height);
         }
         setActiveEscena(escena.toString())
         setPins(prepararPins(hotspotsMap[escena]));
@@ -425,18 +437,10 @@ export function Visualizador({id, extras,edit}) {
         let escenas=objetoData.escenas;
 
         const searchHotspot = (indexEscena) => {
-            let arrayFramesId=[]
-            for (let frame in escenas[indexEscena].imagenes){
-                for(let value in escenas[indexEscena].imagenes[frame].hotspots){
-                    let tempHotspot = escenas[indexEscena].imagenes[frame].hotspots[value];
-                    if(tempHotspot.nombreHotspot === nameHotspot){
-                        arrayFramesId.push(escenas[indexEscena].imagenes[frame].path.split('/')[3].split('.')[0]);
-                    }
-                }
-            }
-            console.log(arrayFramesId)
             return hotspotsMap[indexEscena].filter(hotspot => hotspot.nombreHotspot === nameHotspot).map(hotspot => hotspot.idFrame.toString());
         }
+
+
 
         setAwaitAddHotspot(true);
 
@@ -481,21 +485,29 @@ export function Visualizador({id, extras,edit}) {
                     setAwaitAddHotspot(false);
                 });
         }else{
-            let arrayHotspot = searchHotspot(activeEscena);
-            axios.post(deleteHotspot(id,activeEscena,nameHotspot),arrayHotspot,{headers: {
-                    'Authorization': `${token}`
-                }})
-                .then(response =>{
-                    toast.success(`Hotspot: + ${nameHotspot} creado`,{autoClose: 2000,
+            if(interior360===false){
+
+                console.log(nameHotspot)
+                console.log(searchHotspot(activeEscena))
+                console.log(hotspotsMap[activeEscena])
+            }else{
+                let arrayHotspot = searchHotspot(activeEscena);
+                axios.post(deleteHotspot(id,"interior",nameHotspot),arrayHotspot,{headers: {
+                        'Authorization': `${token}`
+                    }})
+                    .then(response =>{
+                        toast.success(`Hotspot: ${nameHotspot} eliminado`,{autoClose: 2000,
+                            hideProgressBar: true,theme:"dark"});
+                        setUpdateHotspots(true);
+                        setAwaitAddHotspot(false);
+                    }).catch(error => {
+                    console.log(error)
+                    toast.error(`Error: + ${error}`,{autoClose: 3000,
                         hideProgressBar: true,theme:"dark"});
                     setUpdateHotspots(true);
                     setAwaitAddHotspot(false);
-                }).catch(error => {
-                toast.error(`Error: + ${error}`,{autoClose: 3000,
-                    hideProgressBar: true,theme:"dark"});
-                setUpdateHotspots(true);
-                setAwaitAddHotspot(false);
-            });
+                });
+            }
         }
     }
 
@@ -547,7 +559,8 @@ export function Visualizador({id, extras,edit}) {
     const convertToSlug=(Text)=> {
         return Text.toLowerCase()
             .replace(/ /g, '-')
-            .replace(/[^\w-]+/g, '');
+            .replace(/[^\w-]+/g, '')
+            .replace("pdf",".pdf");
     }
     const handleCreateHotpotsExtra=(titulo="test",type,file=null,linkYoutube="",extra=null)=>{
         if(type==="pdf"){
@@ -555,6 +568,7 @@ export function Visualizador({id, extras,edit}) {
             let bodyFormData = new FormData();
             bodyFormData.append('extra', file);
             const toastHotspot = toast.loading("Subiendo PDF")
+            console.log(convertToSlug(file.name))
             axios({
                 method: "post",
                 url: addExtraPdf(id,convertToSlug(file.name),titulo, titulo),
@@ -761,6 +775,7 @@ export function Visualizador({id, extras,edit}) {
     const replicateFrames = (indexEscena, lastPin) => {
 
 
+        console.log(lastPin)
         let move = 0.014;
         let j=20;
         let aux=j;
@@ -904,6 +919,7 @@ export function Visualizador({id, extras,edit}) {
             let ultimoPin= {...lastPin};
             let ultimoPinV2 = {...lastPin};
 
+
             let arrayPuertasCerradas =  replicateFrames("0",ultimoPin);
             let arrayPuertasAbiertas =  replicateFrames("1",ultimoPinV2);
 
@@ -945,7 +961,7 @@ export function Visualizador({id, extras,edit}) {
             )
             setAwaitAddHotspot(false);
         }else{
-            let arrayEscena = replicateFrames(activeEscena);
+            let arrayEscena = replicateFrames(activeEscena,lastPin);
 
             postNewHotspots(id, objetoData.escenas[activeEscena].nombre ,arrayEscena).then(
                 response => {
@@ -997,9 +1013,41 @@ export function Visualizador({id, extras,edit}) {
     }
     const clickOnTridi = (e) => {
 
-        if(addHotspotMode && isMobile){
+        if(addHotspotMode && isMobile && activeEscena !== "2" && interior360===false ){
             setAwaitAddHotspot(true);
            frameReplicateOneReference(calculaUbicacionHotspot(e));
+        }
+        if(addHotspotMode && isMobile ===true && activeEscena ==="2" && interior360===true){
+            if(panellumRef.current!= null){
+                let coordenadas =  panellumRef.current.getViewer().mouseEventToCoords(e);
+                let newPin = {
+                    x: coordenadas[0],
+                    y: coordenadas[1],
+                    idframe: 1,
+                    tipo:hotspotType,
+                    nombreHotspot:nameHotspot,
+                    idExtra:extraSelected.idextra
+                }
+                let data = [];
+                data.push(newPin)
+                const newHotspots360 = toast.loading("Creando hotspot");
+
+
+                axios.post(postAddHotspot(id, "interior"), data,{headers:{'Authorization': `${token}`}}).then(r  =>{
+                    if (r.status === 200){
+                        toast.update(newHotspots360, { render:`Hotspot  ${nameHotspot} creado`, type: "success", isLoading: false, autoClose: 2000,draggable: true});
+                        setUpdateObjectData(true);
+                        setUpdateExtras(true);
+                        setAwaitAddHotspot(false);
+                        setAddHotspotMode(false)
+                        setUpdateHotspots(true);
+                    }
+                }).catch(e=>{
+                    toast.update(newHotspots360, { render:`Error creando hotspot`, type: "error", isLoading: false, autoClose: 2000,draggable: true});
+                });
+
+
+            }
         }
     }
     const doubleClickOnTridi = (e) =>{
@@ -1035,10 +1083,7 @@ export function Visualizador({id, extras,edit}) {
 
             }
         }
-        if(addHotspotMode && isMobile ===false && activeEscena !=="2" ){
-            setAwaitAddHotspot(true);
-            frameReplicateOneReference(calculaUbicacionHotspot(e));
-        }
+
     }
     const youtube_parser = (url="") => {
 
@@ -1156,7 +1201,7 @@ export function Visualizador({id, extras,edit}) {
                 <Route path="/extraPdf" element={<div className={"modal-pdf-container"} >
                     <Popup open={true} className={"pdf-modal"} onClose={()=> navigate(-1)} position="right center">
                         <div className={"container-iframe-modal"}>
-                            <iframe id="iframepdf" src={getPDF(id,extraPdfOrVideo.path)} title="myFrame"></iframe>
+                            <iframe id="iframepdf" src={viewResource(id,extraPdfOrVideo.path)}  title="myFrame"></iframe>
                             <button className={"button-option-pdf-modal"} onClick={()=>navigate(-1)}>Cerrar</button>
                         </div>
                     </Popup>

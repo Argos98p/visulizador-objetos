@@ -62,7 +62,11 @@ function getPDF(id,path){
     return `${BaseURL}:8085/api/images/getresource?path=${path}`
 }
 
+function viewResource(id,path){
+    return `${BaseURL}:8085/api/images/viewresource/pdf?path=${path}`
+}
+
 function loginUser(){
     return `${BaseURL}:8086/api/auth/signin`
 }
-export {loginUser,addLinkYoutube,img360CompleteUrl,getPDF,addExtraPdf,deleteHotspot,uploadExtraUrl,infoObjectUrl,getHotspots,completeImageUrl,getExtrasUrl,ImagePath,postAddHotspot,deleteExtra}
+export {viewResource,loginUser,addLinkYoutube,img360CompleteUrl,getPDF,addExtraPdf,deleteHotspot,uploadExtraUrl,infoObjectUrl,getHotspots,completeImageUrl,getExtrasUrl,ImagePath,postAddHotspot,deleteExtra}
