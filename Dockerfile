@@ -1,7 +1,7 @@
-
+FROM node:16-alpine
 # Override the base log level (info).
 ENV NPM_CONFIG_LOGLEVEL warn
-
+WORKDIR /visualizador-vehiculos
 # Install and configure `serve`.
 RUN npm install -g serve
 CMD serve -s build
