@@ -1,22 +1,17 @@
-FROM node:16-alpine
-# Override the base log level (info).
-ENV NPM_CONFIG_LOGLEVEL warn
-WORKDIR /visualizador-vehiculos
-# Install and configure `serve`.
-RUN npm install -g serve
-CMD serve -s build
-EXPOSE 3000
-
-# Install all dependencies of the current project.
-COPY package.json package.json
-#COPY npm-shrinkwrap.json npm-shrinkwrap.json
-RUN npm install
-
-# Copy all local files into the image.
-COPY . .
-
-# Build for production.
-RUN npm run build --production
+# pull the official base image
+FROM node:alpine
+# set working direction
+WORKDIR /app
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /app/node_modules/.bin:$PATH
+# install application dependencies
+COPY package.json ./
+COPY package-lock.json ./
+RUN npm i
+# add app
+COPY . ./
+# start app
+CMD ["npm", "start"]
 
 
 # Using node:16-alpine base image
