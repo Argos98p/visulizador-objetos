@@ -1,16 +1,17 @@
 # pull the official base image
 FROM node:alpine
 # set working direction
-WORKDIR /app
+WORKDIR /visualizador-vehiculos
 # add `/app/node_modules/.bin` to $PATH
-ENV PATH /app/node_modules/.bin:$PATH
+ENV PATH ="./node_modules/.bin:$PATH"
 # install application dependencies
-COPY package.json ./
-COPY package-lock.json ./
+COPY package.json .
+COPY package-lock.json .
 RUN npm i
 # add app
-COPY . ./
+COPY . .
 # start app
+RUN npm run build --production
 CMD ["npm", "start"]
 
 
