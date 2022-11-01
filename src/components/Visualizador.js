@@ -174,7 +174,6 @@ export function Visualizador({id, extras,edit}) {
     }, [updateObjectData,id]);
 
     useEffect(() => {
-        console.log('update extas')
         axios.get(getExtrasUrl(id))
             .then((response)=>{
                 if(response.data !== []){
@@ -255,15 +254,12 @@ export function Visualizador({id, extras,edit}) {
     }
 
     const pinClickHandler = (pin) => {
-        console.log(pin)
 
         let extraInHotspot = searchExtra(pin.idExtra);
 
         if(extraContainerRef.current.classList.contains("no-visible")){
             extraContainerRef.current.classList.toggle("no-visible");
         }
-
-        console.log(extraInHotspot)
 
         if(extraInHotspot.hasOwnProperty("imagen")){
             setVisibleExtras(true);
@@ -289,11 +285,6 @@ export function Visualizador({id, extras,edit}) {
         [extrasList],
     );
 
-    /*
-    const searchExtra=((extraId)=>{
-        console.log(extrasList);
-        return extrasList.find(x => x.idextra === extraId);
-    })*/
 
     const zoomValueHandler = (valorZoom) => {
         zooom=valorZoom;
@@ -485,13 +476,9 @@ export function Visualizador({id, extras,edit}) {
                     setAwaitAddHotspot(false);
                 });
         }else{
-            if(interior360===false){
 
-                console.log(nameHotspot)
-                console.log(searchHotspot(activeEscena))
-                console.log(hotspotsMap[activeEscena])
-            }else{
-                let arrayHotspot = searchHotspot(activeEscena);
+                let arrayHotspot;
+                arrayHotspot = searchHotspot(activeEscena);
                 axios.post(deleteHotspot(id,"interior",nameHotspot),arrayHotspot,{headers: {
                         'Authorization': `${token}`
                     }})
@@ -507,7 +494,7 @@ export function Visualizador({id, extras,edit}) {
                     setUpdateHotspots(true);
                     setAwaitAddHotspot(false);
                 });
-            }
+
         }
     }
 
@@ -751,14 +738,11 @@ export function Visualizador({id, extras,edit}) {
                     {
 
                         loadStatus === false ? <div className="sweet-loading">
-                            <DotLoader color="#3F3F3F"
+                            <DotLoader color="#0087D1"
                                        loading={
                                            !loadStatus
                                        }
                                        size={70}/>
-                            {/*<h1>{loadPercentage}
-                            %
-                        </h1>*/}
                         </div> :   <div className={"imagesContainer"}
                                         onClick={clickOnTridi}
                                         onDoubleClick={doubleClickOnTridi}
@@ -971,12 +955,11 @@ export function Visualizador({id, extras,edit}) {
                     setAwaitAddHotspot(false);
                     setAddHotspotMode(false)
                     setUpdateHotspots(true);
-                    toast.success(`Hotspot  ${nameHotspot} creado`,{autoClose: 2000,
-                        hideProgressBar: true,theme:"dark"});
+                    toast.update(newHotspotToast, { render:`Hotspot  ${nameHotspot} creado`, type: "success", isLoading: false, autoClose: 2000,draggable: true});
+
                 }).catch(
                 (e)=>{
-                    toast.error('ha ocurrido un error',{autoClose: 3000,
-                        hideProgressBar: true,theme:"dark"});
+                    toast.update(newHotspotToast, { render:`Error creando hotspot`, type: "error", isLoading: false, autoClose: 2000,draggable: true});
                     console.log(e)
                     setAwaitAddHotspot(false);
                 }
@@ -1013,10 +996,15 @@ export function Visualizador({id, extras,edit}) {
     }
     const clickOnTridi = (e) => {
 
-        if(addHotspotMode && isMobile && activeEscena !== "2" && interior360===false ){
+        if(addHotspotMode && isMobile && interior360===true && activeEscena!=="2"){
             setAwaitAddHotspot(true);
-           frameReplicateOneReference(calculaUbicacionHotspot(e));
+            frameReplicateOneReference(calculaUbicacionHotspot(e));
         }
+        if(addHotspotMode && isMobile && interior360===false ){
+            setAwaitAddHotspot(true);
+            frameReplicateOneReference(calculaUbicacionHotspot(e));
+        }
+
         if(addHotspotMode && isMobile ===true && activeEscena ==="2" && interior360===true){
             if(panellumRef.current!= null){
                 let coordenadas =  panellumRef.current.getViewer().mouseEventToCoords(e);
@@ -1031,8 +1019,6 @@ export function Visualizador({id, extras,edit}) {
                 let data = [];
                 data.push(newPin)
                 const newHotspots360 = toast.loading("Creando hotspot");
-
-
                 axios.post(postAddHotspot(id, "interior"), data,{headers:{'Authorization': `${token}`}}).then(r  =>{
                     if (r.status === 200){
                         toast.update(newHotspots360, { render:`Hotspot  ${nameHotspot} creado`, type: "success", isLoading: false, autoClose: 2000,draggable: true});
@@ -1181,7 +1167,7 @@ export function Visualizador({id, extras,edit}) {
 
             {
                 awaitAddHotspot
-                    ?  <div key={"await-hotspot"} className="await-hotspot"><DotLoader color="#16A085 "></DotLoader> </div>
+                    ?  <div key={"await-hotspot"} className="await-hotspot"><DotLoader color="#0087D1"></DotLoader> </div>
                     : null
             }
 

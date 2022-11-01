@@ -12,7 +12,7 @@ const PopupCompartir = () =>{
     const navigate = useNavigate();
 
     const onClickCopy= () =>{
-        copy(`https://preview-url.vercel.app/visualizador/${id}`);
+        copy(`http://173.255.114.112:3001/visualizador/${id}`);
         toast.info('Link copiado al portapapeles',{autoClose: 3000,
             hideProgressBar: true,theme:"dark"});
     }
