@@ -9,7 +9,7 @@ EXPOSE 3000
 
 # Install all dependencies of the current project.
 COPY package.json package.json
-COPY npm-shrinkwrap.json npm-shrinkwrap.json
+#COPY npm-shrinkwrap.json npm-shrinkwrap.json
 RUN npm install
 
 # Copy all local files into the image.
