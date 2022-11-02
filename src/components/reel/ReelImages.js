@@ -20,9 +20,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   const [imageList, setImageList]=useState([])
   const [images, setImages] = useState([]); //for upload with 
   const [imagesListSrc, setImagesListSrc]= useState([]);
-  //const [imagesExtras, setImagesExtras] = useState(extrasImages);
   const [currentImage, setCurrentImage] = useState(0);
-  //const [isViewerOpen, setIsViewerOpen] = useState(false);
   const { height, width } = useWindowDimensions();
   const [ breakpointsReel, setBreakpointsReel ] = useState([])
   //const [loading, setLoading] = useState(true);
@@ -31,9 +29,122 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
   let token = localStorage.getItem("token");
   let navigate  = useNavigate()
 
-  useEffect(() => {
-    if (width>height && height<490){
-      setBreakpointsReel([
+
+
+  const getBreakpoints = useCallback(()=>{
+    if(width<height && height<600){
+      console.log("1")
+      return ([
+            {
+              breakpoint: 1920,
+              settings: {
+                slidesToShow: 10,
+              }
+            },
+            {
+              breakpoint: 1680,
+              settings: {
+                slidesToShow: 9,
+              }
+            },
+            {
+              breakpoint: 1440,
+              settings: {
+                slidesToShow: 8,
+              }
+            },
+
+            {
+              breakpoint: 1024,
+              settings: {
+                slidesToShow: 7,
+
+              }
+            },
+            {
+              breakpoint: 800,
+              settings: {
+                slidesToShow: 7,
+              }
+            },
+            {
+              breakpoint: 618,
+              settings: {
+                slidesToShow: 6,
+              }
+            },
+            {
+              breakpoint: 445,
+              settings: {
+                slidesToShow: 4,
+              }
+            },
+            {
+              breakpoint: 318,
+              settings: {
+                slidesToShow: 3,
+              }
+            },
+          ])
+
+    }
+    else if(width>height && height<400){
+      return ([
+        {
+          breakpoint: 1920,
+          settings: {
+            slidesToShow: 10,
+          }
+        },
+        {
+          breakpoint: 1680,
+          settings: {
+            slidesToShow: 9,
+          }
+        },
+        {
+          breakpoint: 1440,
+          settings: {
+            slidesToShow: 8,
+          }
+        },
+
+        {
+          breakpoint: 1024,
+          settings: {
+            slidesToShow: 8,
+
+          }
+        },
+        {
+          breakpoint: 800,
+          settings: {
+            slidesToShow: 8,
+          }
+        },
+        {
+          breakpoint: 618,
+          settings: {
+            slidesToShow: 7,
+          }
+        },
+        {
+          breakpoint: 445,
+          settings: {
+            slidesToShow: 4,
+          }
+        },
+        {
+          breakpoint: 318,
+          settings: {
+            slidesToShow: 3,
+          }
+        },
+      ])
+    }
+    else if (width>height && height >= 400 && height<600){
+      console.log("2")
+      return  ([
         {
           breakpoint: 1920,
           settings: {
@@ -63,13 +174,13 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
         {
           breakpoint: 800,
           settings: {
-            slidesToShow: 7,
+            slidesToShow: 5,
           }
         },
         {
           breakpoint: 618,
           settings: {
-            slidesToShow: 6,
+            slidesToShow: 5,
           }
         },
         {
@@ -86,8 +197,9 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
         },
 
       ])
-    }else{
-      setBreakpointsReel([
+    }
+    else if (width<height && height >900 && width>900 && width <1200){
+      return( [
         {
           breakpoint: 1920,
           settings: {
@@ -103,7 +215,68 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
         {
           breakpoint: 1440,
           settings: {
-            slidesToShow: 6,
+            slidesToShow: 4,
+          }
+        },
+
+        {
+          breakpoint: 1024,
+          settings: {
+            slidesToShow: 3,
+
+          }
+        },
+        {
+          breakpoint: 850,
+          settings: {
+            slidesToShow: 4,
+          }
+        },
+        {
+          breakpoint: 800,
+          settings: {
+            slidesToShow: 4,
+          }
+        },
+        {
+          breakpoint: 618,
+          settings: {
+            slidesToShow: 3,
+          }
+        },
+        {
+          breakpoint: 445,
+          settings: {
+            slidesToShow: 2,
+          }
+        },
+        {
+          breakpoint: 318,
+          settings: {
+            slidesToShow: 1,
+          }
+        },
+      ])
+    }
+    else{
+
+      return( [
+        {
+          breakpoint: 1920,
+          settings: {
+            slidesToShow: 10,
+          }
+        },
+        {
+          breakpoint: 1680,
+          settings: {
+            slidesToShow: 8,
+          }
+        },
+        {
+          breakpoint: 1440,
+          settings: {
+            slidesToShow: 7,
           }
         },
 
@@ -144,32 +317,45 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
             slidesToShow: 1,
           }
         },
-      ]);
+      ])
     }
-  }, [width,height]);
+  },[width,height])
+
+  const getSlidesToScroll = useCallback(()=>{
+    if (width<300){
+      return 1;
+    }else if(width>300 && width<600){
+      return  2;
+    }
+    else if (width>600 && width<800){
+      return 3
+    }
+    else if (width>800 && width<1800){
+      return 4
+    }
+  },[width])
+
 
   let  settings = {
     dots: false,
     infinite: true,
     speed: 500,
-    slidesToShow: 5,
-    slidesToScroll: 3,
+    slidesToShow: 4,
+    slidesToScroll: getSlidesToScroll(),
     draggable:true,
-    centered:false,
+    centered:true,
     adaptiveHeight:false,
     centerMode:false,
     centerPadding:"10px",
     rows:1,
     beforeChange: () => dragging = true,
     afterChange: () => dragging = false,
-    responsive: breakpointsReel
-
+    responsive: getBreakpoints()
   };
 
 
 
   useImperativeHandle(ref, () => ({
-
     onExtra(extraId) {
       setCurrentImage(searchExtraById(extraId));
       //setIsViewerOpen(true);
@@ -276,7 +462,6 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
     })
   }
-
 
   useEffect(()=>{
     axios.get(getExtrasUrl(id))
