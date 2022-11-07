@@ -10,13 +10,12 @@ import {deleteExtra,getExtrasUrl,uploadExtraUrl} from "../../Api/apiRoutes";
 import './ReelImages.css'
 import Slider from "react-slick";
 import {Outlet, Route, Routes, useNavigate} from "react-router-dom";
-import {FaPlusCircle} from "react-icons/fa";
+import {FaPlusCircle, FaTrash} from "react-icons/fa";
 import Popup from "reactjs-popup";
 import ImagenComponent from "../imagen/ImagenComponent";
 import { toast, ToastContainer } from "react-toastify";
 
-const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
-
+const  ReelImages = forwardRef(({id,extrasImages, isEditMode,searchHotspots},ref) => {
   const [imageList, setImageList]=useState([])
   const [images, setImages] = useState([]); //for upload with 
   const [imagesListSrc, setImagesListSrc]= useState([]);
@@ -353,8 +352,6 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     responsive: getBreakpoints()
   };
 
-
-
   useImperativeHandle(ref, () => ({
     onExtra(extraId) {
       setCurrentImage(searchExtraById(extraId));
@@ -378,18 +375,11 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     setImages([]);
   };
 
-
   const openImageViewer = useCallback((index) => {
     setCurrentImage(index);
     navigate('extra');
     //setIsViewerOpen(true);
   }, [navigate]);
-
-  /*
-  const closeImageViewer = () => {
-    setCurrentImage(0);
-    //setIsViewerOpen(false);
-  };*/
 
   const getExtras = async() => {
     axios.get(getExtrasUrl(id))
@@ -403,7 +393,6 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
                       }
                     }
                 );
-                console.log(temp);
                 setImagesListSrc(temp)
               }else{
                 console.log('error al recibir las imagenes');
@@ -495,16 +484,17 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
 
   },[id]);
 
-/*
-  function onClickDeleteExtra(src){
 
-    axios.post(deleteExtra(id,src[1]),{},{headers: {
+  function onClickDeleteExtra(idExtra){
+
+    axios.post(deleteExtra(id,idExtra),{},{headers: {
         'Authorization': `${token}`
       }})
         .then((response)=>{
           if(response.status === 200){
             console.log(response);
             getExtras();
+            searchHotspots(idExtra);
           }else{
             console.log(response);
           }
@@ -519,7 +509,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
       console.log(error.config);
     })
 
-  }*/
+  }
 
 
   function ImagesReel(){
@@ -564,20 +554,18 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
       }
 
       {imagesListSrc.map((src, index) => (
+          <>
+            <div className='reel_div-img' key={index} onClick={() => dragging ? null :  openImageViewer(index)}>
 
-          <div className='reel_div-img' key={index} onClick={() => dragging ? null :  openImageViewer(index)}>
-            {/*isEditMode
-                ?<button className='btn-eliminar-extra' onClick={()=>onClickDeleteExtra(src)}> <FaTrash/></button>
-                :null
-            */}
-
-
-<ImagenComponent key={index}    imgURL={src[0]}></ImagenComponent>
-
-
-            
-
+            <ImagenComponent key={index}    imgURL={src[0]}></ImagenComponent>
           </div>
+            {
+              isEditMode
+                  ?<button   className='btn-eliminar-extra' onClick={()=>onClickDeleteExtra(src[1])}> <FaTrash/></button>
+                  :null
+            }
+          </>
+
 
       ))}
 
@@ -590,7 +578,6 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode},ref) => {
     <>
     <ToastContainer/>
       <div className='reel_container'>
-
 
         {
           ImagesReel()
