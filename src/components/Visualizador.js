@@ -1146,6 +1146,7 @@ export function Visualizador({id, extras,edit}) {
             <div key={"reel"} ref={extraContainerRef} className="visualizador_reel">
                 {buttonCloseReel()}
                 <ReelImages id={id}
+                            key={'reel'}
                             ref={extraInViewRef}
                             extrasImages={extras}
                             isEditMode={isEditMode} searchHotspots={searchHotspots}></ReelImages>

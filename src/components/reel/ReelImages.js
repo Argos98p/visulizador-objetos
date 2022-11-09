@@ -21,6 +21,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode,searchHotspots},ref
   const [imagesListSrc, setImagesListSrc]= useState([]);
   const [currentImage, setCurrentImage] = useState(0);
   const { height, width } = useWindowDimensions();
+  const [init, setInit] = useState(false)
   const [ breakpointsReel, setBreakpointsReel ] = useState([])
   //const [loading, setLoading] = useState(true);
   //onst counter = useRef(0);
@@ -29,10 +30,8 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode,searchHotspots},ref
   let navigate  = useNavigate()
 
 
-
-  const getBreakpoints = useCallback(()=>{
+function getBreakpoints (){
     if(width<height && height<600){
-      console.log("1")
       return ([
             {
               breakpoint: 1920,
@@ -318,9 +317,10 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode,searchHotspots},ref
         },
       ])
     }
-  },[width,height])
+  }
 
-  const getSlidesToScroll = useCallback(()=>{
+
+  function getSlidesToScroll()  {
     if (width<300){
       return 1;
     }else if(width>300 && width<600){
@@ -332,7 +332,19 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode,searchHotspots},ref
     else if (width>800 && width<1800){
       return 4
     }
-  },[width])
+  }
+
+  useEffect(() => {
+    setInit(true);
+  }, []);
+
+
+  useEffect(() => {
+    if(width>height && init===true){
+      window.location.reload();
+
+    }
+  },[width,height]);
 
 
   let  settings = {
@@ -350,7 +362,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode,searchHotspots},ref
     beforeChange: () => dragging = true,
     afterChange: () => dragging = false,
     responsive: getBreakpoints()
-  };
+  }
 
   useImperativeHandle(ref, () => ({
     onExtra(extraId) {
@@ -484,7 +496,6 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode,searchHotspots},ref
 
   },[id]);
 
-
   function onClickDeleteExtra(idExtra){
 
     axios.post(deleteExtra(id,idExtra),{},{headers: {
@@ -512,11 +523,11 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode,searchHotspots},ref
   }
 
 
-  function ImagesReel(){
-    return <Slider className="reel_image-extra-container" {...settings}>
+  const  ImagesReel=()=>{
+    return <Slider className="reel_image-extra-container"  {...settings}>
       {
         (isEditMode) ?
-            <div className='reel_div-img div-subirExtra cursor-pointer reel_borde-redondo'>
+            <div key={"opok"} className='reel_div-img div-subirExtra cursor-pointer reel_borde-redondo'>
               <ImageUploading
                   multiple
                   value={images}
@@ -544,8 +555,6 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode,searchHotspots},ref
                       </button>
                       &nbsp;
 
-
-
                     </div>
                 )}
               </ImageUploading>
@@ -555,13 +564,13 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode,searchHotspots},ref
 
       {imagesListSrc.map((src, index) => (
           <>
-            <div className='reel_div-img' key={index} onClick={() => dragging ? null :  openImageViewer(index)}>
+            <div className='reel_div-img' key={src[0]} onClick={() => dragging ? null :  openImageViewer(index)}>
 
-            <ImagenComponent key={index}    imgURL={src[0]}></ImagenComponent>
+            <ImagenComponent key={src[0]}    imgURL={src[0]}></ImagenComponent>
           </div>
             {
               isEditMode
-                  ?<button   className='btn-eliminar-extra' onClick={()=>onClickDeleteExtra(src[1])}> <FaTrash/></button>
+                  ?<button key={'btn-eliminar'}  className='btn-eliminar-extra' onClick={()=>onClickDeleteExtra(src[1])}> <FaTrash/></button>
                   :null
             }
           </>
@@ -570,7 +579,6 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode,searchHotspots},ref
       ))}
 
     </Slider>
-
   }
 
 
@@ -618,4 +626,4 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode,searchHotspots},ref
 })
 //);
 
-export default memo(ReelImages);
+export default ReelImages;
