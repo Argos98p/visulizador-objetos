@@ -1,15 +1,70 @@
 .reel_container {
   max-height: 70%;
+  .styles-module_wrapper__1I_qj{
+    z-index: 1000;
+  }
+  .my-reel{
 
-  .slick-slide {
-    img{
-      max-width: 100%;
-      object-fit: contain;
-      max-height: 100%;
+    height: 100%;
+
+    .scroll-container{
+      display: flex;
+      flex-direction: row;
+      height: 100%;
+      position: relative;
+
+      .reel_div-img-container{
+        height: 100%;
+        position: relative;
+        .reel_div-img{
+          height: 100%;
+          img{
+            border-radius: 0.7em;
+            margin-left: 0.4em;
+            height: 100%;
+            cursor:pointer;
+          }
+
+        }
+        .btn-eliminar-extra{
+          top:8px;
+          left: 10px;
+          position: absolute;
+          border: none;
+          border-radius: 0.2em;
+          color: red;
+          width: 2em;
+          height: 2em;
+        }
+      }
+
+      .div-subirExtra{
+        margin-left: 0.4em;
+        background-color: rgb(0, 135, 209);
+        display: inline-block;
+        width: 10em !important;
+        height: 100%;
+        border-radius: 0.7em;
+        .upload__image-wrapper{
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          .btn-addExtra{
+
+            width: 150px;
+            height: 100%;
+            background-color: transparent;
+            border: 0;
+          }
+        }
+      }
+
+
+
     }
 
-
   }
+
 }
 
 *{
@@ -31,55 +86,9 @@
    .slick-next {
      right: 25px;
    }*/
-.slick-prev{
-  left: 0 !important;
-  z-index: 1;
-}
-.slick-next {
-  right: 0 !important;
-  z-index: 1;
-}
-.slick-prev:before, .slick-next:before {
-  font-size: 30px;
-}
-
-.reel_container {
-  max-height: 70%;
 
 
-  .styles-module_wrapper__1I_qj {
-    z-index: 10000 !important;
-  }
-
-  .slick-slider {
-    height: 100%;
-
-    .slick-list {
-      height: 100%;
-
-      .slick-track {
-        margin: auto;
-        height: 100%;
-
-        .slick-slide{
-          & > div{
-            height: 100%;
-          }
-        }
-
-        .slick-slide.slick-active.slick-center.slick-current{
-          height: 100%;
-          & > div{
-            height: 100%;
-          }
-        }
-      }
-    }
-  }
-
-
-}
-
+/*
   .reel_image-extra-container{
     max-height: 100%;
     height: 100%;
@@ -103,37 +112,13 @@
       /*
 
       right: 0;
-      top: 0;*/
-    }
-    .div-subirExtra{
-      background-color: rgb(0, 135, 209);
-      display: flex !important;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      height: 100%;
-      .upload__image-wrapper{
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        .btn-addExtra{
-          width: 100%;
-          height: 100%;
-          background-color: transparent;
-          border: 0;
-        }
-      }
-    }
+      top: 0;
+    }*/
 
 
-    .reel_borde-redondo{
-      border-radius: 0.6em;
-    }
 
-    img {
-      margin: auto;
-      height: 100%;
 
-    }
-  }
+
+
+
+

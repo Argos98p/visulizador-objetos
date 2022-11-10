@@ -31,6 +31,7 @@
     "react-id-generator": "^3.0.2",
     "react-image-viewer-zoom": "^1.0.36",
     "react-images-uploading": "^3.1.7",
+    "react-indiana-drag-scroll": "^2.2.0",
     "react-loading-skeleton": "^3.1.0",
     "react-lottie": "^1.2.3",
     "react-modal": "^3.15.1",

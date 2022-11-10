@@ -1,19 +1,17 @@
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import React, {useState, useEffect, useCallback, memo, forwardRef, useImperativeHandle, useRef} from 'react';
+import React, {forwardRef, useCallback, useEffect, useImperativeHandle, useState} from 'react';
 import useWindowDimensions from '../../hooks/useWindowSize';
 import ImageUploading from 'react-images-uploading';
 import axios from "axios";
 import ImageViewer from 'react-simple-image-viewer';
-import {ImagePath} from '../../Api/apiRoutes'
-import {deleteExtra,getExtrasUrl,uploadExtraUrl} from "../../Api/apiRoutes";
-import './ReelImages.css'
-import Slider from "react-slick";
+import {deleteExtra, getExtrasUrl, ImagePath, uploadExtraUrl} from '../../Api/apiRoutes'
 import {Outlet, Route, Routes, useNavigate} from "react-router-dom";
 import {FaPlusCircle, FaTrash} from "react-icons/fa";
 import Popup from "reactjs-popup";
 import ImagenComponent from "../imagen/ImagenComponent";
-import { toast, ToastContainer } from "react-toastify";
+import {toast, ToastContainer} from "react-toastify";
+import ScrollContainer from "react-indiana-drag-scroll";
 
 const  ReelImages = forwardRef(({id,extrasImages, isEditMode,searchHotspots},ref) => {
   const [imageList, setImageList]=useState([])
@@ -319,7 +317,6 @@ function getBreakpoints (){
     }
   }
 
-
   function getSlidesToScroll()  {
     if (width<300){
       return 1;
@@ -337,15 +334,6 @@ function getBreakpoints (){
   useEffect(() => {
     setInit(true);
   }, []);
-
-
-  useEffect(() => {
-    if(width>height && init===true){
-      window.location.reload();
-
-    }
-  },[width,height]);
-
 
   let  settings = {
     dots: false,
@@ -477,6 +465,7 @@ function getBreakpoints (){
                     }
                 );
                 setImagesListSrc(temp)
+
               }else{
                 console.log('error al recibir las imagenes');
               }
@@ -522,8 +511,72 @@ function getBreakpoints (){
 
   }
 
+const imagesInArray=()=>{
+  let aux;
+  aux =  imagesListSrc.map((src, index) => (
+      <>
+        <div className='reel_div-img-container' key={src[1]}>
+          <div  className='reel_div-img' onClick={() => openImageViewer(index)}>
+            <ImagenComponent   key={src[1]+"_imageComponent"} imgURL={src[0]}></ImagenComponent>
+          </div>
+
+          {
+            isEditMode
+                ?<button  className='btn-eliminar-extra' key={src[1]+"btn_eliminar"} onClick={()=>onClickDeleteExtra(src[1])}> <FaTrash/></button>
+                :null
+          }
+
+
+      </div>
+
+
+      </>));
+
+  return aux}
 
   const  ImagesReel=()=>{
+    return (<>
+    <div className={"my-reel"}>
+      <ScrollContainer className="scroll-container" horizontal={true} vertical={false}>
+        {
+          (isEditMode) ?
+              <div key={"opok"} className=' div-subirExtra cursor-pointer '>
+                <ImageUploading
+                    multiple
+                    value={images}
+                    onChange={onChange}
+                    dataURLKey="data_url"
+                >
+                  {({
+                      imageListUpload,
+                      onImageUpload,
+                      onImageRemoveAll,
+                      onImageUpdate,
+                      onImageRemove,
+                      isDragging,
+                      dragProps,
+                    }) => (
+
+                      <div className="upload__image-wrapper">
+                        <button className={"btn-addExtra"}
+                                style={isDragging ? { color: 'red' } : undefined}
+                                onClick={onImageUpload}
+                                {...dragProps}
+                        >
+                          <FaPlusCircle color={"#fff"} fontSize={"30px"}></FaPlusCircle>
+                        </button>
+                        &nbsp;
+                      </div>
+                  )}
+                </ImageUploading>
+              </div>
+              :null
+        }
+        {imagesInArray()}
+      </ScrollContainer>
+    </div>
+    </>);
+    /*
     return <Slider className="reel_image-extra-container"  {...settings}>
       {
         (isEditMode) ?
@@ -579,18 +632,17 @@ function getBreakpoints (){
       ))}
 
     </Slider>
-  }
 
+     */
+  }
 
   return (
     <>
     <ToastContainer/>
       <div className='reel_container'>
-
         {
           ImagesReel()
         }
-
         <Outlet></Outlet>
         <Routes>
           <Route path="/extra" element={<ImageViewer
@@ -621,9 +673,7 @@ function getBreakpoints (){
         </Routes>
       </div>
       </>
-
   )
 })
-//);
 
 export default ReelImages;
