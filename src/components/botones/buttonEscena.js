@@ -3,7 +3,7 @@ import {FaCarSide } from "react-icons/fa/index.js";
 import ReactTooltip from "react-tooltip";
 import {memo} from "react";
 
-const ButtonEscena = memo(({escenaInfo, onClick , activo})=>{
+const ButtonEscena = memo(({escenaInfo, onClick , activo,disabled})=>{
 
 
     let icono =null;
@@ -25,7 +25,7 @@ const ButtonEscena = memo(({escenaInfo, onClick , activo})=>{
             break;
     }
     return <div className="button-escena_navigation-item">
-    <button  data-for='soclose2' data-tip={escenaInfo[1].nombre}  className={`button-escena-btn ${activo ? "activo":""}`} onClick={()=>onClick(escenaInfo)}>
+    <button   data-for='soclose2' data-tip={escenaInfo[1].nombre}  className={`button-escena-btn ${activo ? "activo":""}`} onClick={()=>onClick(escenaInfo)}>
       {icono}
     </button>
     <ReactTooltip id="soclose2" place="right" disable={isMobile} effect="solid" getContent={(dataTip=>dataTip)}>

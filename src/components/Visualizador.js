@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import Tridi from "react-tridi";
+//import Tridi from "react-tridi";
+import Tridi from "./my_react_tridi/my_react_tridi"
 import axios from "axios";
 import ReelImages from "./reel/ReelImages";
 import 'react-modal-video/scss/modal-video.scss';
@@ -38,6 +39,7 @@ import useWindowDimensions from "../hooks/useWindowSize";
 import {Pannellum} from "pannellum-react";
 import {svgImagen, svgPdf, svgYoutube} from "../utils/iconsVisualizador";
 import LottieErrorScene from "../Animations/lottieErrorScene";
+import {after} from "underscore";
 
 
 export function Visualizador({id, extras,edit}) {
@@ -68,6 +70,8 @@ export function Visualizador({id, extras,edit}) {
     const [updateExtras, setUpdateExtras] = useState(false);
     const [hotspotType, setHotspotType] = useState("imagen");
     const [interior360, setInterior360] = useState(false);
+
+    const [loadScenes, setLoadScenes] = useState([true,true,true]);
 
 
     const extraContainerRef=useRef();
@@ -186,13 +190,14 @@ export function Visualizador({id, extras,edit}) {
         };
     }, [updateExtras,id]);
 
+    /*
     useEffect(() => {
         setTimeout(()=>{
             //setLoadPercentage(100);
             setLoadStatus(true);
         },6000);
         return(setLoadStatus(false))
-    }, []);
+    }, []);*/
 
 
     const prepararPins = (fetchedPinsObject) => {
@@ -210,7 +215,6 @@ export function Visualizador({id, extras,edit}) {
         }
         return [];
     }
-
     function getArraySrcPath(escena){
         if(escena.nombre==="interior" && interior360){
             if(isMobile === true){
@@ -239,8 +243,6 @@ export function Visualizador({id, extras,edit}) {
         }
         return arrayFrames;
     }
-
-
     function handleClickExtras() {
         setVisibleExtras(!visibleExtras);
         extraContainerRef.current.classList.toggle("no-visible");
@@ -270,15 +272,12 @@ export function Visualizador({id, extras,edit}) {
         }
 
     };
-
     const searchExtra=useCallback(
         (extraId) => {
             return extrasList.find(x => x.idextra === extraId);
         },
         [extrasList],
     );
-
-
     const zoomValueHandler = (valorZoom) => {
         zooom=valorZoom;
     }
@@ -315,8 +314,6 @@ export function Visualizador({id, extras,edit}) {
         }
 
     }
-
-
     const handleWheel = (e) => {
 
             e.deltaY > 0 ? handleZoomOut() : handleZoomIn();
@@ -495,6 +492,7 @@ export function Visualizador({id, extras,edit}) {
                                       activo={
                                           index.toString() === activeEscena
                                       }
+                                      disabled={!loadStatus}
                         ></ButtonEscena>
                     ))}
             </>
@@ -594,6 +592,32 @@ export function Visualizador({id, extras,edit}) {
                 }
         }
     }
+
+
+
+    let updateEscenas = (index)=>{
+        console.log(index)
+        if(index==="1" || index==="2"){
+            console.log('entra qui')
+            setLoadStatus(true)
+        }
+
+
+    }
+
+    /*
+    useEffect(() => {
+        console.log(loadScenes)
+        if(interior360 ===false && loadScenes.filter((v) => (v === false)).length>1){
+            setLoadStatus(true);
+
+        }
+        if(interior360 && loadScenes.filter((v) => (v === false)).length>1){
+            setLoadStatus(true);
+
+        }
+    }, [loadScenes]);*/
+
     const loadAllTridiComponents=()=>{
         if(objetoData){
             let escenas=objetoData.escenas;
@@ -602,9 +626,7 @@ export function Visualizador({id, extras,edit}) {
             for (let index in escenas){
                 show=activeEscena===index
                 let imagesSrcOneScene = getArraySrcPath(escenas[index]);
-
                 try{
-
                     if(imagesSrcOneScene.length === 0 ){
                     escenasSrcImages.push(
                         <div className="emptyEscena ">
@@ -614,102 +636,108 @@ export function Visualizador({id, extras,edit}) {
                         </div>
                     )}
                 else if(imagesSrcOneScene.length === 1){
-                    escenasSrcImages.push(
-                        <div className={show && loadStatus ? "arriba" : "abajo"} key={index}>
-                            <Pannellum
-                                doubleClickZoom={false}
-                                ref={panellumRef}
-                                width={"100vw"}
-                                height={"100vh"}
-                                image={imagesSrcOneScene[0]}
-                                pitch={10}
-                                yaw={180}
-                                hfov={110}
-                                autoLoad = {true}
-                                disableKeyboardCtrl={true}
-                                onRender={()=>{}}
-                                showFullscreenCtrl={false}
-                                showZoomCtrl={false}
-                                autoRotate={10}
-                                onLoad={() => {
 
-                                }}
-                                onError={err => {
-                                    console.log("Error", err);
-                                }}
-
-                            >
-                                {
-                                    hotspotsMap["2"] ? hotspotsMap["2"].map(function (e){return <Pannellum.Hotspot
-                                            type="custom"
-                                            cssClass="button-hotspot"
-                                            tooltip = {(hotSpotDiv, args) => {
-                                            if(e.tipo === "imagen"){
-                                                hotSpotDiv.innerHTML+=svgImagen();
-                                            }else if(e.tipo === "pdf"){
-                                                hotSpotDiv.innerHTML+=svgPdf();
-                                            }else if(e.tipo === "youtube"){
-                                                hotSpotDiv.innerHTML+=svgYoutube();
-                                            }else{
-                                                hotSpotDiv.innerHTML+='+';
-                                            }
-
-                                        }}
-                                            handleClick={(evt , args) => pinClickHandler(args)}
-                                            handleClickArg={e}
-                                            pitch={e.x}
-                                            yaw={e.y}
-                                            text="Info Hotspot Text 3"
-                                            URL="https://github.com/farminf/pannellum-react"
-                                        /> }   )
-                                        : null
-
-                                    //hotspots360.map(function (e){return e})
-                                }
-                            </Pannellum>
-                        </div>
-                    )
+                    if(hotspotsMap!==undefined || hotspotsMap["2"]!== undefined ||  hotspotsMap["2"])
+                    {
 
 
+                        escenasSrcImages.push(
+                            <div className={show && loadStatus ? "arriba" : "abajo"} key={index}>
+                                <Pannellum
+                                    doubleClickZoom={false}
+                                    ref={panellumRef}
+                                    width={"100vw"}
+                                    height={"100vh"}
+                                    image={imagesSrcOneScene[0]}
+                                    pitch={10}
+                                    yaw={180}
+                                    hfov={110}
+                                    autoLoad = {true}
+                                    disableKeyboardCtrl={true}
+                                    onRender={()=>{}}
+                                    showFullscreenCtrl={false}
+                                    showZoomCtrl={false}
+                                    autoRotate={10}
+                                    onLoad={()=>updateEscenas("2")}
+                                    onError={err => {
+                                        console.log("Error", err);
+                                    }}
+
+                                >
+                                    {
+                                         hotspotsMap["2"]?.map(function (e){return <Pannellum.Hotspot
+                                                type="custom"
+                                                cssClass="button-hotspot"
+                                                tooltip = {(hotSpotDiv, args) => {
+                                                if(e.tipo === "imagen"){
+                                                    hotSpotDiv.innerHTML+=svgImagen();
+                                                }else if(e.tipo === "pdf"){
+                                                    hotSpotDiv.innerHTML+=svgPdf();
+                                                }else if(e.tipo === "youtube"){
+                                                    hotSpotDiv.innerHTML+=svgYoutube();
+                                                }else{
+                                                    hotSpotDiv.innerHTML+='+';
+                                                }
+
+                                            }}
+                                                handleClick={(evt , args) => pinClickHandler(args)}
+                                                handleClickArg={e}
+                                                pitch={e.x}
+                                                yaw={e.y}
+                                                text="Info Hotspot Text 3"
+                                                URL="https://github.com/farminf/pannellum-react"
+                                            /> }   )
+
+
+                                        //hotspots360.map(function (e){return e})
+                                    }
+                                </Pannellum>
+                            </div>
+                        )
+                    }
                 }
                 else{
+
                     escenasSrcImages.push(
-                         <Tridi ref={  show  ? tridiRef :null}
-                               key={index}
-                               className={`${ addHotspotMode===true ? " addHotspotCursor " : ""} ${show && loadStatus? "visible" : "oculto"}`}
-                               images={imagesSrcOneScene}
-                               autoplaySpeed={70}
-                               zoom={1}
-                               maxZoom={3}
-                               minZoom={1}
-                               onZoom={zoomValueHandler}
-                               onFrameChange={frameChangeHandler}
-                               touch={true}
-                               touchDragInterval={1}
-                               onAutoplayStart={
-                                    () => {
-                                       if (show ===true){
-                                           setIsAutoPlayRunning(true)
-                                       }
-                                   }
-                               }
-                               onAutoplayStop={
-                                   () =>{
-                                       if(show === true){
-                                           setIsAutoPlayRunning(false)
-                                       }
-                                   }
-                               }
-                               onPinClick={pinClickHandler}
-                               setPins={setPins}
-                               renderPin={myRenderPin}
-                               showStatusBar={true}
-                               pins={pins}
-                               showControlBar={false}
-                        />
+                            <Tridi ref={  show  ? tridiRef :null}
+                                  key={index}
+                                  count={imagesSrcOneScene.length}
+                                  className={`${ addHotspotMode===true ? " addHotspotCursor " : ""} ${show && loadStatus === true ? "visible" : "oculto"}`}
+                                  images={imagesSrcOneScene}
+                                  autoplaySpeed={70}
+                                  zoom={1}
+                                  maxZoom={3}
+                                  minZoom={1}
+                                  onZoom={zoomValueHandler}
+                                  onFrameChange={frameChangeHandler}
+                                  touch={true}
+                                  touchDragInterval={1}
+                                  onAutoplayStart={
+                                      () => {
+                                          if (show ===true){
+                                              setIsAutoPlayRunning(true)
+                                          }
+                                      }
+                                  }
+                                  onAutoplayStop={
+                                      () =>{
+                                          if(show === true){
+                                              setIsAutoPlayRunning(false)
+                                          }
+                                      }
+                                  }
+                                  onPinClick={pinClickHandler}
+                                  setPins={setPins}
+                                  renderPin={myRenderPin}
+                                  showStatusBar={true}
+
+                                  onLoadChange={()=>updateEscenas(index)}
+                                  showControlBar={false}
+                            />
                     )
                 }
                 }catch (e) {
+                    console.log(e)
                     escenasSrcImages.push(
                         <LottieErrorScene></LottieErrorScene>
                     );
@@ -718,24 +746,25 @@ export function Visualizador({id, extras,edit}) {
             }
 
             return (
-                <div className={`tridi-container`}    onWheel={handleWheel} >
-                    {
-
-                        loadStatus === false ? <div className="sweet-loading">
+                <>
+                    <div className={`tridi-container`}    onWheel={handleWheel} >
+                        <div className={ `sweet-loading ${ loadStatus===false ? "visible" : "oculto"}`} >
                             <DotLoader color="#0087D1"
-                                       loading={
-                                           !loadStatus
-                                       }
+
                                        size={70}/>
-                        </div> :   <div className={"imagesContainer"}
-                                        onClick={clickOnTridi}
-                                        onDoubleClick={doubleClickOnTridi}
-                                        ref={containerRef}>
+                        </div>
+                        {<div className={`imagesContainer ${ loadStatus===true ? "visible" : "oculto"}`}
+                              onClick={clickOnTridi}
+                              onDoubleClick={doubleClickOnTridi}
+                              ref={containerRef}>
+
                             {escenasSrcImages}
                         </div>
-                    }
+                        }
 
-                </div>
+                    </div>
+                </>
+
             );
         }
         return <h1>holaa</h1>
@@ -1122,8 +1151,6 @@ export function Visualizador({id, extras,edit}) {
                 handleDeleteHotspot(nombre);
             }
         }
-
-
     }
 
 
@@ -1158,18 +1185,20 @@ export function Visualizador({id, extras,edit}) {
                 }
             </div>
 
-            <div className="visualizador_navigation-container" key={"escenas-giro"}>
-                {botonesEscenas}
-                {botonAutoGiro}
-            </div>
+            {
+                <div className="visualizador_navigation-container" key={"escenas-giro"} >
+                    {botonesEscenas}
+                    {botonAutoGiro}
+                </div>
+
+            }
+
 
             {
                 awaitAddHotspot
                     ?  <div key={"await-hotspot"} className="await-hotspot"><DotLoader color="#0087D1"></DotLoader> </div>
                     : null
             }
-
-
         </div>
             <Outlet/>
             <Routes>
