@@ -16,48 +16,39 @@ function Controller({editMode}) {
 
 
     useEffect(() => {
+        axios.get(infoObjectUrl(id)).then(response => {
 
+            if(response.data !== "NOT_FOUND"){
+                if(Object.keys(response.data.escenas).length===0){
+                    setNoEscenas(true)
 
-        axios.post(loginUser(),{ "username":"seaman2",
-
-            "password":"123456789"}).then(response =>{
-            //console.log(response.data)
-            localStorage.setItem('token', response.data.accessToken)
-            localStorage.setItem('user',response.data.id)
-
-            axios.get(infoObjectUrl(id)).then(response => {
-
-                if(response.data !== "NOT_FOUND"){
-                    if(Object.keys(response.data.escenas).length===0){
-                        setNoEscenas(true)
-
-                    }else{
-                        setMyObjeto(response.data);
-                        axios.get(getExtrasUrl(id))
-                            .then((response)=>{
-                                if(response.data !== []){
-                                    setExtras(response.data)
-                                }
-                            });
-                    }
+                }else{
+                    setMyObjeto(response.data);
+                    axios.get(getExtrasUrl(id))
+                        .then((response)=>{
+                            if(response.data !== []){
+                                setExtras(response.data)
+                            }
+                        });
                 }
+            }
 
 
-                else{
-                    setMyObjeto("NOT_FOUND");
+            else{
+                setMyObjeto("NOT_FOUND");
 
-                }
-            }).catch(error => {
-                console.log(error)
-                if(error.response.status === 404){
-                    setMyObjeto("NOT_FOUND");
-                }
-            })
+            }
+        }).catch(error => {
+            console.log(error)
+            if(error.response.status === 404){
+                setMyObjeto("NOT_FOUND");
+            }
         })
 
 
-
     }, [id,navigate]);
+
+
 
 
 

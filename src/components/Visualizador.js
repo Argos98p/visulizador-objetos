@@ -199,7 +199,6 @@ export function Visualizador({id, extras,edit}) {
         return(setLoadStatus(false))
     }, []);*/
 
-
     const prepararPins = (fetchedPinsObject) => {
 
         if(fetchedPinsObject !== undefined)
@@ -389,7 +388,7 @@ export function Visualizador({id, extras,edit}) {
 
         return (
             <>
-                <div data-tip={"test"} data-for='test'>
+                <div data-tip={"test"} data-for='test' key={pin.id}>
 
                     <label  >
                         <div id="b3"
@@ -596,9 +595,9 @@ export function Visualizador({id, extras,edit}) {
 
 
     let updateEscenas = (index)=>{
-        console.log(index)
+        //console.log(index)
         if(index==="1" || index==="2"){
-            console.log('entra qui')
+           // console.log('entra qui')
             setLoadStatus(true)
         }
 
@@ -730,7 +729,7 @@ export function Visualizador({id, extras,edit}) {
                                   setPins={setPins}
                                   renderPin={myRenderPin}
                                   showStatusBar={true}
-
+                                   pins={pins}
                                   onLoadChange={()=>updateEscenas(index)}
                                   showControlBar={false}
                             />
@@ -1125,12 +1124,13 @@ export function Visualizador({id, extras,edit}) {
         </div>
     },[isAutoPlayRunning,isMobile]
 );
+    /*
     const botonModoEdicion =()=>{
         function handleActivateEditMode() {
             setIsEditMode(!isEditMode)
         }
         return <ToogleButton isEditMode={isEditMode} handleActivateEditMode={handleActivateEditMode}></ToogleButton>;
-    }
+    }*/
     const logoCompany = ()=>{
         return <div key={"logo"} className="logo-company">
             <img src="/icono.png" alt=""/>
@@ -1168,7 +1168,7 @@ export function Visualizador({id, extras,edit}) {
                 {botonInfoObject()}
                 {botonAgregarHotspot()}
             </div>
-            {botonModoEdicion()}
+            {/*botonModoEdicion()*/}
 
             <div key={"reel"} ref={extraContainerRef} className="visualizador_reel">
                 {buttonCloseReel()}

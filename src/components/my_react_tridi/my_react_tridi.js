@@ -876,17 +876,27 @@ var Tridi = forwardRef(function (_ref, ref) {
 
 
 
-    let loadImageAfter=after(_count, () => {
+    let loadImageAfter=after(_count-5, () => {
         console.log("loaded");
         onLoadChange(true, 100);
+        /*
+        if (!viewerSize) {
+            console.log("wadsfasdffdsa")
+            let _viewerImageRef$curre, _viewerImageRef$curre2;
+            setViewerSize({
+                width: _viewerImageRef === null || _viewerImageRef === void 0 ? void 0 : (_viewerImageRef$curre = _viewerImageRef.current) === null || _viewerImageRef$curre === void 0 ? void 0 : _viewerImageRef$curre.clientWidth,
+                height: _viewerImageRef === null || _viewerImageRef === void 0 ? void 0 : (_viewerImageRef$curre2 = _viewerImageRef.current) === null || _viewerImageRef$curre2 === void 0 ? void 0 : _viewerImageRef$curre2.clientHeight
+            });
+        }*/
     });
-/*
+
     let loadImage = function loadImage(index) {
-        console.log(index)
 
-        setLoadedImagesCount(loadedImagesCount + 1);
+        let aux= _count -1;
+        if(index === aux){
+            onLoadChange(true, 100);
+        }
 
-        onImageLoaded();
         if (!viewerSize) {
             let _viewerImageRef$curre, _viewerImageRef$curre2;
             setViewerSize({
@@ -894,11 +904,11 @@ var Tridi = forwardRef(function (_ref, ref) {
                 height: _viewerImageRef === null || _viewerImageRef === void 0 ? void 0 : (_viewerImageRef$curre2 = _viewerImageRef.current) === null || _viewerImageRef$curre2 === void 0 ? void 0 : _viewerImageRef$curre2.clientHeight
             });
         }
-    };*/
-/*
+    };
+
     var onImageLoaded = useCallback(function () {
         onLoadChange(loadedImagesCount + 1 === _count, Math.round((loadedImagesCount + 1) / _count * 100));
-    }, [_count, loadedImagesCount, onLoadChange]);*/
+    }, [_count, loadedImagesCount, onLoadChange]);
 
     useTridiKeyPressHandler({
         nextMove: nextMove,
@@ -911,7 +921,7 @@ var Tridi = forwardRef(function (_ref, ref) {
             return /*#__PURE__*/React.createElement("img", {
                 key: index,
                 src: src,
-                onLoad: loadImageAfter,
+                onLoad:()=>loadImage(index),
                 className: styles['tridi-viewer-image'] + " " + (currentImageIndex === index ? styles['tridi-viewer-image-shown'] : styles['tridi-viewer-image-hidden']),
                 alt: ""
             });
