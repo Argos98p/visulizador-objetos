@@ -25,7 +25,8 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode,searchHotspots},ref
   //onst counter = useRef(0);
   let dragging = false;
   let token = localStorage.getItem("token");
-  console.log(token);
+  let idUsuario = localStorage.getItem("idUser");
+
   let navigate  = useNavigate()
 
 
@@ -416,7 +417,7 @@ function getBreakpoints (){
     const idToast = toast.loading("Subiendo extra...")
     const payload = new FormData();
     payload.append('extra',imagenFile)
-    fetch(uploadExtraUrl(id,imagenFile.name,'hola'), {
+    fetch(uploadExtraUrl(id,imagenFile.name,'hola',idUsuario), {
       method: "POST",
       body: payload,
           headers: {
@@ -488,12 +489,11 @@ function getBreakpoints (){
 
   function onClickDeleteExtra(idExtra){
 
-    axios.post(deleteExtra(id,idExtra),{},{headers: {
+    axios.post(deleteExtra(id,idExtra,idUsuario),{},{headers: {
         'Authorization': `${token}`
       }})
         .then((response)=>{
           if(response.status === 200){
-            console.log(response);
             getExtras();
             searchHotspots(idExtra);
           }else{

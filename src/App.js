@@ -20,12 +20,12 @@ function App() {
 
     const SaveToken = () =>{
         const { id } = useParams();
-        console.log(id)
+
         const navigation = useNavigate()
         const [searchParams, setSearchParams] = useSearchParams();
         let tk = searchParams.get("token");
         let idUser = searchParams.get("idUser");
-        console.log(searchParams)
+
         fetch(verificaToken(idUser), {
             method: "POST",
             headers: {
@@ -34,7 +34,8 @@ function App() {
         }).then(r => {
                 console.log(r.status)
             if(r.status === 200){
-                localStorage.setItem('token', searchParams.get("token"));
+                localStorage.setItem('token', tk);
+                localStorage.setItem("idUser",idUser)
                 navigation(`/visualizador/edit/${id}`);
                 return <Navigate to={`/visualizador/edit/${id}`} />
             }else if(r.status === 401){

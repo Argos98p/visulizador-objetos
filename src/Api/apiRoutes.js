@@ -1,6 +1,6 @@
 let BaseURL="http://173.255.114.112";
 
-let idUsuario = "27";
+
 
 /*
 function statusEsceneUrl(id,escenaNombre){
@@ -29,15 +29,15 @@ function ImagePath(pathImage){
 }
 
 
-function  postAddHotspot(id,nombreEscena){
+function  postAddHotspot(id,nombreEscena,idUsuario){
     return `${BaseURL}:8084/api/objects/addhotspot?idobjeto=${id}&nombre_escena=${nombreEscena}&idusuario=${idUsuario}`;
 }
 
-function deleteExtra(idObjeto,idExtra){
+function deleteExtra(idObjeto,idExtra,idUsuario){
     return `${BaseURL}:8084/api/objects/deleteextra?idobjeto=${idObjeto}&idextra=${idExtra}&idusuario=${idUsuario}`;
 }
 
-function uploadExtraUrl(id,archivo,descripcion){
+function uploadExtraUrl(id,archivo,descripcion,idUsuario){
     return `${BaseURL}:8084/api/objects/addextra/imagen?idobjeto=${id}&archivo=${archivo}&descripcion=${descripcion}&idusuario=${idUsuario}`;
 }
 
@@ -48,14 +48,14 @@ function getHotspots(id, nombreEscena){
     return `${BaseURL}:8084/api/objects/gethotspots?idobjeto=${id}&nombre_escena=${nombreEscena}`
 }
 
-function deleteHotspot(id, nombreEscena,nombreHotspot){
+function deleteHotspot(id, nombreEscena,nombreHotspot,idUsuario){
     return `${BaseURL}:8084/api/objects/deletehotspot?idobjeto=${id}&nombre_escena=${nombreEscena}&nombreHotspot=${nombreHotspot}&idusuario=${idUsuario}`
 }
-function addExtraPdf(id,nombre_doc,titulo, descripcion){
+function addExtraPdf(id,nombre_doc,titulo, descripcion,idUsuario){
     return `${BaseURL}:8084/api/objects/addextra/pdf?idobjeto=${id}&archivo=${nombre_doc}&titulo=${titulo}&descripcion=${descripcion}&idusuario=${idUsuario}`;
 }
 
-function addLinkYoutube(id,nombreArchivo, link, titulo, descripcion){
+function addLinkYoutube(id,nombreArchivo, link, titulo, descripcion,idUsuario){
     return `${BaseURL}:8084/api/objects/addextra/link?idobjeto=${id}&nombre=${nombreArchivo}&link=${link}&titulo=${titulo}&descripcion=${descripcion}&idusuario=${idUsuario}`;
 }
 function getPDF(id,path){

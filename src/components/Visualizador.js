@@ -74,6 +74,7 @@ export function Visualizador({id, extras,edit}) {
     const [loadScenes, setLoadScenes] = useState([true,true,true]);
 
 
+
     const extraContainerRef=useRef();
     const extraInViewRef = useRef();
     const tridiRef = useRef(null);
@@ -87,6 +88,7 @@ export function Visualizador({id, extras,edit}) {
     let zooom=1;
 
     let token = localStorage.getItem("token");
+    let idUsuario = localStorage.getItem("idUser");
 
     
     useEffect(() => {
@@ -308,13 +310,10 @@ export function Visualizador({id, extras,edit}) {
                     tridiRef.current.toggleMoving(false)
                 }
             }
-
-
         }
 
     }
     const handleWheel = (e) => {
-
             e.deltaY > 0 ? handleZoomOut() : handleZoomIn();
     }
 
@@ -326,12 +325,9 @@ export function Visualizador({id, extras,edit}) {
 
     useEffect(() => {
         async function fetchData() {
-            console.log(currentFrameIndex)
             const myDiv = tridiContainerRef.current;
-            //console.log( (activeEscena))
             let activeTridi = Array.from(myDiv.querySelectorAll('.visible .info-value '))[parseInt(activeEscena)];
 
-            console.log(Array.from(myDiv.querySelectorAll('.visible .info-value ')))
             if(activeTridi !== undefined) {
                 let actualFrame = parseInt(activeTridi.innerHTML);
                 let previousFrame = currentFrameIndex;
@@ -374,7 +370,7 @@ export function Visualizador({id, extras,edit}) {
     }, [addHotspotMode,isMobile]);
 
     const postNewHotspots = (id, nombreEscena,arrayHotspots) => {
-        return axios.post(postAddHotspot(id,nombreEscena),arrayHotspots,{headers: {
+        return axios.post(postAddHotspot(id,nombreEscena,idUsuario),arrayHotspots,{headers: {
                 'Authorization': `${token}`
             }});
     }
@@ -430,11 +426,11 @@ export function Visualizador({id, extras,edit}) {
             let hotspotsDeleteCerradas = searchHotspot("0");
 
 
-            axios.post(deleteHotspot(id,"puertas_abiertas",nameHotspot),hotspotsDeleteAbiertas,{headers: {
+            axios.post(deleteHotspot(id,"puertas_abiertas",nameHotspot,idUsuario),hotspotsDeleteAbiertas,{headers: {
                     'Authorization': `${token}`
                 }})
                 .then((response)=>{
-                    axios.post(deleteHotspot(id,"puertas_cerradas",nameHotspot),hotspotsDeleteCerradas,{headers: {
+                    axios.post(deleteHotspot(id,"puertas_cerradas",nameHotspot,idUsuario),hotspotsDeleteCerradas,{headers: {
                             'Authorization': `${token}`
                         }})
                         .then(response =>{
@@ -468,7 +464,7 @@ export function Visualizador({id, extras,edit}) {
         }else{
                 let arrayHotspot;
                 arrayHotspot = searchHotspot(activeEscena);
-                axios.post(deleteHotspot(id,"interior",nameHotspot),arrayHotspot,{headers: {
+                axios.post(deleteHotspot(id,"interior",nameHotspot,idUsuario),arrayHotspot,{headers: {
                         'Authorization': `${token}`
                     }})
                     .then(response =>{
@@ -547,7 +543,7 @@ export function Visualizador({id, extras,edit}) {
             const toastHotspot = toast.loading("Subiendo PDF")
             axios({
                 method: "post",
-                url: addExtraPdf(id,convertToSlug(file.name),titulo, titulo),
+                url: addExtraPdf(id,convertToSlug(file.name),titulo, titulo,idUsuario),
                 data: bodyFormData,
                 headers: { "Content-Type": "multipart/form-data",'Authorization': token},
             })
@@ -570,7 +566,7 @@ export function Visualizador({id, extras,edit}) {
         }
         else if(type==="video_youtube"){
             console.log(linkYoutube)
-            axios.post(addLinkYoutube(id, 'test', linkYoutube),{},{headers: {
+            axios.post(addLinkYoutube(id, 'test', linkYoutube,idUsuario),{},{headers: {
                     'Authorization': `${token}`
                 }})
                 .then(res => {
@@ -1035,7 +1031,7 @@ export function Visualizador({id, extras,edit}) {
                 let data = [];
                 data.push(newPin)
                 const newHotspots360 = toast.loading("Creando hotspot");
-                axios.post(postAddHotspot(id, "interior"), data,{headers:{'Authorization': `${token}`}}).then(r  =>{
+                axios.post(postAddHotspot(id, "interior",idUsuario), data,{headers:{'Authorization': `${token}`}}).then(r  =>{
                     if (r.status === 200){
                         toast.update(newHotspots360, { render:`Hotspot  ${nameHotspot} creado`, type: "success", isLoading: false, autoClose: 2000,draggable: true});
                         setUpdateObjectData(true);
@@ -1075,7 +1071,7 @@ export function Visualizador({id, extras,edit}) {
                 data.push(newPin)
                 const newHotspots360 = toast.loading("Creando hotspot");
 
-                axios.post(postAddHotspot(id, "interior"), data,{headers:{'Authorization': `${token}`}}).then(r  =>{
+                axios.post(postAddHotspot(id, "interior",idUsuario), data,{headers:{'Authorization': `${token}`}}).then(r  =>{
                     if (r.status === 200){
                         toast.update(newHotspots360, { render:`Hotspot  ${nameHotspot} creado`, type: "success", isLoading: false, autoClose: 2000,draggable: true});
                         setUpdateObjectData(true);
@@ -1151,7 +1147,7 @@ export function Visualizador({id, extras,edit}) {
         Object.keys(hotspotsMap).forEach(key => {
             let hotspotsImagen = structuredClone(hotspotsMap[key])
             hotspotsEliminar=hotspotsEliminar.concat(hotspotsImagen.filter(hotspot => hotspot.idExtra === extraId))
-            console.log(hotspotsEliminar)
+
         });
         let nombresHotspots = [...new Set(hotspotsEliminar.map(x=> x.nombreHotspot))];
         if(nombresHotspots.length>0){
