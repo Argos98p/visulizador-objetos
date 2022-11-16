@@ -25,6 +25,7 @@ const  ReelImages = forwardRef(({id,extrasImages, isEditMode,searchHotspots},ref
   //onst counter = useRef(0);
   let dragging = false;
   let token = localStorage.getItem("token");
+  console.log(token);
   let navigate  = useNavigate()
 
 

@@ -323,10 +323,15 @@ export function Visualizador({id, extras,edit}) {
         setPins(prepararPins(hotspotsMap[escena]));
     },[hotspotsMap,height,width]);
 
+
     useEffect(() => {
         async function fetchData() {
+            console.log(currentFrameIndex)
             const myDiv = tridiContainerRef.current;
-            let activeTridi = Array.from(myDiv.querySelectorAll('.visible .info-value '))[0];
+            //console.log( (activeEscena))
+            let activeTridi = Array.from(myDiv.querySelectorAll('.visible .info-value '))[parseInt(activeEscena)];
+
+            console.log(Array.from(myDiv.querySelectorAll('.visible .info-value ')))
             if(activeTridi !== undefined) {
                 let actualFrame = parseInt(activeTridi.innerHTML);
                 let previousFrame = currentFrameIndex;
@@ -346,6 +351,9 @@ export function Visualizador({id, extras,edit}) {
             tridiRef.current.toggleAutoplay(isAutoPlayRunning)
         }
     }, [activeEscena,isMobile,isAutoPlayRunning]);
+
+
+
 
     const frameChangeHandler = (currentFrameIndex) => {
         setCurrentFrameIndex(currentFrameIndex);
@@ -698,7 +706,7 @@ export function Visualizador({id, extras,edit}) {
                 else{
 
                     escenasSrcImages.push(
-                            <Tridi ref={  show  ? tridiRef :null}
+                            <Tridi ref={  show  && loadStatus ? tridiRef :null}
                                   key={index}
                                   count={imagesSrcOneScene.length}
                                   className={`${ addHotspotMode===true ? " addHotspotCursor " : ""} ${show && loadStatus === true ? "visible" : "oculto"}`}

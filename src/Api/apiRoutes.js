@@ -1,6 +1,6 @@
 let BaseURL="http://173.255.114.112";
 
-let idUsuario = "11";
+let idUsuario = "27";
 
 /*
 function statusEsceneUrl(id,escenaNombre){
@@ -66,7 +66,11 @@ function viewResource(id,path){
     return `${BaseURL}:8085/api/images/viewresource/pdf?path=${path}`
 }
 
+function verificaToken(idUser){
+    return `${BaseURL}:8084/api/objects/verificacion?idusuario=${idUser}`;
+}
+
 function loginUser(){
     return `${BaseURL}:8086/api/auth/signin`
 }
-export {viewResource,loginUser,addLinkYoutube,img360CompleteUrl,getPDF,addExtraPdf,deleteHotspot,uploadExtraUrl,infoObjectUrl,getHotspots,completeImageUrl,getExtrasUrl,ImagePath,postAddHotspot,deleteExtra}
+export {verificaToken,viewResource,loginUser,addLinkYoutube,img360CompleteUrl,getPDF,addExtraPdf,deleteHotspot,uploadExtraUrl,infoObjectUrl,getHotspots,completeImageUrl,getExtrasUrl,ImagePath,postAddHotspot,deleteExtra}
