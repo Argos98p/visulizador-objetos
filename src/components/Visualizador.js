@@ -566,7 +566,7 @@ export function Visualizador({id, extras,edit}) {
         }
         else if(type==="video_youtube"){
             console.log(linkYoutube)
-            axios.post(addLinkYoutube(id, 'test', linkYoutube,idUsuario),{},{headers: {
+            axios.post(addLinkYoutube(id, 'test', linkYoutube,"","",idUsuario),{},{headers: {
                     'Authorization': `${token}`
                 }})
                 .then(res => {
