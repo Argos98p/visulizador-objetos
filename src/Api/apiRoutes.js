@@ -38,7 +38,7 @@ function deleteExtra(idObjeto,idExtra,idUsuario){
 }
 
 function uploadExtraUrl(id,archivo,descripcion,idUsuario){
-    return `${BaseURL}:8084/api/objects/addextra/imagen?idobjeto=${id}&archivo=${archivo}&descripcion=${descripcion}&idusuario=${idUsuario}`;
+    return `${BaseURL}:8084/api/objects/addextra/imagen?idobjeto=${id}&archivo=${archivo}&descripcion=${descripcion}&tipo=extra&idusuario=${idUsuario}`;
 }
 
 function img360CompleteUrl(path,id){
