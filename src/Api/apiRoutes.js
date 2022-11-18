@@ -52,11 +52,11 @@ function deleteHotspot(id, nombreEscena,nombreHotspot,idUsuario){
     return `${BaseURL}:8084/api/objects/deletehotspot?idobjeto=${id}&nombre_escena=${nombreEscena}&nombreHotspot=${nombreHotspot}&idusuario=${idUsuario}`
 }
 function addExtraPdf(id,nombre_doc,titulo, descripcion,idUsuario){
-    return `${BaseURL}:8084/api/objects/addextra/pdf?idobjeto=${id}&archivo=${nombre_doc}&titulo=${titulo}&descripcion=${descripcion}&idusuario=${idUsuario}`;
+    return `${BaseURL}:8084/api/objects/addextra/pdf?idobjeto=${id}&archivo=${nombre_doc}&titulo=${titulo}&descripcion=${descripcion}&tipo=hotspot&idusuario=${idUsuario}`;
 }
 
-function addLinkYoutube(id,nombreArchivo, link, titulo, descripcion,idUsuario){
-    return `${BaseURL}:8084/api/objects/addextra/link?idobjeto=${id}&nombre=${nombreArchivo}&link=${link}&titulo=${titulo}&descripcion=${descripcion}&idusuario=${idUsuario}`;
+function addLinkYoutube(id,nombreArchivo, link, titulo,descripcion,idUsuario){
+    return `${BaseURL}:8084/api/objects/addextra/link?idobjeto=${id}&nombre=${nombreArchivo}&tipo=hotspot&link=${link}&titulo=${titulo}&descripcion=${descripcion}&idusuario=${idUsuario}`;
 }
 function getPDF(id,path){
     return `${BaseURL}:8085/api/images/getresource?path=${path}`

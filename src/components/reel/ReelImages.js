@@ -489,17 +489,25 @@ function getBreakpoints (){
 
   function onClickDeleteExtra(idExtra){
 
+    const idToastEliminar = toast.loading("Eliminando extra...")
+
     axios.post(deleteExtra(id,idExtra,idUsuario),{},{headers: {
         'Authorization': `${token}`
       }})
         .then((response)=>{
           if(response.status === 200){
+            toast.update(idToastEliminar, { render: "Extra eliminado", type: "success", isLoading: false, autoClose: 1000,draggable: true});
             getExtras();
             searchHotspots(idExtra);
-          }else{
+          }else if(response.status === 401){
+            toast.update(idToastEliminar, { render: "Error usuario no autorizado", type: "error", isLoading: false, autoClose: 1000,draggable: true});            console.log(response);
+          }
+          else{
             console.log(response);
           }
         }).catch(error => {
+      toast.update(idToastEliminar, { render: error.response, type: "error", isLoading: false, autoClose: 1000,draggable: true});
+
       if(error.response){
         console.log(error.response);
       }else if(error.request){
