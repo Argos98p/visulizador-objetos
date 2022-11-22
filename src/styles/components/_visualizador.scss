@@ -72,6 +72,11 @@
 }
 
 
+.no-visible{
+    display: none;
+    transition: opacity 0.2s ease-out;
+    opacity: 0;
+}
 .toogle-edit-mode{
   position: absolute;
   top: 1.5em;
