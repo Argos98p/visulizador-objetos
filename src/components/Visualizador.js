@@ -326,7 +326,7 @@ export function Visualizador({id, extras,edit}) {
     useEffect(() => {
         async function fetchData() {
             const myDiv = tridiContainerRef.current;
-            let activeTridi = Array.from(myDiv.querySelectorAll('.visible .info-value '))[parseInt(activeEscena)];
+            let activeTridi = Array.from(myDiv.querySelectorAll('.visible .info-value '))[0];
 
             if(activeTridi !== undefined) {
                 let actualFrame = parseInt(activeTridi.innerHTML);
@@ -643,9 +643,8 @@ export function Visualizador({id, extras,edit}) {
                     if(hotspotsMap!==undefined || hotspotsMap["2"]!== undefined ||  hotspotsMap["2"])
                     {
 
-
                         escenasSrcImages.push(
-                            <div className={show && loadStatus ? "arriba" : "abajo"} key={index}>
+                            <div className={show && loadStatus ? "" : "abajo"} key={index}>
                                 <Pannellum
                                     doubleClickZoom={false}
                                     ref={panellumRef}
@@ -751,19 +750,21 @@ export function Visualizador({id, extras,edit}) {
             return (
                 <>
                     <div className={`tridi-container`}    onWheel={handleWheel} >
-                        <div className={ `sweet-loading ${ loadStatus===false ? "visible" : "oculto"}`} >
-                            <DotLoader color="#0087D1"
-
-                                       size={70}/>
+                        <div className={`loader-container ${ loadStatus===false ? "arriba" : "oculto"}`} >
+                            <div className={ `sweet-loading`} >
+                                <DotLoader color="#0087D1"
+                                           size={70}/>
+                            </div>
                         </div>
-                        {<div className={`imagesContainer ${ loadStatus===true ? "visible" : "oculto"}`}
+
+
+                        {<div className={`imagesContainer ${ loadStatus===true ? "" : "abajo"}`}
                               onClick={clickOnTridi}
                               onDoubleClick={doubleClickOnTridi}
                               ref={containerRef}>
 
                             {escenasSrcImages}
-                        </div>
-                        }
+                        </div>}
 
                     </div>
                 </>
@@ -1048,8 +1049,6 @@ export function Visualizador({id, extras,edit}) {
             }
         }
     }
-
-
     const doubleClickOnTridi = (e) =>{
         if(addHotspotMode  && activeEscena!=="2"){
             setAwaitAddHotspot(true);
@@ -1182,7 +1181,7 @@ export function Visualizador({id, extras,edit}) {
                             extrasImages={extras}
                             isEditMode={isEditMode} searchHotspots={searchHotspots}></ReelImages>
             </div>
-            <div  key={"tridi-container"} ref={tridiContainerRef}  className="tridi-container">
+            <div  key={"tridi-container-div"} ref={tridiContainerRef}  className="tridi-container-div">
 
                 {
                     loadAllTridiComponents()

@@ -1,9 +1,15 @@
+.tridi-container-div{
+  height: 100vh;
+  width: 100vw;
+}
 .tridi-container {
   height: 100%;
   width: 100%;
+  /*
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: center;*/
+
   .imagesContainer{
     .addHotspotCursor{
       cursor:url(http://www.rw-designer.com/cursor-extern.php?id=24819)22 14.5, pointer !important;
@@ -50,6 +56,19 @@
   .abajo{
     z-index: 8;
   }
+  .oculto{
+    display: none !important;
+  }
+  .loader-container{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #111111;
+  }
+
+
 }
 
 
