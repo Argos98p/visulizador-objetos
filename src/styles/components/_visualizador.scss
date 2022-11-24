@@ -2,6 +2,23 @@
   height: 100vh;
   width: 100vw;
 }
+
+.efecto-zoom{
+  //width: 720px !important;
+  //height: 720px !important;
+  overflow: hidden ;
+  text-align: center;
+  transition-duration: 600ms;
+  transition-timing-function: ease;
+  transform: scale(3);
+}
+._3zqPm{
+  transition-duration: 600ms;
+  transition-timing-function: ease;
+}
+
+
+
 .tridi-container {
   height: 100%;
   width: 100%;
