@@ -1,5 +1,5 @@
 import Popup from 'reactjs-popup';
-import React, { useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import 'reactjs-popup/dist/index.css';
 import '../modal.css';
 
@@ -24,7 +24,8 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
     const [acceptedFiles,setAcceptedFiles] = useState([])
     const [linkYoutube, setLinkYoutube] = useState("");
     const [extrasOnlyImages, setExtrasOnlyImages]= useState(extras.filter(extra => extra.hasOwnProperty("imagen")))
-    const [ inputTituloHotspotValue, setInputTituloHotspotValue ] = useState("sin-nombre")
+    const [ inputTituloHotspotValue, setInputTituloHotspotValue ] = useState("")
+    const nombreInputRef = useRef();
 
 
     function handleClickOnImageModal(event, item){
@@ -46,7 +47,6 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
 
         if(extraType==="video_youtube"){
             handleCreateHotpotsExtra(aux ,'video_youtube',null,linkYoutube);
-
         }else if(extraType ==="vincular_extra"){
             handleCreateHotpotsExtra(aux,"vincular_extra",null,null,imageSelected);
         }else if(extraType ==="pdf"){
@@ -60,9 +60,15 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
         setLinkYoutube(linkYoutube);
     }
 
+    useEffect(() => {
+        setInputTituloHotspotValue("");
+    }, [extraType]);
+
+
     const loadPopupContent=()=>{
 
 
+        console.log("render")
         if(extraType==="video_youtube"){
             return <AddYoutubeVideo onHandleInputYoutube={onHandleInputYoutube} addPdfVis={addPdfVis}></AddYoutubeVideo>
         }
@@ -73,7 +79,7 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
                         {
                             extrasOnlyImages.map((item, index) => (
                                 <div className='imagen-modal-container ' key={index}>
-                                    <figure onClick={(event) => handleClickOnImageModal(event,item)}>
+                                    <figure onClick={(event) => {handleClickOnImageModal(event,item);setInputTituloHotspotValue(item.descripcion)}}>
                                         <img className={`imagen-modal  ${
                                             item===imageSelected
                                                 ? "image-modal-selected" : ""
@@ -113,7 +119,9 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
             }
             return (
                 <div >
-                    <Dropzone onDrop={acceptedFiles => setAcceptedFiles(acceptedFiles)} >
+                    <Dropzone onDrop={acceptedFiles => {setAcceptedFiles(acceptedFiles);
+                        setInputTituloHotspotValue(acceptedFiles[0].name.replace(".pdf",""));
+                        console.log(acceptedFiles)}} >
 
                         {({getRootProps, getInputProps}) => (
                             <section>
@@ -143,11 +151,12 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
         }
     }
 
+
+
+
+
     const onChangeInputTitulo = (e)=>{
-
-
             setInputTituloHotspotValue(e.target.value);
-
 
     }
 
@@ -156,7 +165,7 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
             return null;
         }
         return (
-                <input type="text"  autoComplete="false" onChange={(e)=>onChangeInputTitulo(e)} placeholder={"Ingrese un titulo o descripcion"} name="input-titulo"/>
+                <input type="text" ref={nombreInputRef} autoComplete="false" value={inputTituloHotspotValue} onChange={(e)=>onChangeInputTitulo(e)} placeholder={"Ingrese un titulo o descripcion"} name="input-titulo"/>
     );
     }
 

@@ -1,6 +1,13 @@
 import Popup from 'reactjs-popup';
 import React from "react";
-import {FacebookIcon, FacebookMessengerIcon, TelegramIcon, WhatsappIcon} from "react-share";
+import {
+    FacebookIcon,
+    FacebookMessengerIcon, FacebookMessengerShareButton,
+    FacebookShareButton,
+    FacebookShareCount,
+    TelegramIcon, TelegramShareButton,
+    WhatsappIcon, WhatsappShareButton
+} from "react-share";
 import copy from 'copy-to-clipboard';
 import {MdClose} from "react-icons/md";
 import {useNavigate, useParams} from "react-router-dom";
@@ -10,6 +17,7 @@ import {toast} from "react-toastify";
 const PopupCompartir = () =>{
     let {id} = useParams();
     const navigate = useNavigate();
+    const urlToShare = `http://173.255.114.112:3001/visualizador/${id}`;
 
     const onClickCopy= () =>{
         copy(`http://173.255.114.112:3001/visualizador/${id}`);
@@ -31,21 +39,33 @@ const PopupCompartir = () =>{
                 Compartir
             </div>
             <div className="popup-compartir_social-buttons">
+                <WhatsappShareButton url={urlToShare} >
+                    <div className="popup-compartir_button-item">
+                        <WhatsappIcon round={true} size={42} > </WhatsappIcon>
+                        <p>Whatsapp</p>
+                    </div>
+                </WhatsappShareButton>
+
                 <div className="popup-compartir_button-item">
-                    <WhatsappIcon round={true} size={42} ></WhatsappIcon>
-                    <p>Whatsapp</p>
+                    <FacebookMessengerShareButton url={urlToShare}>
+                        <FacebookMessengerIcon round={true} size={42}></FacebookMessengerIcon>
+                        <p>Messenger</p>
+                    </FacebookMessengerShareButton>
+
+                </div>
+
+
+                <div className="popup-compartir_button-item">
+                    <FacebookShareButton url={urlToShare}>
+                        <FacebookIcon round={true} size={42}></FacebookIcon>
+                        <p>Facebook</p>
+                    </FacebookShareButton>
                 </div>
                 <div className="popup-compartir_button-item">
-                    <FacebookMessengerIcon round={true} size={42}></FacebookMessengerIcon>
-                    <p>Messenger</p>
-                </div>
-                <div className="popup-compartir_button-item">
-                    <FacebookIcon round={true} size={42}></FacebookIcon>
-                    <p>Facebook</p>
-                </div>
-                <div className="popup-compartir_button-item">
-                    <TelegramIcon round={true} size={42}></TelegramIcon>
-                    <p>Telegram</p>
+                    <TelegramShareButton url={urlToShare}>
+                        <TelegramIcon round={true} size={42}></TelegramIcon>
+                        <p>Telegram</p>
+                    </TelegramShareButton>
                 </div>
             </div>
 
