@@ -18,20 +18,13 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
   const [images, setImages] = useState([]); //for upload with 
   const [imagesListSrc, setImagesListSrc]= useState([]);
   const [currentImage, setCurrentImage] = useState(0);
-  const { height, width } = useWindowDimensions();
-  const [init, setInit] = useState(false)
-  const [ breakpointsReel, setBreakpointsReel ] = useState([])
-  //const [loading, setLoading] = useState(true);
-  //onst counter = useRef(0);
-  let dragging = false;
+
+
   let token = localStorage.getItem("token");
   let idUsuario = localStorage.getItem("idUser");
 
   let navigate  = useNavigate()
 
-  useEffect(() => {
-    setInit(true);
-  }, []);
 
   useImperativeHandle(ref, () => ({
     onExtra(extraId) {
@@ -60,6 +53,11 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
     setCurrentImage(index);
     navigate('extra');
     //setIsViewerOpen(true);
+    /*
+    let imageSrcToView=document.getElementsByClassName("styles-module_image__2hdkJ");
+    console.log(imageSrcToView)
+    imageSrcToView.classList.toggle("show");*/
+
   }, [navigate]);
 
   const getExtras = async() => {
@@ -221,7 +219,6 @@ const imagesInArray=()=>{
       </>));
 
   return aux}
-
   const  ImagesReel=()=>{
     return (<>
     <div className={"my-reel"}>
@@ -333,17 +330,32 @@ const imagesInArray=()=>{
         }
         <Outlet></Outlet>
         <Routes>
-          <Route path="/extra" element={<ImageViewer
+          <Route path="/extra" element={
+            <>
+              {/*
+                  let imageSrcToView = document.getElementsByClassName("styles-module_image__2hdkJ");
+                  console.log(imageSrcToView)
+                  imageSrcToView.classList.toggle("show");*/
+              }
+            <ImageViewer
               src={ imagesListSrc.map((item,index)=>item[0]) }
               currentIndex={ currentImage }
               disableScroll={ false }
               closeOnClickOutside={ true }
               onClose={ ()=>{navigate(-1);
-                currentElement.classList.remove("efecto-zoom") }}
+                let myTridi=document.getElementsByClassName("_lqEjs visible")
+                let imagenActual=null;
+                if(myTridi.length>0){
+                  imagenActual=myTridi[0].getElementsByClassName("_3zqPm")[0];
+                  imagenActual.classList.remove("efecto-zoom");
+                }}}
               backgroundStyle={{
                 backgroundColor: "rgba(0,0,0,0.9)"
               }}
           />
+
+            </>
+
           }/>
           <Route path="/subirextra" element={
             <Popup

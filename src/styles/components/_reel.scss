@@ -1,5 +1,32 @@
 .reel_container {
   max-height: 85%;
+
+
+  .react-simple-image-viewer__modal-content{
+    animation-timing-function:ease-in-out !important;
+    animation-duration: 300ms !important;
+    //transition-duration: 300ms;
+    //transition-timing-function: ease-in-out;
+  }
+  .show {
+    opacity: 1;
+  }
+
+
+  .viewer-animation{
+    opacity: 1;
+  }
+  .styles-module_image__2hdkJ{
+    opacity: 1;
+    transition: opacity 0.6s linear;
+    /*
+    animation-timing-function:ease-in-out !important; ;
+    animation-duration: 300ms !important;
+    transition-duration: 300ms !important;
+    transition-timing-function: ease-in-out !important;*/
+  }
+
+
   .styles-module_wrapper__1I_qj{
     z-index: 1000;
   }
@@ -71,50 +98,6 @@
 *{
   outline: none;
 }
-
-
-
-
-
-
-
-
-   /*
-   .slick-arrow .slick-prev{
-     z-index: 1000;
-
-   }
-   .slick-next {
-     right: 25px;
-   }*/
-
-
-/*
-  .reel_image-extra-container{
-    max-height: 100%;
-    height: 100%;
-    max-width: 100%;
-    overflow: hidden;
-
-
-    .reel_div-img{
-      height: 100% !important;
-      max-height: 100% !important;
-
-    }
-    .btn-eliminar-extra{
-      top: 0;
-      position: absolute;
-      border: none;
-      border-radius: 0.2em;
-      color: red;
-      width: 2em;
-      height: 2em;
-      /*
-
-      right: 0;
-      top: 0;
-    }*/
 
 
 

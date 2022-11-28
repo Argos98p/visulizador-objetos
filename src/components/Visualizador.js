@@ -202,16 +202,14 @@ export function Visualizador({id, extras,edit}) {
         return(setLoadStatus(false))
     }, []);*/
 
-
+/*
     useEffect(() => {
-
         let myTridi=document.getElementsByClassName("_lqEjs visible")
         if(myTridi.length>0){
             setCurrentImage(myTridi[0].getElementsByClassName("_3zqPm")[0]);
         }
 
-
-    }, [currentFrameIndex]);
+    }, [currentFrameIndex]);*/
 
 
     const prepararPins = (fetchedPinsObject) => {
@@ -267,12 +265,16 @@ export function Visualizador({id, extras,edit}) {
     );
     const pinClickHandler = async (pin) => {
 
-        if(currentImage != undefined || currentImage!= null){
-            currentImage.classList.toggle("efecto-zoom")
-            await sleep(400);
+        if(currentImage !== undefined){
+            let myTridi=document.getElementsByClassName("_lqEjs visible")
+            let imagenActual=null;
+            if(myTridi.length>0){
+                imagenActual=myTridi[0].getElementsByClassName("_3zqPm")[0];
+                imagenActual.classList.add("efecto-zoom")
+            }
+
+            await sleep(270);
         }
-
-
 
                 let extraInHotspot = searchExtra(pin.idExtra);
 
@@ -292,8 +294,8 @@ export function Visualizador({id, extras,edit}) {
                     setExtraPdfOrVideo(extraInHotspot);
                     navigate("extrapdf");
                 }
-
     };
+
     const searchExtra=useCallback(
         (extraId) => {
             return extrasList.find(x => x.idextra === extraId);
@@ -618,7 +620,7 @@ export function Visualizador({id, extras,edit}) {
            // console.log('entra qui')
             setLoadStatus(true)
             let myTridi=document.getElementsByClassName("_lqEjs visible")
-            console.log(myTridi)
+
 
 
             if(myTridi.length>0){
@@ -1161,6 +1163,16 @@ export function Visualizador({id, extras,edit}) {
         </div>
     }
 
+    const returnRoute=()=>{
+        navigate(-1);
+        let myTridi=document.getElementsByClassName("_lqEjs visible")
+        let imagenActual=null;
+        if(myTridi.length>0){
+            imagenActual=myTridi[0].getElementsByClassName("_3zqPm")[0];
+            imagenActual.classList.remove("efecto-zoom");
+        }
+    }
+
     const searchHotspots=(extraId)=>{
         let hotspotsEliminar=[]
         Object.keys(hotspotsMap).forEach(key => {
@@ -1229,16 +1241,18 @@ export function Visualizador({id, extras,edit}) {
                 <Route path="/agregarHotspot" element = {<PopupNewHotspot id={id} extras={extras} addPdfVis={addPdfVis} handleCreateHotpotsExtra={handleCreateHotpotsExtra}
                                                                           listaHotspots={hotspotsMap[activeEscena]} onClickDeleteHotspot={handleDeleteHotspot}
                 ></PopupNewHotspot>}/>
-                <Route path="/extravideo" element={ <ModalVideo channel='youtube' autoplay isOpen={true} videoId={youtube_parser(extraPdfOrVideo.enlace)} onClose={() => navigate(-1)} />
+                <Route path="/extravideo" element={ <ModalVideo channel='youtube' autoplay isOpen={true} videoId={youtube_parser(extraPdfOrVideo.enlace)} onClose={() => {
+
+                    returnRoute();
+                }} />
                 }></Route>
                 <Route path="/extraPdf" element={<div className={"modal-pdf-container"} >
-                    <Popup open={true} className={"pdf-modal"} onClose={()=> navigate(-1)} position="right center">
+                    <Popup open={true} className={`${isMobile ? "pdf-modal-celular" :"pdf-modal"}`}  onClose={()=> returnRoute()} position="right center">
                         <div className={"container-iframe-modal"}>
                             <iframe id="iframepdf" src={viewResource(id,extraPdfOrVideo.path)}  title="myFrame"></iframe>
-                            <button className={"button-option-pdf-modal"} onClick={()=>navigate(-1)}>Cerrar</button>
+                            <button className={"button-option-pdf-modal"} onClick={()=>{returnRoute()}}>Cerrar</button>
                         </div>
                     </Popup>
-
                 </div>
 
                 }></Route>
