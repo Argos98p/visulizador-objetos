@@ -1,7 +1,5 @@
 .reel_container {
   max-height: 85%;
-
-
   .react-simple-image-viewer__modal-content{
     animation-timing-function:ease-in-out !important;
     animation-duration: 300ms !important;
@@ -11,7 +9,6 @@
   .show {
     opacity: 1;
   }
-
 
   .viewer-animation{
     opacity: 1;
@@ -25,8 +22,6 @@
     transition-duration: 300ms !important;
     transition-timing-function: ease-in-out !important;*/
   }
-
-
   .styles-module_wrapper__1I_qj{
     z-index: 1000;
   }
@@ -39,11 +34,9 @@
       flex-direction: row;
       height: 100%;
       position: relative;
-
       .reel_div-img-container{
         height: 100%;
         position: relative;
-
         .reel_div-img{
           height: 100%;
           img{

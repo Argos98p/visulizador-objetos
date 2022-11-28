@@ -1002,16 +1002,29 @@ export function Visualizador({id, extras,edit}) {
         }
 
     }
+
+
+
     const calculaUbicacionHotspot=(e)=>{
-        let viewerWidth = containerRef.current.clientWidth;
-        let viewerHeight = containerRef.current.clientHeight;
+
+        let element =  document.getElementsByClassName("_lqEjs visible")[0].firstChild;
+        let viewerWidth = element.clientWidth;
+        let viewerHeight = element.clientHeight;
+        let clientX = e.clientX;
+        let clientY = e.clientY;
+        let viewerOffsetLeft = element.getBoundingClientRect().left;
+        let viewerOffsetTop = element.getBoundingClientRect().top;
+        let x = ((clientX - viewerOffsetLeft) / viewerWidth).toFixed(6) ;
+        let y = ((clientY - viewerOffsetTop) / viewerHeight).toFixed(6) ;
+
+        /*
         let clientX = e.clientX - (viewerWidth - viewerWidth) / 2;
         let clientY = e.clientY - (viewerHeight - viewerHeight) / 2;
         let viewerOffsetLeft = containerRef.current.getBoundingClientRect().left;
         let viewerOffsetTop = containerRef.current.getBoundingClientRect().top;
         let x = ((clientX - viewerOffsetLeft) / viewerWidth).toFixed(6) ;
         let y = ((clientY - viewerOffsetTop) / viewerHeight).toFixed(6) ;
-
+*/
         if(currentFrameIndex === 0){
             return {
                 x: x,
@@ -1030,6 +1043,7 @@ export function Visualizador({id, extras,edit}) {
 
     }
     const clickOnTridi = (e) => {
+
 
         if(addHotspotMode && isMobile && interior360===true && activeEscena!=="2"){
             setAwaitAddHotspot(true);
