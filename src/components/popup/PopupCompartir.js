@@ -31,14 +31,21 @@ const PopupCompartir = () =>{
         modal
         nested >
         <div className="popup-compartir-relative">
+
             <button className="popup-compartir-close" onClick={()=>navigate(-1)}>
                 <MdClose/>
             </button>
+
+            <a href="https://web.whatsapp.com/send?text=www.google.com" data-action="share/whatsapp/share">Share via Whatsapp web</a>
+            <h1>--------</h1>
+            <a href="whatsapp://send?text=www.google.com" data-action="share/whatsapp/share">Share via Whatsapp</a>
 
             <div className="popup-compartir-title">
                 Compartir
             </div>
             <div className="popup-compartir_social-buttons">
+
+
                 <WhatsappShareButton url={urlToShare} >
                     <div className="popup-compartir_button-item">
                         <WhatsappIcon round={true} size={42} > </WhatsappIcon>
