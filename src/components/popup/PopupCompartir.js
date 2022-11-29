@@ -36,9 +36,6 @@ const PopupCompartir = () =>{
                 <MdClose/>
             </button>
 
-            <a href="https://web.whatsapp.com/send?text=www.google.com" data-action="share/whatsapp/share">Share via Whatsapp web</a>
-            <h1>--------</h1>
-            <a href="whatsapp://send?text=www.google.com" data-action="share/whatsapp/share">Share via Whatsapp</a>
 
             <div className="popup-compartir-title">
                 Compartir

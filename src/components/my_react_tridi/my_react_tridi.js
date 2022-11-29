@@ -573,6 +573,8 @@ var Tridi = forwardRef(function (_ref, ref) {
         onPrevMove();
         return inverse ? nextFrame() : prevFrame();
     }, [inverse, nextFrame, onPrevMove, prevFrame]);
+
+
     var rotateViewerImage = useCallback(function (e) {
         var interval = e.touches ? touchDragInterval : dragInterval;
         var eventX = e.touches ? Math.round(e.touches[0].clientX) : e.clientX;
