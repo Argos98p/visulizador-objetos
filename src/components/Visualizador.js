@@ -1150,7 +1150,6 @@ export function Visualizador({id, extras,edit}) {
         else return "";
 
     }
-
     const botonAutoGiro= useMemo(
     ()=>{
         return <div className={`button-escena_navigation-item`}  onClick={()=>{setIsAutoPlayRunning(!isAutoPlayRunning);
@@ -1176,7 +1175,6 @@ export function Visualizador({id, extras,edit}) {
             <label>MOTOR'S</label>
         </div>
     }
-
     const returnRoute=()=>{
         navigate(-1);
         let myTridi=document.getElementsByClassName("_lqEjs visible")
@@ -1186,7 +1184,6 @@ export function Visualizador({id, extras,edit}) {
             imagenActual.classList.remove("efecto-zoom");
         }
     }
-
     const searchHotspots=(extraId)=>{
         let hotspotsEliminar=[]
         Object.keys(hotspotsMap).forEach(key => {
@@ -1203,9 +1200,7 @@ export function Visualizador({id, extras,edit}) {
     }
     return (
         <>
-
         <div className="visualizador dragging" onContextMenu={(e)=> {e.preventDefault();}}>
-
             {logoCompany()}
             {buttonOpenReel()}
             <ToastContainer />
@@ -1215,7 +1210,6 @@ export function Visualizador({id, extras,edit}) {
                 {botonAgregarHotspot()}
             </div>
             {/*botonModoEdicion()*/}
-
             <div key={"reel"} ref={extraContainerRef} className="visualizador_reel">
                 {buttonCloseReel()}
                 <ReelImages id={id}
@@ -1230,16 +1224,12 @@ export function Visualizador({id, extras,edit}) {
                     loadAllTridiComponents()
                 }
             </div>
-
             {
                 <div className="visualizador_navigation-container" key={"escenas-giro"} >
                     {botonesEscenas}
                     {botonAutoGiro}
                 </div>
-
             }
-
-
             {
                 awaitAddHotspot
                     ?  <div key={"await-hotspot"} className="await-hotspot"><DotLoader color="#0087D1"></DotLoader> </div>
@@ -1256,7 +1246,6 @@ export function Visualizador({id, extras,edit}) {
                                                                           listaHotspots={hotspotsMap[activeEscena]} onClickDeleteHotspot={handleDeleteHotspot}
                 ></PopupNewHotspot>}/>
                 <Route path="/extravideo" element={ <ModalVideo channel='youtube' autoplay isOpen={true} videoId={youtube_parser(extraPdfOrVideo.enlace)} onClose={() => {
-
                     returnRoute();
                 }} />
                 }></Route>
@@ -1268,7 +1257,6 @@ export function Visualizador({id, extras,edit}) {
                         </div>
                     </Popup>
                 </div>
-
                 }></Route>
             </Routes>
         </>

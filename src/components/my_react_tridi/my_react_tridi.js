@@ -594,6 +594,7 @@ var Tridi = forwardRef(function (_ref, ref) {
 
         if (threshold && newMove < oldMove) {
             nextMove();
+            console.log("22")
         } else if (threshold && newMove > oldMove) {
             prevMove();
         }
@@ -752,7 +753,6 @@ var Tridi = forwardRef(function (_ref, ref) {
         if (AnimatedValues.current.isZooming) {
             return;
         }
-
         if (isMoveing && AnimatedValues.current.originOffset) {
             var clientX = e.touches[0].clientX;
             var clientY = e.touches[0].clientY;
@@ -760,19 +760,16 @@ var Tridi = forwardRef(function (_ref, ref) {
             AnimatedValues.current.y.setValue(clientY - AnimatedValues.current.originOffset.y);
             return;
         }
-
         if (touch) {
             rotateViewerImage(e);
         }
     }, [rotateViewerImage, touch, isMoveing]);
     var imageViewerTouchEndHandler = useCallback(function (e) {
         AnimatedValues.current.originOffset = null;
-
         if (touch) {
             stopDragging();
             resetMoveBuffer();
         }
-
         if (!isAutoPlayRunning && resumeAutoplayOnMouseLeave) {
             _toggleAutoplay(true);
         }
@@ -784,11 +781,8 @@ var Tridi = forwardRef(function (_ref, ref) {
             var viewerHeight = _viewerImageRef.current.clientHeight;
             var clientX = (e.clientX - AnimatedValues.current.x._value - (viewerWidth - viewerWidth * AnimatedValues.current.zoom._value) / 2) / AnimatedValues.current.zoom._value;
             var clientY = (e.clientY - AnimatedValues.current.y._value - (viewerHeight - viewerHeight * AnimatedValues.current.zoom._value) / 2) / AnimatedValues.current.zoom._value;
-
             var viewerOffsetLeft = _viewerImageRef.current.getBoundingClientRect().left;
-
             var viewerOffsetTop = _viewerImageRef.current.getBoundingClientRect().top;
-
             var x = ((clientX - viewerOffsetLeft) / viewerWidth).toFixed(6);
             var y = ((clientY - viewerOffsetTop) / viewerHeight).toFixed(6);
             var pin = {

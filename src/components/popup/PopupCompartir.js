@@ -13,12 +13,10 @@ import {MdClose} from "react-icons/md";
 import {useNavigate, useParams} from "react-router-dom";
 import {toast} from "react-toastify";
 
-
 const PopupCompartir = () =>{
     let {id} = useParams();
     const navigate = useNavigate();
     const urlToShare = `http://173.255.114.112:3001/visualizador/${id}`;
-
     const onClickCopy= () =>{
         copy(`http://173.255.114.112:3001/visualizador/${id}`);
         toast.info('Link copiado al portapapeles',{autoClose: 3000,
@@ -31,34 +29,25 @@ const PopupCompartir = () =>{
         modal
         nested >
         <div className="popup-compartir-relative">
-
             <button className="popup-compartir-close" onClick={()=>navigate(-1)}>
                 <MdClose/>
             </button>
-
-
             <div className="popup-compartir-title">
                 Compartir
             </div>
             <div className="popup-compartir_social-buttons">
-
-
                 <WhatsappShareButton url={urlToShare} >
                     <div className="popup-compartir_button-item">
                         <WhatsappIcon round={true} size={42} > </WhatsappIcon>
                         <p>Whatsapp</p>
                     </div>
                 </WhatsappShareButton>
-
                 <div className="popup-compartir_button-item">
                     <FacebookMessengerShareButton url={urlToShare}>
                         <FacebookMessengerIcon round={true} size={42}></FacebookMessengerIcon>
                         <p>Messenger</p>
                     </FacebookMessengerShareButton>
-
                 </div>
-
-
                 <div className="popup-compartir_button-item">
                     <FacebookShareButton url={urlToShare}>
                         <FacebookIcon round={true} size={42}></FacebookIcon>
@@ -81,5 +70,4 @@ const PopupCompartir = () =>{
 
     </Popup>
 }
-
 export default PopupCompartir;

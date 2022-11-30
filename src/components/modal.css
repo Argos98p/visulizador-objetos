@@ -83,6 +83,7 @@
 
   .container-lista-extras{
     display: flex;
+    /*overflow: hidden;*/
     flex-direction: column;
     flex-basis: 50%;
     flex-grow: 0;

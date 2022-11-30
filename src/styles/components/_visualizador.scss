@@ -90,7 +90,7 @@
 
 
 .no-visible{
-    display: none;
+    display: none !important;
     transition: opacity 0.2s ease-out;
     opacity: 0;
 }

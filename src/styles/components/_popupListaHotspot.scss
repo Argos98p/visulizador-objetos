@@ -1,4 +1,12 @@
+@media screen  and (max-height: 425px) {
+  .container-lista-hotspots{
+    max-height: 200px;
+    overflow-y: auto;
+  }
+}
+
 .container-lista-hotspots{
+
   .item-hotspots{
     background-color: $buttons-backgroud-transparent;
     padding: 1em ;
