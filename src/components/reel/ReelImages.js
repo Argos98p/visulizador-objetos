@@ -2,8 +2,11 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import FsLightbox from "fslightbox-react";
 
+
 import React, {forwardRef, useCallback, useEffect, useImperativeHandle, useState} from 'react';
 import useWindowDimensions from '../../hooks/useWindowSize';
+//import Lightbox from 'react-image-lightbox';
+import 'react-image-lightbox/style.css';
 import ImageUploading from 'react-images-uploading';
 import axios from "axios";
 import ImageViewer from 'react-simple-image-viewer';
@@ -14,12 +17,17 @@ import Popup from "reactjs-popup";
 import ImagenComponent from "../imagen/ImagenComponent";
 import {toast, ToastContainer} from "react-toastify";
 import ScrollContainer from "react-indiana-drag-scroll";
+import 'photoswipe/dist/photoswipe.css'
+import Lightbox, { ImagesListType } from 'react-spring-lightbox';
+import { Gallery, Item } from 'react-photoswipe-gallery'
+import {BiFont} from "react-icons/bi";
+import {CloseButton} from "reactstrap";
+import {AiOutlineClose} from "react-icons/ai";
 
 const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,searchHotspots},ref) => {
   const [imageList, setImageList]=useState([])
   const [images, setImages] = useState([]); //for upload with 
   const [imagesListSrc, setImagesListSrc]= useState([]);
-  const [currentImage, setCurrentImage] = useState(0);
 
 
   let token = localStorage.getItem("token");
@@ -30,8 +38,10 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
 
   useImperativeHandle(ref, () => ({
     onExtra(extraId) {
-      setCurrentImage(searchExtraById(extraId));
+
+      setCurrentIndex(searchExtraById(extraId))
       //setIsViewerOpen(true);
+      console.log("entra extra")
       navigate('extra');
     }
   }));
@@ -50,17 +60,6 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
     uploadExtra(imageListUpload[0].file)
     setImages([]);
   };
-
-  const openImageViewer = useCallback((index) => {
-    setCurrentImage(index);
-    navigate('extra');
-    //setIsViewerOpen(true);
-    /*
-    let imageSrcToView=document.getElementsByClassName("styles-module_image__2hdkJ");
-    console.log(imageSrcToView)
-    imageSrcToView.classList.toggle("show");*/
-
-  }, [navigate]);
 
   const getExtras = async() => {
     axios.get(getExtrasUrl(id))
@@ -199,15 +198,39 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
 
   }
 
-const imagesInArray=()=>{
+
+  const [currentImageIndex, setCurrentIndex] = useState(0);
+
+  const gotoPrevious = () => setCurrentIndex(currentImageIndex - 1);
+
+
+  const gotoNext = () =>setCurrentIndex(currentImageIndex + 1);
+
+  const [srcImages, setSrcImages] = useState([]);
+
+  useEffect(() => {
+    let arraySrc=[]
+    imagesListSrc.forEach((item,index)=>{
+      let myObject={
+        src:item[0],
+        loading:'lazy',
+        alt:'test'
+      }
+      arraySrc.push(myObject);
+
+    })
+    setSrcImages(arraySrc)
+  }, [imagesListSrc]);
+
+
+  const imagesInArray=()=>{
   let aux;
   aux =  imagesListSrc.map((src, index) => (
       <>
         <div className='reel_div-img-container' key={src[1]}>
-          <div  className='reel_div-img' onClick={() => openImageViewer(index)}>
+          <div  className='reel_div-img' onClick={() => {  setCurrentIndex(index);navigate("extra")}}>
             <ImagenComponent   key={src[1]+"_imageComponent"} imgURL={src[0]}></ImagenComponent>
           </div>
-
           {
             isEditMode
                 ?<button  className='btn-eliminar-extra' key={src[1]+"btn_eliminar"} onClick={()=>onClickDeleteExtra(src[1])}> <FaTrash/></button>
@@ -263,67 +286,17 @@ const imagesInArray=()=>{
       </ScrollContainer>
     </div>
     </>);
-    /*
-    return <Slider className="reel_image-extra-container"  {...settings}>
-      {
-        (isEditMode) ?
-            <div key={"opok"} className='reel_div-img div-subirExtra cursor-pointer reel_borde-redondo'>
-              <ImageUploading
-                  multiple
-                  value={images}
-                  onChange={onChange}
-                  dataURLKey="data_url"
-              >
-                {({
-                    imageListUpload,
-                    onImageUpload,
-                    onImageRemoveAll,
-                    onImageUpdate,
-                    onImageRemove,
-                    isDragging,
-                    dragProps,
-                  }) => (
 
-                    <div className="upload__image-wrapper">
-
-                      <button className={"btn-addExtra"}
-                              style={isDragging ? { color: 'red' } : undefined}
-                              onClick={onImageUpload}
-                              {...dragProps}
-                      >
-                        <FaPlusCircle color={"#fff"} fontSize={"30px"}></FaPlusCircle>
-                      </button>
-                      &nbsp;
-
-                    </div>
-                )}
-              </ImageUploading>
-            </div>
-            :null
-      }
-
-      {imagesListSrc.map((src, index) => (
-          <>
-            <div className='reel_div-img' key={src[0]} onClick={() => dragging ? null :  openImageViewer(index)}>
-
-            <ImagenComponent key={src[0]}    imgURL={src[0]}></ImagenComponent>
-          </div>
-            {
-              isEditMode
-                  ?<button key={'btn-eliminar'}  className='btn-eliminar-extra' onClick={()=>onClickDeleteExtra(src[1])}> <FaTrash/></button>
-                  :null
-            }
-          </>
-
-
-      ))}
-
-    </Slider>
-
-     */
   }
 
-  const [toogler, setToogler] = useState(true);
+  const closeViewer=()=>{
+    navigate(-1); let myTridi=document.getElementsByClassName("_lqEjs visible")
+    let imagenActual=null;
+    if(myTridi.length>0){
+      imagenActual=myTridi[0].getElementsByClassName("_3zqPm")[0];
+      imagenActual.classList.remove("efecto-zoom");
+    }
+  }
 
   return (
     <>
@@ -332,33 +305,57 @@ const imagesInArray=()=>{
         {
           ImagesReel()
         }
+
+
         <Outlet></Outlet>
         <Routes>
           <Route path="/extra" element={
-
-
             <>
-
               {/*
                   let imageSrcToView = document.getElementsByClassName("styles-module_image__2hdkJ");
                   console.log(imageSrcToView)
                   imageSrcToView.classList.toggle("show");*/
               }
 
-              {
-                /*
-                 <FsLightbox
-                  toggler={toogler}
-                  sources={[
-                    "https://i.imgur.com/fsyrScY.jpg","https://i.imgur.com/fsyrScY.jpg","https://i.imgur.com/fsyrScY.jpg"
-                  ]}
-              />*/
-              }
+              <Lightbox
+                  isOpen={true}
+                  onPrev={gotoPrevious}
+                  onNext={gotoNext}
+                  images={srcImages}
+                  currentIndex={currentImageIndex}
+
+                  /* Add your own UI */
+                  renderHeader={() => ( <AiOutlineClose onClick={()=>closeViewer()} className={"boton-cerrar-viewer"} /> )}
+                  // renderFooter={() => (<CustomFooter />)}
+                  // renderPrevButton={() => (<CustomLeftArrowButton />)}
+                  // renderNextButton={() => (<CustomRightArrowButton />)}
+                  // renderImageOverlay={() => (<ImageOverlayComponent >)}
+
+                  /* Add styling */
+                  // className="cool-class"
+                   style={{ background: "rgba(0, 0, 0, .5)" }}
+
+                  /* Handle closing */
+                   onClose={() => closeViewer()}
+
+                  /* Use single or double click to zoom */
+                  // singleClickToZoom
+
+                  /* react-spring config for open/close animation */
+                  // pageTransitionConfig={{
+                  //   from: { transform: "scale(0.75)", opacity: 0 },
+                  //   enter: { transform: "scale(1)", opacity: 1 },
+                  //   leave: { transform: "scale(0.75)", opacity: 0 },
+                  //   config: { mass: 1, tension: 320, friction: 32 }
+                  // }}
+              />
+
+
+
 
               {
 
-
-                     <ImageViewer
+                /*<ImageViewer
                   src={ imagesListSrc.map((item,index)=>item[0]) }
                   currentIndex={ currentImage }
                   disableScroll={ false }
@@ -374,12 +371,9 @@ const imagesInArray=()=>{
                     backgroundColor: "rgba(0,0,0,0.9)"
                   }}
               />
-
+*/
               }
-
-
             </>
-
           }/>
           <Route path="/subirextra" element={
             <Popup
@@ -389,10 +383,7 @@ const imagesInArray=()=>{
                 modal
                 nested >
               <div className="popup-compartir-relative">
-
-
               </div>
-
             </Popup>
           }/>
         </Routes>

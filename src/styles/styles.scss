@@ -1,4 +1,13 @@
+.boton-cerrar-viewer{
+  position: absolute;
+  top: 20px;
+  right: 10px;
+  width: 50px!important;
+  height: 50px !important;
+  color: white !important ;
+  z-index: 1000;cursor: pointer;
 
+}
 // UI settings
 @import "./base/settings";
 
@@ -14,3 +23,4 @@
 //Screens
 
 * { box-sizing: border-box; }
+
