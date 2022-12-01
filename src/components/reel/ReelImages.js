@@ -1,5 +1,7 @@
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import FsLightbox from "fslightbox-react";
+
 import React, {forwardRef, useCallback, useEffect, useImperativeHandle, useState} from 'react';
 import useWindowDimensions from '../../hooks/useWindowSize';
 import ImageUploading from 'react-images-uploading';
@@ -321,6 +323,8 @@ const imagesInArray=()=>{
      */
   }
 
+  const [toogler, setToogler] = useState(true);
+
   return (
     <>
     <ToastContainer/>
@@ -331,28 +335,48 @@ const imagesInArray=()=>{
         <Outlet></Outlet>
         <Routes>
           <Route path="/extra" element={
+
+
             <>
+
               {/*
                   let imageSrcToView = document.getElementsByClassName("styles-module_image__2hdkJ");
                   console.log(imageSrcToView)
                   imageSrcToView.classList.toggle("show");*/
               }
-            <ImageViewer
-              src={ imagesListSrc.map((item,index)=>item[0]) }
-              currentIndex={ currentImage }
-              disableScroll={ false }
-              closeOnClickOutside={ true }
-              onClose={ ()=>{navigate(-1);
-                let myTridi=document.getElementsByClassName("_lqEjs visible")
-                let imagenActual=null;
-                if(myTridi.length>0){
-                  imagenActual=myTridi[0].getElementsByClassName("_3zqPm")[0];
-                  imagenActual.classList.remove("efecto-zoom");
-                }}}
-              backgroundStyle={{
-                backgroundColor: "rgba(0,0,0,0.9)"
-              }}
-          />
+
+              {
+                /*
+                 <FsLightbox
+                  toggler={toogler}
+                  sources={[
+                    "https://i.imgur.com/fsyrScY.jpg","https://i.imgur.com/fsyrScY.jpg","https://i.imgur.com/fsyrScY.jpg"
+                  ]}
+              />*/
+              }
+
+              {
+
+
+                     <ImageViewer
+                  src={ imagesListSrc.map((item,index)=>item[0]) }
+                  currentIndex={ currentImage }
+                  disableScroll={ false }
+                  closeOnClickOutside={ true }
+                  onClose={ ()=>{navigate(-1);
+                    let myTridi=document.getElementsByClassName("_lqEjs visible")
+                    let imagenActual=null;
+                    if(myTridi.length>0){
+                      imagenActual=myTridi[0].getElementsByClassName("_3zqPm")[0];
+                      imagenActual.classList.remove("efecto-zoom");
+                    }}}
+                  backgroundStyle={{
+                    backgroundColor: "rgba(0,0,0,0.9)"
+                  }}
+              />
+
+              }
+
 
             </>
 

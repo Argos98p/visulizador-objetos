@@ -15,6 +15,7 @@
     "classnames": "^2.3.1",
     "copy-to-clipboard": "^3.3.2",
     "framer-motion": "^6.5.1",
+    "fslightbox-react": "^1.6.2-2",
     "image-hover": "^0.8.0",
     "imagehover.css": "^2.0.0",
     "lottie-react": "^2.3.1",

@@ -960,9 +960,8 @@ export function Visualizador({id, extras,edit}) {
                             }).catch(
                             (e)=>{
 
-                                toast.update(newHotspotToast, { render:`Error creando hotspot`, type: "error", isLoading: false, autoClose: 2000,draggable: true});
-
-                                console.log(e)
+                                toast.update(newHotspotToast, { render:`Error creando hotspot`+e, type: "error", isLoading: false, autoClose: 2000,draggable: true});
+                                setAddHotspotMode(false);
                                 setAwaitAddHotspot(false);
                             }
                         )
@@ -972,10 +971,11 @@ export function Visualizador({id, extras,edit}) {
             ).catch(
                 (e)=>{
 
-                    toast.update(newHotspotToast, { render:`Error creando hotspot`, type: "error", isLoading: false, autoClose: 2000,draggable: true});
+                    toast.update(newHotspotToast, { render:`Error creando hotspot` +e, type: "error", isLoading: false, autoClose: 2000,draggable: true});
 
                     console.log(e)
                     setAwaitAddHotspot(false);
+                    setAddHotspotMode(false)
                 }
             )
             setAwaitAddHotspot(false);
@@ -994,9 +994,10 @@ export function Visualizador({id, extras,edit}) {
 
                 }).catch(
                 (e)=>{
-                    toast.update(newHotspotToast, { render:`Error creando hotspot`, type: "error", isLoading: false, autoClose: 2000,draggable: true});
+                    toast.update(newHotspotToast, { render:`Error creando hotspot` +e, type: "error", isLoading: false, autoClose: 2000,draggable: true});
                     console.log(e)
                     setAwaitAddHotspot(false);
+                    setAddHotspotMode(false)
                 }
             )
         }
@@ -1078,7 +1079,9 @@ export function Visualizador({id, extras,edit}) {
                         setUpdateHotspots(true);
                     }
                 }).catch(e=>{
-                    toast.update(newHotspots360, { render:`Error creando hotspot`, type: "error", isLoading: false, autoClose: 2000,draggable: true});
+                    toast.update(newHotspots360, { render:`Error creando hotspot` +e, type: "error", isLoading: false, autoClose: 2000,draggable: true});
+                    setAddHotspotMode(false);
+                    setAwaitAddHotspot(false);
                 });
 
 
@@ -1116,7 +1119,9 @@ export function Visualizador({id, extras,edit}) {
                         setUpdateHotspots(true);
                     }
                 }).catch(e=>{
-                    toast.update(newHotspots360, { render:`Error creando hotspot`, type: "error", isLoading: false, autoClose: 2000,draggable: true});
+                    toast.update(newHotspots360, { render:`Error creando hotspot`+e, type: "error", isLoading: false, autoClose: 2000,draggable: true});
+                    setAddHotspotMode(false);
+                    setAwaitAddHotspot(false);
                 });
             }
         }
