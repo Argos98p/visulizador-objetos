@@ -261,7 +261,7 @@ export function Visualizador({id, extras,edit}) {
                 imagenActual=myTridi[0].getElementsByClassName("_3zqPm")[0];
                 imagenActual.classList.add("efecto-zoom")
             }
-            await sleep(270);
+            await sleep(240);
         }
                 let extraInHotspot = searchExtra(pin.idExtra);
                 if(extraInHotspot.hasOwnProperty("imagen")){
