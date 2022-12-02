@@ -73,8 +73,6 @@ export function Visualizador({id, extras,edit}) {
 
     const [loadScenes, setLoadScenes] = useState([true,true,true]);
 
-
-
     const extraContainerRef=useRef();
     const extraInViewRef = useRef();
     const tridiRef = useRef(null);
@@ -193,23 +191,6 @@ export function Visualizador({id, extras,edit}) {
         };
     }, [updateExtras,id]);
 
-    /*
-    useEffect(() => {
-        setTimeout(()=>{
-            //setLoadPercentage(100);
-            setLoadStatus(true);
-        },6000);
-        return(setLoadStatus(false))
-    }, []);*/
-
-/*
-    useEffect(() => {
-        let myTridi=document.getElementsByClassName("_lqEjs visible")
-        if(myTridi.length>0){
-            setCurrentImage(myTridi[0].getElementsByClassName("_3zqPm")[0]);
-        }
-
-    }, [currentFrameIndex]);*/
 
 
     const prepararPins = (fetchedPinsObject) => {
@@ -260,6 +241,14 @@ export function Visualizador({id, extras,edit}) {
         extraContainerRef.current.classList.toggle("no-visible");
     }
 
+    function closeReel(){
+        if(visibleExtras===true){
+            setVisibleExtras(false);
+            //extraContainerRef.current.classList.add("oculto");
+            //extraContainerRef.current.classList.add("no-visible");
+        }
+    }
+
     const sleep = ms => new Promise(
         resolve => setTimeout(resolve, ms)
     );
@@ -272,21 +261,13 @@ export function Visualizador({id, extras,edit}) {
                 imagenActual=myTridi[0].getElementsByClassName("_3zqPm")[0];
                 imagenActual.classList.add("efecto-zoom")
             }
-
             await sleep(270);
         }
-
                 let extraInHotspot = searchExtra(pin.idExtra);
-
-                if(extraContainerRef.current.classList.contains("no-visible")){
-                    extraContainerRef.current.classList.toggle("no-visible");
-                }
                 if(extraInHotspot.hasOwnProperty("imagen")){
-                    setVisibleExtras(true);
                     extraInViewRef.current.onExtra(pin.idExtra);
                 }
                 else if(extraInHotspot.hasOwnProperty("enlace")){
-
                     setExtraPdfOrVideo(extraInHotspot);
                     navigate("extravideo");
                 }
@@ -295,7 +276,6 @@ export function Visualizador({id, extras,edit}) {
                     navigate("extrapdf");
                 }
     };
-
     const searchExtra=useCallback(
         (extraId) => {
             return extrasList.find(x => x.idextra === extraId);
@@ -305,7 +285,6 @@ export function Visualizador({id, extras,edit}) {
     const zoomValueHandler = (valorZoom) => {
         zooom=valorZoom;
     }
-
     const  handleZoomIn = () => {
         if(activeEscena!=="2") {
             zooom = zooom + 0.3;
@@ -339,12 +318,10 @@ export function Visualizador({id, extras,edit}) {
     const handleWheel = (e) => {
             e.deltaY > 0 ? handleZoomOut() : handleZoomIn();
     }
-
     const handleButtonEscena=useCallback((escena)=>{
         setActiveEscena(escena.toString())
         setPins(prepararPins(hotspotsMap[escena]));
     },[hotspotsMap,height,width]);
-
     useEffect(() => {
         async function fetchData() {
             const myDiv = tridiContainerRef.current;
@@ -369,11 +346,9 @@ export function Visualizador({id, extras,edit}) {
             tridiRef.current.toggleAutoplay(isAutoPlayRunning)
         }
     }, [activeEscena,isMobile,isAutoPlayRunning]);
-
     const frameChangeHandler = (currentFrameIndex) => {
         setCurrentFrameIndex(currentFrameIndex);
     };
-
     useEffect(() => {
         if(addHotspotMode===true){
             if(isMobile){
@@ -387,7 +362,6 @@ export function Visualizador({id, extras,edit}) {
 
         }
     }, [addHotspotMode,isMobile]);
-
     const postNewHotspots = (id, nombreEscena,arrayHotspots) => {
         return axios.post(postAddHotspot(id,nombreEscena,idUsuario),arrayHotspots,{headers: {
                 'Authorization': `${token}`
@@ -500,7 +474,6 @@ export function Visualizador({id, extras,edit}) {
 
         }
     }
-
     const botonesEscenas=useMemo(()=>
             <>
                 {
@@ -519,8 +492,6 @@ export function Visualizador({id, extras,edit}) {
             </>
         ,[handleButtonEscena,objetoData,activeEscena]
     )
-
-
     const botonInfoObject=()=>{
         return <>
             <Link to={'info'}>
@@ -613,7 +584,6 @@ export function Visualizador({id, extras,edit}) {
                 }
         }
     }
-
     let updateEscenas = (index)=>{
         //console.log(index)
         if(index==="1" || index==="2"){
@@ -630,20 +600,6 @@ export function Visualizador({id, extras,edit}) {
 
 
     }
-
-    /*
-    useEffect(() => {
-        console.log(loadScenes)
-        if(interior360 ===false && loadScenes.filter((v) => (v === false)).length>1){
-            setLoadStatus(true);
-
-        }
-        if(interior360 && loadScenes.filter((v) => (v === false)).length>1){
-            setLoadStatus(true);
-
-        }
-    }, [loadScenes]);*/
-
     const loadAllTridiComponents=()=>{
         if(objetoData){
             let escenas=objetoData.escenas;
@@ -1003,9 +959,6 @@ export function Visualizador({id, extras,edit}) {
         }
 
     }
-
-
-
     const calculaUbicacionHotspot=(e)=>{
 
         let element =  document.getElementsByClassName("_lqEjs visible")[0].firstChild;

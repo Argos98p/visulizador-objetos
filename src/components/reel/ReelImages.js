@@ -1,15 +1,8 @@
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import FsLightbox from "fslightbox-react";
-
 
 import React, {forwardRef, useCallback, useEffect, useImperativeHandle, useState} from 'react';
-import useWindowDimensions from '../../hooks/useWindowSize';
-//import Lightbox from 'react-image-lightbox';
 import 'react-image-lightbox/style.css';
 import ImageUploading from 'react-images-uploading';
 import axios from "axios";
-import ImageViewer from 'react-simple-image-viewer';
 import {deleteExtra, getExtrasUrl, ImagePath, uploadExtraUrl} from '../../Api/apiRoutes'
 import {Outlet, Route, Routes, useNavigate} from "react-router-dom";
 import {FaPlusCircle, FaTrash} from "react-icons/fa";
@@ -19,10 +12,8 @@ import {toast, ToastContainer} from "react-toastify";
 import ScrollContainer from "react-indiana-drag-scroll";
 import 'photoswipe/dist/photoswipe.css'
 import Lightbox, { ImagesListType } from 'react-spring-lightbox';
-import { Gallery, Item } from 'react-photoswipe-gallery'
-import {BiFont} from "react-icons/bi";
-import {CloseButton} from "reactstrap";
-import {AiOutlineClose} from "react-icons/ai";
+
+import {IoMdCloseCircle} from "react-icons/io";
 
 const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,searchHotspots},ref) => {
   const [imageList, setImageList]=useState([])
@@ -38,9 +29,7 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
 
   useImperativeHandle(ref, () => ({
     onExtra(extraId) {
-
       setCurrentIndex(searchExtraById(extraId))
-      //setIsViewerOpen(true);
       console.log("entra extra")
       navigate('extra');
     }
@@ -214,7 +203,7 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
       let myObject={
         src:item[0],
         loading:'lazy',
-        alt:'test'
+        alt:'eager'
       }
       arraySrc.push(myObject);
 
@@ -290,7 +279,8 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
   }
 
   const closeViewer=()=>{
-    navigate(-1); let myTridi=document.getElementsByClassName("_lqEjs visible")
+    navigate(-1);
+    let myTridi=document.getElementsByClassName("_lqEjs visible")
     let imagenActual=null;
     if(myTridi.length>0){
       imagenActual=myTridi[0].getElementsByClassName("_3zqPm")[0];
@@ -311,33 +301,21 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
         <Routes>
           <Route path="/extra" element={
             <>
-              {/*
-                  let imageSrcToView = document.getElementsByClassName("styles-module_image__2hdkJ");
-                  console.log(imageSrcToView)
-                  imageSrcToView.classList.toggle("show");*/
-              }
-
               <Lightbox
                   isOpen={true}
                   onPrev={gotoPrevious}
                   onNext={gotoNext}
                   images={srcImages}
                   currentIndex={currentImageIndex}
-
-                  /* Add your own UI */
-                  renderHeader={() => ( <AiOutlineClose onClick={()=>closeViewer()} className={"boton-cerrar-viewer"} /> )}
+                  renderHeader={() => ( <IoMdCloseCircle  onClick={()=>closeViewer()} className={"boton-cerrar-viewer"}/> )}
                   // renderFooter={() => (<CustomFooter />)}
                   // renderPrevButton={() => (<CustomLeftArrowButton />)}
                   // renderNextButton={() => (<CustomRightArrowButton />)}
                   // renderImageOverlay={() => (<ImageOverlayComponent >)}
-
-                  /* Add styling */
                   // className="cool-class"
-                   style={{ background: "rgba(0, 0, 0, .5)" }}
-
+                   style={{ background: "rgba(0, 0, 0, .9)" }}
                   /* Handle closing */
                    onClose={() => closeViewer()}
-
                   /* Use single or double click to zoom */
                   // singleClickToZoom
 
@@ -349,30 +327,6 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
                   //   config: { mass: 1, tension: 320, friction: 32 }
                   // }}
               />
-
-
-
-
-              {
-
-                /*<ImageViewer
-                  src={ imagesListSrc.map((item,index)=>item[0]) }
-                  currentIndex={ currentImage }
-                  disableScroll={ false }
-                  closeOnClickOutside={ true }
-                  onClose={ ()=>{navigate(-1);
-                    let myTridi=document.getElementsByClassName("_lqEjs visible")
-                    let imagenActual=null;
-                    if(myTridi.length>0){
-                      imagenActual=myTridi[0].getElementsByClassName("_3zqPm")[0];
-                      imagenActual.classList.remove("efecto-zoom");
-                    }}}
-                  backgroundStyle={{
-                    backgroundColor: "rgba(0,0,0,0.9)"
-                  }}
-              />
-*/
-              }
             </>
           }/>
           <Route path="/subirextra" element={

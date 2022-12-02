@@ -6,9 +6,12 @@
   height: 50px !important;
   color: white !important ;
   z-index: 1000;cursor: pointer;
-
 }
-// UI settings
+
+.ktMAEn {
+  z-index: 9999 !important;
+}
+  // UI settings
 @import "./base/settings";
 
 //Components
