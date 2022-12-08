@@ -43,21 +43,6 @@ const PopupInfoObjetct = ({ imgForInfoModal, infoObjectData}) => {
                 <div className="popup-info-izq">
                     <img  src= {imgForInfoModal} alt="MDN"/>
                 </div>
-
-                {
-                /*
-                <div className="popup-info-object">
-                    <p>Modelo: {info[0]} </p>
-                    <p>Anio: {info[1]} </p>
-                    <p>Kilometraje: {info[2]}</p>
-                    <p>MetricaKilometraje: {info[3]}</p>
-                    <p> Ciudad: {info[4]}</p>
-                    <p>Placas: {info[5]}</p>
-                    <p>Precio: {info[6]}</p>
-                    <p>MetricaPrecio: {info[7]}</p>
-                    <p>Descripcion: {info[8]}</p>
-                    <p>Propietario: {info[10]}</p>
-                </div>*/}
                 </div>
                 <div className={"button-container"}>
                     <MdCancel className={"button"} fontSize={54} onClick={()=>navigate(-1)}/>

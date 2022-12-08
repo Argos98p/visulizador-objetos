@@ -3,7 +3,7 @@ import {Route, Routes, useNavigate, useParams} from "react-router-dom";
 import {Visualizador} from "./Visualizador";
 import axios from "axios";
 import NoEncontrado from "./publicidad/paginaNoEncontrado";
-import {infoObjectUrl, getExtrasUrl, loginUser} from "../Api/apiRoutes";
+import {infoObjectUrl, getExtrasUrl} from "../Api/apiRoutes";
 import LottieServerError from "../Animations/lottieServerError";
 
 
