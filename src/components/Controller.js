@@ -13,8 +13,6 @@ function Controller({editMode}) {
     const [extras, setExtras] = useState([]);
     const [noEscenas,setNoEscenas] = useState(false);
     const navigate=useNavigate();
-
-
     useEffect(() => {
         axios.get(infoObjectUrl(id)).then(response => {
 
@@ -32,8 +30,6 @@ function Controller({editMode}) {
                         });
                 }
             }
-
-
             else{
                 setMyObjeto("NOT_FOUND");
 
@@ -44,13 +40,7 @@ function Controller({editMode}) {
                 setMyObjeto("NOT_FOUND");
             }
         })
-
-
     }, [id,navigate]);
-
-
-
-
 
     return (
         <>

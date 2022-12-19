@@ -88,7 +88,9 @@ export function Visualizador({id, extras,edit}) {
 
     let token = localStorage.getItem("token");
     let idUsuario = localStorage.getItem("idUser");
+    let webview=localStorage.getItem("webview");
 
+    console.log(webview)
     
     useEffect(() => {
 
@@ -1208,7 +1210,7 @@ export function Visualizador({id, extras,edit}) {
                 }} />
                 }></Route>
                 <Route path="/extraPdf" element={<div className={"modal-pdf-container"} >
-                    <Popup open={true} className={`${isMobile ? "pdf-modal-celular" :"pdf-modal"}`}  onClose={()=> returnRoute()} position="right center">
+                    <Popup open={true} className={`${isMobile && webview==='false' ? "pdf-modal-celular" : webview==='true' ?"pdf-modal-webview" :"pdf-modal "}`}  onClose={()=> returnRoute()} position="right center">
                         <div className={"container-iframe-modal"}>
                             <iframe id="iframepdf" src={viewResource(id,extraPdfOrVideo.path)}  title="myFrame"></iframe>
                             <button className={"button-option-pdf-modal"} onClick={()=>{returnRoute()}}>Cerrar</button>
@@ -1218,5 +1220,5 @@ export function Visualizador({id, extras,edit}) {
                 }></Route>
             </Routes>
         </>
-);
+    );
 }

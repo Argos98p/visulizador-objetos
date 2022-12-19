@@ -14,17 +14,29 @@ function App() {
 
     const VisualizadorRedirect = () => {
         const { id } = useParams();
-
         return <Navigate to={`/visualizador/view/${id}`} />
     }
 
     const SaveToken = () =>{
-        const { id } = useParams();
+        const { id,webview } = useParams();
+
 
         const navigation = useNavigate()
         const [searchParams, setSearchParams] = useSearchParams();
         let tk = searchParams.get("token");
         let idUser = searchParams.get("idUser");
+
+
+        if(webview){
+            localStorage.setItem('webview',true);
+        }else{
+            localStorage.setItem('webview',false);
+        }
+        if(!tk){
+            navigation(`/visualizador/view/${id}`);
+            return <Navigate to={`/visualizador/view/${id}`} />
+        }
+
 
         fetch(verificaToken(idUser), {
             method: "POST",
@@ -32,7 +44,7 @@ function App() {
                 'Authorization': tk,
             }
         }).then(r => {
-                console.log(r.status)
+
             if(r.status === 200){
                 localStorage.setItem('token', tk);
                 localStorage.setItem("idUser",idUser)
@@ -60,10 +72,9 @@ function App() {
                     <ProtectedRoute>
                         <Controller editMode={true}/>
                     </ProtectedRoute>
-
                     } />
-                <Route path="/visualizador/:id/*" element={<VisualizadorRedirect/>}/>
                 <Route path="/visualizador/:id" element={<SaveToken/>}/>
+                <Route path="/visualizador/:id/:webview" element={<SaveToken/>}/>
             </Routes>
     );
 }

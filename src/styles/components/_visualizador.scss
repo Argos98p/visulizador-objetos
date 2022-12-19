@@ -212,6 +212,30 @@
   color: white;
 }
 
+.pdf-modal-webview-overlay{
+  .pdf-modal-webview-content{
+    background: $border-dark !important;
+    border: transparent;
+    height: auto;
+    width: 30% !important;
+  }
+  iframe{
+    width: 0;
+    height: 0;
+    margin-bottom: 0;
+  }
+  .button-option-pdf-modal{
+    background-color: $primary-color;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 0.8em;
+    color: $secondary-color;
+    width: 100%
+  }
+
+}
+
 .pdf-modal-celular-overlay{
   .pdf-modal-celular-content{
     background: $border-dark !important;
