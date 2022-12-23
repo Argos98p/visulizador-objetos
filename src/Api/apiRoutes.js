@@ -1,4 +1,3 @@
-//let BaseURL="https://173.255.114.112";
 let BaseURL="https://3dmotores.com";
 
 
