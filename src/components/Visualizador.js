@@ -506,9 +506,13 @@ export function Visualizador({id, extras,edit}) {
     const botonCompartir=()=>{
 
     return <>
-        <Link to={"compartir"}>
-            <img className="visualizador_btn-share-img cursor-pointer"  src="/iconos/btn-compartir.png" alt=""/>
-        </Link>
+        {
+            webview ==='false' ?<Link to={"compartir"}>
+                    <img className="visualizador_btn-share-img cursor-pointer"  src="/iconos/btn-compartir.png" alt=""/>
+                </Link>
+                : null
+        }
+
     </>
     }
     const botonAgregarHotspot=()=>{
