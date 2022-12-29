@@ -20,7 +20,7 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
 
     const navigate = useNavigate();
     const [imageSelected, setImageSelected] = useState(null);
-    const [extraType, setExtraType] = useState("video_youtube");
+    const [extraType, setExtraType] = useState("");
     const [acceptedFiles,setAcceptedFiles] = useState([])
     const [linkYoutube, setLinkYoutube] = useState("");
     const [extrasOnlyImages, setExtrasOnlyImages]= useState(extras.filter(extra => extra.hasOwnProperty("imagen")))
@@ -66,6 +66,13 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
 
 
     const loadPopupContent=()=>{
+
+        if(extraType===""){
+            return <div style={{textAlign:"center"}}>
+                <h4>Seleccione un tipo de hotspot</h4>
+            </div>
+
+        }
 
         if(extraType==="video_youtube"){
             return <AddYoutubeVideo onHandleInputYoutube={onHandleInputYoutube} addPdfVis={addPdfVis}></AddYoutubeVideo>
@@ -173,7 +180,6 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
         <>
             <div >
             <Popup className="popup-add-hotspot"
-
                 onClose={()=>navigate(-1)}
                 open={true}
                 modal
@@ -184,9 +190,7 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
                             <TiArrowBack className="icon cursor-pointer" onClick={()=>navigate(-1)} fontSize={40}></TiArrowBack>
                             <h5>Añadir hotspot</h5>
                         </div>
-
                         <div className="buttons-container">
-
                             <div className={"button-type-extra " + (extraType === "vincular_extra" ? "activo" : "" )}  onClick={()=>setExtraType("vincular_extra")}>
                                 <img src="/iconos/enlace.png" alt=""/>
                                 <button>Vincular con extra</button>

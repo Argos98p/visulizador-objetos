@@ -67,7 +67,8 @@ function App() {
     return (
             <Routes>
                 <Route index element={<h1>index</h1>} />
-                <Route path="/visualizador/view/:id/*" element={<Controller editMode={false}/>} />
+                {/*en la siguiente linea va false*/}
+                <Route path="/visualizador/view/:id/*" element={<Controller editMode={true}/>} />
                 <Route path="/visualizador/edit/:id/*" element={
                     <ProtectedRoute>
                         <Controller editMode={true}/>
