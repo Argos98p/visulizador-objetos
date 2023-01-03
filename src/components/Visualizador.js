@@ -88,9 +88,10 @@ export function Visualizador({id, extras,edit}) {
 
     let token = localStorage.getItem("token");
     let idUsuario = localStorage.getItem("idUser");
-    let webview=localStorage.getItem("webview");
-
-    console.log(webview)
+    let webview=localStorage.getItem("webview") ;
+    if(webview==null){
+        webview=false;
+    }
     
     useEffect(() => {
 

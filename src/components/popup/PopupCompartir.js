@@ -16,9 +16,9 @@ import {toast} from "react-toastify";
 const PopupCompartir = () =>{
     let {id} = useParams();
     const navigate = useNavigate();
-    const urlToShare = `http://3dmotores.com/object/${id}`;
+    const urlToShare = `http://3dmotores.com/preview/object/${id}`;
     const onClickCopy= () =>{
-        copy(`http://3dmotores.com/object/${id}`);
+        copy(`http://3dmotores.com/preview/object/${id}`);
         toast.info('Link copiado al portapapeles',{autoClose: 3000,
             hideProgressBar: true,theme:"dark"});
     }
