@@ -1,0 +1,41 @@
+.home-page-container{
+    background-color: #1e2125;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.image-container{
+    width: 40vw;
+
+}
+
+.image-container2{
+    width: 25vw;
+    position: absolute;
+    bottom: 2em;
+    cursor: pointer;
+}
+
+.image-container img{
+    width: 100%;
+}
+.image-container2 img{
+    width: 100%;
+}
+@media (min-width: 800px) {
+    .image-container{
+        width: 250px;
+
+    }
+
+    .image-container2{
+        width: 150px;
+        position: absolute;
+        bottom: 2em;
+    }
+}

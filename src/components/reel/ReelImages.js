@@ -15,7 +15,7 @@ import Lightbox, { ImagesListType } from 'react-spring-lightbox';
 
 import {IoMdCloseCircle} from "react-icons/io";
 
-const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,searchHotspots},ref) => {
+const  ReelImages = forwardRef(({idV,extrasImages, currentElement, isEditMode,searchHotspots},ref) => {
   const [imageList, setImageList]=useState([])
   const [images, setImages] = useState([]); //for upload with 
   const [imagesListSrc, setImagesListSrc]= useState([]);
@@ -30,7 +30,7 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
   useImperativeHandle(ref, () => ({
     onExtra(extraId) {
       setCurrentIndex(searchExtraById(extraId))
-      console.log("entra extra")
+      //console.log("entra extra")
       navigate('extra');
     }
   }));
@@ -51,7 +51,7 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
   };
 
   const getExtras = async() => {
-    axios.get(getExtrasUrl(id))
+    axios.get(getExtrasUrl(idV))
         .then((response)=>{
               if(response.status===200){
                 let temp= [];
@@ -84,7 +84,7 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
     const idToast = toast.loading("Subiendo extra...")
     const payload = new FormData();
     payload.append('extra',imagenFile)
-    fetch(uploadExtraUrl(id,imagenFile.name,'hola',idUsuario), {
+    fetch(uploadExtraUrl(idV,imagenFile.name,'hola',idUsuario), {
       method: "POST",
       body: payload,
           headers: {
@@ -101,7 +101,7 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
       } else if (res.status === 401) {
         toast.update(idToast, { render: "Error user not authorized", type: "error", isLoading: false, autoClose: 1000,draggable: true});
 
-        console.log("error")
+        //console.log("error")
       }
     }, function (e) {
       console.log("Error submitting form!"+e);
@@ -122,7 +122,7 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
   }
 
   useEffect(()=>{
-    axios.get(getExtrasUrl(id))
+    axios.get(getExtrasUrl(idV))
         .then((response)=>{
               if(response.status===200){
                 let temp= [];
@@ -152,13 +152,13 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
     })
 
 
-  },[id]);
+  },[idV]);
 
   function onClickDeleteExtra(idExtra){
 
     const idToastEliminar = toast.loading("Eliminando extra...")
 
-    axios.post(deleteExtra(id,idExtra,idUsuario),{},{headers: {
+    axios.post(deleteExtra(idV,idExtra,idUsuario),{},{headers: {
         'Authorization': `${token}`
       }})
         .then((response)=>{
@@ -167,10 +167,10 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
             getExtras();
             searchHotspots(idExtra);
           }else if(response.status === 401){
-            toast.update(idToastEliminar, { render: "Error usuario no autorizado", type: "error", isLoading: false, autoClose: 1000,draggable: true});            console.log(response);
+            toast.update(idToastEliminar, { render: "Error usuario no autorizado", type: "error", isLoading: false, autoClose: 1000,draggable: true});
           }
           else{
-            console.log(response);
+           // console.log(response);
           }
         }).catch(error => {
       toast.update(idToastEliminar, { render: error.response, type: "error", isLoading: false, autoClose: 1000,draggable: true});
@@ -203,7 +203,8 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
       let myObject={
         src:item[0],
         loading:'lazy',
-        alt:'eager'
+        alt:'eager',
+        id:index
       }
       arraySrc.push(myObject);
 
@@ -216,7 +217,7 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
   let aux;
   aux =  imagesListSrc.map((src, index) => (
       <>
-        <div className='reel_div-img-container' key={src[1]}>
+        <div  className='reel_div-img-container' key={src[1]}>
           <div  className='reel_div-img' onClick={() => {  setCurrentIndex(index);navigate("extra")}}>
             <ImagenComponent   key={src[1]+"_imageComponent"} imgURL={src[0]}></ImagenComponent>
           </div>
@@ -291,12 +292,10 @@ const  ReelImages = forwardRef(({id,extrasImages, currentElement, isEditMode,sea
   return (
     <>
     <ToastContainer/>
-      <div className='reel_container'>
+      <div className='reel_container' key={'reel-container-op'}>
         {
           ImagesReel()
         }
-
-
         <Outlet></Outlet>
         <Routes>
           <Route path="/extra" element={

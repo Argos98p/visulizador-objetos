@@ -300,7 +300,6 @@ export function Visualizador({id, extras,edit}) {
                     tridiRef.current.toggleMoving(false)
                 }
             }
-
         }
     }
     const handleZoomOut = () => {
@@ -551,6 +550,8 @@ export function Visualizador({id, extras,edit}) {
                         setAddHotspotMode(true);
                         setAwaitAddHotspot(false);
                         toast.update(toastHotspot, { render: "PDF subido", type: "success", isLoading: false, autoClose: 1000,draggable: true});
+                    }else{
+                        toast.update(toastHotspot, { render: "Error subiendo PDF"  +response, type: "success", isLoading: false, autoClose: 1000,draggable: true});
                     }
                 })
                 .catch(function (response) {
@@ -1177,7 +1178,7 @@ export function Visualizador({id, extras,edit}) {
             {/*botonModoEdicion()*/}
             <div key={"reel"} ref={extraContainerRef} className="visualizador_reel">
                 {buttonCloseReel()}
-                <ReelImages id={id}
+                <ReelImages idV={id}
                             currentElement={currentImage}
                             key={'reel'}
                             ref={extraInViewRef}
