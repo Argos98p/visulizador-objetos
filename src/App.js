@@ -27,8 +27,10 @@ function App() {
         let tk = searchParams.get("token");
         let idUser = searchParams.get("idUser");
 
+        console.log(webview)
 
         if(webview){
+            console.log('2ntrea')
             localStorage.setItem('webview',true);
         }else{
             localStorage.setItem('webview',false);
