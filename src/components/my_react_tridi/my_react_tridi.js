@@ -553,17 +553,24 @@ var Tridi = forwardRef(function (_ref, ref) {
         onHintHide();
     };
 
-    var nextFrame = useCallback(function () {
-        var newIndex = currentImageIndex >= _count - 1 ? 0 : currentImageIndex + 1;
+
+    var nextFrame = useCallback(function (slide) {
+        var newIndex = currentImageIndex +slide >= _count ? 0 : currentImageIndex + slide;
+        // console.log(slide, newIndex, currentImageIndex);
         setCurrentImageIndex(newIndex);
         onNextFrame();
         onFrameChange(newIndex);
+        return newIndex;
     }, [_count, currentImageIndex, onFrameChange, onNextFrame]);
-    var prevFrame = useCallback(function () {
-        var newIndex = currentImageIndex <= 0 ? _count - 1 : currentImageIndex - 1;
+    var prevFrame = useCallback(function (slide) {
+
+        var newIndex = currentImageIndex-slide <= 0 ? _count+currentImageIndex-slide-1 : currentImageIndex - slide;
+        //console.log(slide, newIndex,currentImageIndex);
+
         setCurrentImageIndex(newIndex);
         onPrevFrame();
         onFrameChange(newIndex);
+        return newIndex;
     }, [_count, currentImageIndex, onFrameChange, onPrevFrame]);
     var nextMove = useCallback(function () {
         onNextMove();
@@ -574,36 +581,120 @@ var Tridi = forwardRef(function (_ref, ref) {
         return inverse ? nextFrame() : prevFrame();
     }, [inverse, nextFrame, onPrevMove, prevFrame]);
 
+    const [contador, setcontador] = useState(0);
+    var aux=0;
+    var rotateViewerImage = useCallback(function (e,isTouch=false) {
 
-    var rotateViewerImage = useCallback(function (e) {
         var interval = e.touches ? touchDragInterval : dragInterval;
         var eventX = e.touches ? Math.round(e.touches[0].clientX) : e.clientX;
         var coord = eventX - _viewerImageRef.current.offsetLeft;
         var newMoveBufffer = moveBuffer;
+
 
         if (moveBuffer.length < 2) {
             newMoveBufffer = moveBuffer.concat(coord);
         } else {
             newMoveBufffer = [moveBuffer[1], coord];
         }
+        if(newMoveBufffer!==[]){
+            setMoveBuffer(newMoveBufffer)
+            setmyBuffer(newMoveBufffer)
+        }else{
+        }
 
-        setMoveBuffer(newMoveBufffer);
+
         var threshold = !(coord % interval);
         var oldMove = newMoveBufffer[0];
         var newMove = newMoveBufffer[1];
 
-        if (threshold && newMove < oldMove) {
-            nextMove();
-            console.log("22")
-        } else if (threshold && newMove > oldMove) {
-            prevMove();
+        if(isTouch){
+            if(threshold && newMove >oldMove){
+                if(newMove > oldMove && newMove < oldMove+5){
+                    setcontador(contador+1);
+                    if(contador>=0){
+                        prevFrame(3);
+                        setcontador(0)
+                    }
+                }
+                else if( newMove > oldMove+5 && newMove < oldMove+25  ){
+                    prevFrame(3);
+                }
+                else if (newMove > oldMove+25 && newMove < oldMove +50){
+                    prevFrame(3);
+                }else if (newMove > oldMove+50 && newMove<oldMove+100){
+                    prevFrame(4);
+                }else if (newMove > oldMove+100){
+                    prevFrame(4);
+                }
+            }else if (threshold && newMove < oldMove){
+                if( newMove < oldMove && newMove > oldMove-5){
+                    setcontador(contador+1);
+                    if(contador>=0){
+                        nextFrame(3);
+                        setcontador(0)
+                    }
+                }
+                else if (newMove < oldMove-5 && newMove > oldMove-25){
+                    nextFrame(3);
+                }
+                else if (newMove < oldMove-25 && newMove > oldMove-50){
+                    nextFrame(3);
+                }
+                else if (newMove < oldMove-50 && newMove > oldMove-100){
+                    nextFrame(4);
+                }else if (newMove < oldMove-100 ){
+                    nextFrame(4);
+                }
+            }
+        }else{
+            if(threshold && newMove >oldMove){
+                if(newMove > oldMove && newMove < oldMove+5){
+                    setcontador(contador+1);
+                    if(contador>3){
+                        prevFrame(1);
+                        setcontador(0)
+                    }
+                }
+                else if( newMove > oldMove+5 && newMove < oldMove+25  ){
+                    prevFrame(1);
+                }
+                else if (newMove > oldMove+25 && newMove < oldMove +50){
+                    prevFrame(1);
+                }
+                else if (newMove > oldMove+50 && newMove<oldMove+100){
+                    prevFrame(2);
+                }else if (newMove > oldMove+100){
+                    prevFrame(2);
+                }
+            }else if (threshold && newMove < oldMove){
+                if( newMove < oldMove && newMove > oldMove-5){
+                    setcontador(contador+1);
+                    if(contador>3){
+                        nextFrame(1);
+                        setcontador(0)
+                    }
+                }
+                else if (newMove < oldMove-5 && newMove > oldMove-25){
+                    nextFrame(1);
+                }
+                else if (newMove < oldMove-25 && newMove > oldMove-50){
+                    nextFrame(1);
+                }
+                else if (newMove < oldMove-50 && newMove > oldMove-100){
+                    nextFrame(2);
+                }else if (newMove < oldMove-100 ){
+                    nextFrame(2);
+                }
+            }
         }
+
     }, [dragInterval, moveBuffer, nextMove, prevMove, touchDragInterval]);
 
     var resetMoveBuffer = function resetMoveBuffer() {
         return setMoveBuffer([]);
     };
 
+    const [myBuffer, setmyBuffer] = useState([]);
     var startDragging = useCallback(function () {
         setIsDragging(true);
         onDragStart();
@@ -659,6 +750,42 @@ var Tridi = forwardRef(function (_ref, ref) {
         onZoom(newZoom);
     };
 
+    const sleep = ms => new Promise(
+        resolve => setTimeout(resolve, ms)
+    );
+    var momentumEffect = async (buffer, isTouch=false)=>{
+        let desplazamiento= Math.abs(buffer[0]-buffer[1]);
+        if(isTouch){
+            let k = 4;
+            if(buffer[0]<buffer[1]){
+                for(let i = 0;i<=desplazamiento+k;i++){
+                    await sleep(50);
+                    let auxs=prevFrame(i);
+                    setCurrentImageIndex(auxs);
+                }
+            }else if(buffer[0]>buffer[1]){
+                for(let i = 1;i<=desplazamiento+k;i++){
+                    await sleep(50);
+                    let auxs=nextFrame(i);
+                    setCurrentImageIndex(auxs);
+                }
+            }
+        }else{
+            if(buffer[0]<buffer[1]){
+                for(let i = 0;i<=desplazamiento;i++){
+                    await sleep(50);
+                    let auxs=prevFrame(i);
+                    setCurrentImageIndex(auxs);
+                }
+            }else if(buffer[0]>buffer[1]){
+                for(let i = 1;i<=desplazamiento;i++){
+                    await sleep(50);
+                    let auxs=nextFrame(i);
+                    setCurrentImageIndex(auxs);
+                }
+            }
+        }
+    }
     var imageViewerMouseDownHandler = function imageViewerMouseDownHandler(e) {
         if (_draggable) {
             if (e.preventDefault) e.preventDefault();
@@ -684,6 +811,7 @@ var Tridi = forwardRef(function (_ref, ref) {
         if (_draggable) {
             if (e.preventDefault) e.preventDefault();
             stopDragging();
+            momentumEffect(moveBuffer);
             resetMoveBuffer();
         }
 
@@ -705,7 +833,10 @@ var Tridi = forwardRef(function (_ref, ref) {
     };
 
     var imageViewerMouseLeaveHandler = function imageViewerMouseLeaveHandler() {
-        if (_draggable) resetMoveBuffer();
+        if (_draggable) {
+            momentumEffect(moveBuffer)
+            resetMoveBuffer();
+        }
 
         if (!isAutoPlayRunning && resumeAutoplayOnMouseLeave) {
             _toggleAutoplay(true);
@@ -764,17 +895,17 @@ var Tridi = forwardRef(function (_ref, ref) {
             rotateViewerImage(e);
         }
     }, [rotateViewerImage, touch, isMoveing]);
-    var imageViewerTouchEndHandler = useCallback(function (e) {
+    var imageViewerTouchEndHandler = function (e) {
         AnimatedValues.current.originOffset = null;
         if (touch) {
+            momentumEffect(myBuffer,true);
             stopDragging();
             resetMoveBuffer();
         }
         if (!isAutoPlayRunning && resumeAutoplayOnMouseLeave) {
             _toggleAutoplay(true);
         }
-    }, [isAutoPlayRunning, resumeAutoplayOnMouseLeave, stopDragging, _toggleAutoplay, touch]);
-
+    }
     var imageViewerClickHandler = function imageViewerClickHandler(e) {
         if (isRecording) {
             var viewerWidth = _viewerImageRef.current.clientWidth;
