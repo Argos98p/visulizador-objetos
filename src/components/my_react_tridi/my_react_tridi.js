@@ -753,7 +753,7 @@ var Tridi = forwardRef(function (_ref, ref) {
     const sleep = ms => new Promise(
         resolve => setTimeout(resolve, ms)
     );
-    var momentumEffect = async (buffer, isTouch=false)=>{
+    var momentumEffect = null /*async (buffer, isTouch=false)=>{
         let desplazamiento= Math.abs(buffer[0]-buffer[1]);
         if(isTouch){
             let k = 4;
@@ -785,7 +785,7 @@ var Tridi = forwardRef(function (_ref, ref) {
                 }
             }
         }
-    }
+    }*/
     var imageViewerMouseDownHandler = function imageViewerMouseDownHandler(e) {
         if (_draggable) {
             if (e.preventDefault) e.preventDefault();
