@@ -8,25 +8,19 @@
     align-items: center;
 
 }
-
 .image-container{
     width: 40vw;
-
 }
-
 .image-container2{
     width: 25vw;
     position: absolute;
     bottom: 2em;
     cursor: pointer;
 }
+.image-container img, .image-container2 img{
+    width: 100%;
+}
 
-.image-container img{
-    width: 100%;
-}
-.image-container2 img{
-    width: 100%;
-}
 @media (min-width: 800px) {
     .image-container{
         width: 250px;

@@ -811,7 +811,7 @@ var Tridi = forwardRef(function (_ref, ref) {
         if (_draggable) {
             if (e.preventDefault) e.preventDefault();
             stopDragging();
-            momentumEffect(moveBuffer);
+            //momentumEffect(moveBuffer);
             resetMoveBuffer();
         }
 
@@ -834,7 +834,7 @@ var Tridi = forwardRef(function (_ref, ref) {
 
     var imageViewerMouseLeaveHandler = function imageViewerMouseLeaveHandler() {
         if (_draggable) {
-            momentumEffect(moveBuffer)
+            //momentumEffect(moveBuffer)
             resetMoveBuffer();
         }
 
@@ -898,7 +898,7 @@ var Tridi = forwardRef(function (_ref, ref) {
     var imageViewerTouchEndHandler = function (e) {
         AnimatedValues.current.originOffset = null;
         if (touch) {
-            momentumEffect(myBuffer,true);
+           // momentumEffect(myBuffer,true);
             stopDragging();
             resetMoveBuffer();
         }
