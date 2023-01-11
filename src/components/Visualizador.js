@@ -331,6 +331,7 @@ export function Visualizador({id, extras,edit}) {
 
             if(activeTridi !== undefined) {
                 let actualFrame = parseInt(activeTridi.innerHTML);
+
                 let previousFrame = currentFrameIndex;
                 if(actualFrame>previousFrame){
                     for(let i = actualFrame;i>previousFrame;i--){
@@ -718,7 +719,7 @@ export function Visualizador({id, extras,edit}) {
                                   onPinClick={pinClickHandler}
                                   setPins={setPins}
                                   renderPin={myRenderPin}
-                                  showStatusBar={true}
+                                   showStatusBar={true}
                                    pins={pins}
                                   onLoadChange={()=>updateEscenas(index)}
                                   showControlBar={false}
@@ -979,14 +980,6 @@ export function Visualizador({id, extras,edit}) {
         let x = ((clientX - viewerOffsetLeft) / viewerWidth).toFixed(6) ;
         let y = ((clientY - viewerOffsetTop) / viewerHeight).toFixed(6) ;
 
-        /*
-        let clientX = e.clientX - (viewerWidth - viewerWidth) / 2;
-        let clientY = e.clientY - (viewerHeight - viewerHeight) / 2;
-        let viewerOffsetLeft = containerRef.current.getBoundingClientRect().left;
-        let viewerOffsetTop = containerRef.current.getBoundingClientRect().top;
-        let x = ((clientX - viewerOffsetLeft) / viewerWidth).toFixed(6) ;
-        let y = ((clientY - viewerOffsetTop) / viewerHeight).toFixed(6) ;
-*/
         if(currentFrameIndex === 0){
             return {
                 x: x,

@@ -357,21 +357,27 @@ Pins.defaultProps = {
 var styles$3 = {"tridi-status-bar":"_2_pZm"};
 
 var StatusBar = function StatusBar(_ref) {
-    var isRecording = _ref.isRecording,
-        currentImageIndex = _ref.currentImageIndex;
-    return /*#__PURE__*/React.createElement("div", {
-        className: "tridi-status-bar " + styles$3['tridi-status-bar']
-    }, /*#__PURE__*/React.createElement("div", {
-        className: "status-info"
-    }, /*#__PURE__*/React.createElement("span", {
-        className: "info-label"
-    }, "Frame Id: "), /*#__PURE__*/React.createElement("span", {
-        className: "info-value"
-    }, currentImageIndex)), isRecording && /*#__PURE__*/React.createElement("div", {
-        className: "status-info"
-    }, /*#__PURE__*/React.createElement("span", {
-        className: "info-label"
-    }, "Recording...")));
+
+    if(_ref.currentImageIndex === 0  || isNaN(_ref.currentImageIndex) ){
+
+    }else {
+        console.log(_ref)
+        var isRecording = _ref.isRecording,
+            currentImageIndex = _ref.currentImageIndex;
+        return /*#__PURE__*/React.createElement("div", {
+            className: "tridi-status-bar " + styles$3['tridi-status-bar']
+        }, /*#__PURE__*/React.createElement("div", {
+            className: "status-info"
+        }, /*#__PURE__*/React.createElement("span", {
+            className: "info-label"
+        }, "Frame Id: "), /*#__PURE__*/React.createElement("span", {
+            className: "info-value"
+        }, currentImageIndex)), isRecording && /*#__PURE__*/React.createElement("div", {
+            className: "status-info"
+        }, /*#__PURE__*/React.createElement("span", {
+            className: "info-label"
+        }, "Recording...")));
+    }
 };
 
 var DragIcon = function DragIcon(props) {
@@ -553,16 +559,28 @@ var Tridi = forwardRef(function (_ref, ref) {
         onHintHide();
     };
 
-
-    var nextFrame = useCallback(function (slide) {
+    var nextFrame = useCallback(function () {
+        var newIndex = currentImageIndex >= _count - 1 ? 0 : currentImageIndex + 1;
+        setCurrentImageIndex(newIndex);
+        onNextFrame();
+        onFrameChange(newIndex);
+    }, [_count, currentImageIndex, onFrameChange, onNextFrame]);
+    var prevFrame = useCallback(function () {
+        var newIndex = currentImageIndex <= 0 ? _count - 1 : currentImageIndex - 1;
+        setCurrentImageIndex(newIndex);
+        onPrevFrame();
+        onFrameChange(newIndex);
+    }, [_count, currentImageIndex, onFrameChange, onPrevFrame]);
+    /*
+    var nextFrame = function (slide) {
         var newIndex = currentImageIndex +slide >= _count ? 0 : currentImageIndex + slide;
-        // console.log(slide, newIndex, currentImageIndex);
+        // console.log('current image index ' + currentImageIndex);
         setCurrentImageIndex(newIndex);
         onNextFrame();
         onFrameChange(newIndex);
         return newIndex;
-    }, [_count, currentImageIndex, onFrameChange, onNextFrame]);
-    var prevFrame = useCallback(function (slide) {
+    }
+    var prevFrame = function (slide) {
 
         var newIndex = currentImageIndex-slide <= 0 ? _count+currentImageIndex-slide-1 : currentImageIndex - slide;
         //console.log(slide, newIndex,currentImageIndex);
@@ -571,11 +589,12 @@ var Tridi = forwardRef(function (_ref, ref) {
         onPrevFrame();
         onFrameChange(newIndex);
         return newIndex;
-    }, [_count, currentImageIndex, onFrameChange, onPrevFrame]);
+    }*/
     var nextMove = useCallback(function () {
         onNextMove();
         return inverse ? prevFrame() : nextFrame();
     }, [inverse, nextFrame, onNextMove, prevFrame]);
+
     var prevMove = useCallback(function () {
         onPrevMove();
         return inverse ? nextFrame() : prevFrame();
@@ -591,6 +610,23 @@ var Tridi = forwardRef(function (_ref, ref) {
         var newMoveBufffer = moveBuffer;
 
 
+        if (moveBuffer.length < 2) {
+            newMoveBufffer = moveBuffer.concat(coord);
+        } else {
+            newMoveBufffer = [moveBuffer[1], coord];
+        }
+
+        setMoveBuffer(newMoveBufffer);
+        var threshold = !(coord % interval);
+        var oldMove = newMoveBufffer[0];
+        var newMove = newMoveBufffer[1];
+
+        if (threshold && newMove < oldMove) {
+            nextMove();
+        } else if (threshold && newMove > oldMove) {
+            prevMove();
+        }
+        /*
         if (moveBuffer.length < 2) {
             newMoveBufffer = moveBuffer.concat(coord);
         } else {
@@ -686,7 +722,7 @@ var Tridi = forwardRef(function (_ref, ref) {
                     nextFrame(2);
                 }
             }
-        }
+        }*/
 
     }, [dragInterval, moveBuffer, nextMove, prevMove, touchDragInterval]);
 
