@@ -81,11 +81,8 @@ export function Visualizador({id, extras,edit}) {
     const containerRef = useRef(null);
     const panellumRef = useRef(null);
     const [currentImage, setCurrentImage] = useState(null);
-
     const navigate = useNavigate();
-
     let zooom=1;
-
     let token = localStorage.getItem("token");
     let idUsuario = localStorage.getItem("idUser");
     let webview=localStorage.getItem("webview") ;
@@ -321,17 +318,24 @@ export function Visualizador({id, extras,edit}) {
             e.deltaY > 0 ? handleZoomOut() : handleZoomIn();
     }
     const handleButtonEscena=useCallback((escena)=>{
+        //para que la escena que no esta en pantalla siga moviendose
+        if(tridiRef.current!=null){
+            tridiRef.current.toggleAutoplay(false)
+        }
         setActiveEscena(escena.toString())
         setPins(prepararPins(hotspotsMap[escena]));
-    },[hotspotsMap,height,width]);
+    },[hotspotsMap,height,width,tridiRef]);
     useEffect(() => {
         async function fetchData() {
+
+
+
             const myDiv = tridiContainerRef.current;
             let activeTridi = Array.from(myDiv.querySelectorAll('.visible .info-value '))[0];
+            console.log(tridiRef)
 
             if(activeTridi !== undefined) {
                 let actualFrame = parseInt(activeTridi.innerHTML);
-
                 let previousFrame = currentFrameIndex;
                 if(actualFrame>previousFrame){
                     for(let i = actualFrame;i>previousFrame;i--){
@@ -362,7 +366,6 @@ export function Visualizador({id, extras,edit}) {
                 toast.info('Doble click sobre la pantalla para crear el hotspot',{autoClose: 3000,
                     hideProgressBar: true,theme:"dark"});
             }
-
         }
     }, [addHotspotMode,isMobile]);
     const postNewHotspots = (id, nombreEscena,arrayHotspots) => {
@@ -389,20 +392,15 @@ export function Visualizador({id, extras,edit}) {
         return (
             <>
                 <div data-tip={"test"} data-for='test' key={pin.id}>
-
                     <label  >
                         <div id="b3"
-
                              className="button-hotspot"
                         >
                             {
                                 aux
                             }
                         </div>
-
                     </label>
-
-
                 </div>
             </>
         );
@@ -486,6 +484,7 @@ export function Visualizador({id, extras,edit}) {
                         }
                                       escenaInfo={escena}
                                       onClick={()=>handleButtonEscena(index)}
+                                      onTouch={()=>handleButtonEscena(index)}
                                       activo={
                                           index.toString() === activeEscena
                                       }
@@ -527,6 +526,8 @@ export function Visualizador({id, extras,edit}) {
     const addPdfVis=(file)=>{console.log(file)}
     const convertToSlug=(Text)=> {
         return Text.toLowerCase()
+            .replace("(","")
+            .replace(")","")
             .replace(/ /g, '-')
             .replace(/[^\w-]+/g, '')
             .replace("pdf",".pdf");
@@ -539,7 +540,7 @@ export function Visualizador({id, extras,edit}) {
             const toastHotspot = toast.loading("Subiendo PDF")
             axios({
                 method: "post",
-                url: addExtraPdf(id,convertToSlug(file.name),titulo, titulo,idUsuario),
+                url: addExtraPdf(id,convertToSlug(file.name),"titulo", "titulo",idUsuario),
                 data: bodyFormData,
                 headers: { "Content-Type": "multipart/form-data",'Authorization': token},
             })
@@ -558,7 +559,7 @@ export function Visualizador({id, extras,edit}) {
                 .catch(function (response) {
                     setAwaitAddHotspot(false);
                     console.log(response);
-                    toast.update(toastHotspot, { render: "Error subiendo PDF", type: "success", isLoading: false, autoClose: 1000,draggable: true});
+                    toast.update(toastHotspot, { render: "Error subiendo PDF", type: "error", isLoading: false, autoClose: 1000,draggable: true});
 
                 });
         }
@@ -620,17 +621,15 @@ export function Visualizador({id, extras,edit}) {
                 try{
                     if(imagesSrcOneScene.length === 0 ){
                     escenasSrcImages.push(
-                        <div className="emptyEscena ">
+                        <div className="emptyEscena">
                             <h2 className="texto-blanco">Escena vacia</h2>
                             <br></br>
                             <LottieEmptyEscenas></LottieEmptyEscenas>
                         </div>
                     )}
                 else if(imagesSrcOneScene.length === 1){
-
                     if(hotspotsMap!==undefined || hotspotsMap["2"]!== undefined ||  hotspotsMap["2"])
                     {
-
                         escenasSrcImages.push(
                             <div className={show && loadStatus ? "" : "abajo"} key={index}>
                                 <Pannellum
@@ -652,7 +651,6 @@ export function Visualizador({id, extras,edit}) {
                                     onError={err => {
                                         console.log("Error", err);
                                     }}
-
                                 >
                                     {
                                          hotspotsMap["2"]?.map(function (e){return <Pannellum.Hotspot
@@ -668,7 +666,6 @@ export function Visualizador({id, extras,edit}) {
                                                 }else{
                                                     hotSpotDiv.innerHTML+='+';
                                                 }
-
                                             }}
                                                 handleClick={(evt , args) => pinClickHandler(args)}
                                                 handleClickArg={e}
@@ -825,7 +822,7 @@ export function Visualizador({id, extras,edit}) {
             }
             k=-j;
             let h= lastPin.frameId -j +frames[indexEscena]+1
-            console.log(frames[indexEscena])
+            //console.log(frames[indexEscena])
 
             for(let i = lastPin.frameId -j;i<lastPin.frameId;i++){
                 let newPin={};

@@ -361,7 +361,7 @@ var StatusBar = function StatusBar(_ref) {
     if(_ref.currentImageIndex === 0  || isNaN(_ref.currentImageIndex) ){
 
     }else {
-        console.log(_ref)
+        //console.log(_ref)
         var isRecording = _ref.isRecording,
             currentImageIndex = _ref.currentImageIndex;
         return /*#__PURE__*/React.createElement("div", {

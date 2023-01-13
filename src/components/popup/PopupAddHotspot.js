@@ -71,9 +71,7 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
             return <div style={{textAlign:"center"}}>
                 <h4>Seleccione un tipo de hotspot</h4>
             </div>
-
         }
-
         if(extraType==="video_youtube"){
             return <AddYoutubeVideo onHandleInputYoutube={onHandleInputYoutube} addPdfVis={addPdfVis}></AddYoutubeVideo>
         }
@@ -99,7 +97,6 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
                     </div>
                 </div>
             );
-
         }
         if(extraType==="pdf"){
             let baseStyle = {
@@ -124,6 +121,7 @@ const  PopupNewHotspot =({id, extras,listaHotspots,onClickDeleteHotspot, handleC
             }
             return (
                 <div >
+
                     <Dropzone onDrop={acceptedFiles => {setAcceptedFiles(acceptedFiles);
                         setInputTituloHotspotValue(acceptedFiles[0].name.replace(".pdf",""));
                         console.log(acceptedFiles)}} >
