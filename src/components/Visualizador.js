@@ -39,7 +39,8 @@ import useWindowDimensions from "../hooks/useWindowSize";
 import {Pannellum} from "pannellum-react";
 import {svgImagen, svgPdf, svgYoutube} from "../utils/iconsVisualizador";
 import LottieErrorScene from "../Animations/lottieErrorScene";
-import {after} from "underscore";
+import Toggle from 'react-toggle'
+import "react-toggle/style.css"
 
 
 export function Visualizador({id, extras,edit}) {
@@ -70,6 +71,8 @@ export function Visualizador({id, extras,edit}) {
     const [updateExtras, setUpdateExtras] = useState(false);
     const [hotspotType, setHotspotType] = useState("imagen");
     const [interior360, setInterior360] = useState(false);
+    const [imagenesSinFondo, setImagenesSinFondo] = useState(false)
+    const [fetchImgSinfondo, setFetchImgSinFondo] = useState(false);
 
     const [loadScenes, setLoadScenes] = useState([true,true,true]);
 
@@ -208,26 +211,29 @@ export function Visualizador({id, extras,edit}) {
         }
         return [];
     }
-    function getArraySrcPath(escena){
+
+    const getArraySrcPath =(escena)=>{
         if(escena.nombre==="interior" && interior360){
             if(isMobile === true){
                 return [img360CompleteUrl(escena.imagenes[1].path,id)]
             }else{
                 return [img360CompleteUrl(escena.imagenes[0].path,id)]
             }
-
         }
-
         let n = Object.keys(escena.imagenes).length;
         let escenaNumber;
         let arrayFrames=[]
-
         if(n!==0){
             escenaNumber= escena.imagenes[1].path.split("/")[1];
         }
         for(let i=1;i<=n;i++){
+            if(imagenesSinFondo && escena.nombre !== "interior"){
+                arrayFrames.push(completeImageUrl(`/${id}/${escenaNumber}/sinfondo/${i}.png`));
+            }
+            if(!imagenesSinFondo){
+                arrayFrames.push(completeImageUrl(`/${id}/${escenaNumber}/frames_compresos/${i}.jpg`));
+            }
 
-            arrayFrames.push(completeImageUrl(`/${id}/${escenaNumber}/frames_compresos/${i}.jpg`));
         }
         if(imgForInfoModal === ""){
             if(arrayFrames.length>0){
@@ -236,6 +242,7 @@ export function Visualizador({id, extras,edit}) {
         }
         return arrayFrames;
     }
+
     function handleClickExtras() {
         setVisibleExtras(!visibleExtras);
         extraContainerRef.current.classList.toggle("no-visible");
@@ -253,7 +260,6 @@ export function Visualizador({id, extras,edit}) {
         resolve => setTimeout(resolve, ms)
     );
     const pinClickHandler = async (pin) => {
-
         if(currentImage !== undefined){
             let myTridi=document.getElementsByClassName("_lqEjs visible")
             let imagenActual=null;
@@ -327,13 +333,8 @@ export function Visualizador({id, extras,edit}) {
     },[hotspotsMap,height,width,tridiRef]);
     useEffect(() => {
         async function fetchData() {
-
-
-
             const myDiv = tridiContainerRef.current;
             let activeTridi = Array.from(myDiv.querySelectorAll('.visible .info-value '))[0];
-            console.log(tridiRef)
-
             if(activeTridi !== undefined) {
                 let actualFrame = parseInt(activeTridi.innerHTML);
                 let previousFrame = currentFrameIndex;
@@ -373,7 +374,6 @@ export function Visualizador({id, extras,edit}) {
                 'Authorization': `${token}`
             }});
     }
-
     const myRenderPin = (pin) => {
         let aux ;
         if(pin.tipo === "imagen" ){
@@ -405,7 +405,6 @@ export function Visualizador({id, extras,edit}) {
             </>
         );
     }
-
     function handleDeleteHotspot(nameHotspot) {
         let escenas=objetoData.escenas;
         const searchHotspot = (indexEscena) => {
@@ -523,6 +522,26 @@ export function Visualizador({id, extras,edit}) {
             return null;
         }
     }
+    const botonQuitarFondo = () => {
+        const handleButtonImagenesSinFondo=()=>{
+            if(imagenesSinFondo){
+                setImagenesSinFondo(false);
+                setLoadStatus(false)
+            }else{
+                setImagenesSinFondo(true);
+                setLoadStatus(false)
+            }
+
+
+        }
+        return <label>
+            <Toggle
+                defaultChecked={false}
+                onChange={()=>handleButtonImagenesSinFondo()} />
+            <span>Quitar fondo</span>
+        </label>
+    }
+
     const addPdfVis=(file)=>{console.log(file)}
     const convertToSlug=(Text)=> {
         return Text.toLowerCase()
@@ -598,10 +617,9 @@ export function Visualizador({id, extras,edit}) {
         //console.log(index)
         if(index==="1" || index==="2"){
            // console.log('entra qui')
+
             setLoadStatus(true)
             let myTridi=document.getElementsByClassName("_lqEjs visible")
-
-
 
             if(myTridi.length>0){
                 setCurrentImage(myTridi[0].getElementsByClassName("_3zqPm")[0]);
@@ -684,7 +702,6 @@ export function Visualizador({id, extras,edit}) {
                     }
                 }
                 else{
-
                     escenasSrcImages.push(
                             <Tridi ref={  show  && loadStatus ? tridiRef :null}
                                   key={index}
@@ -996,7 +1013,6 @@ export function Visualizador({id, extras,edit}) {
     }
     const clickOnTridi = (e) => {
 
-
         if(addHotspotMode && isMobile && interior360===true && activeEscena!=="2"){
             setAwaitAddHotspot(true);
             frameReplicateOneReference(calculaUbicacionHotspot(e));
@@ -1164,6 +1180,7 @@ export function Visualizador({id, extras,edit}) {
                 {botonCompartir()}
                 {botonInfoObject()}
                 {botonAgregarHotspot()}
+                {botonQuitarFondo()}
             </div>
             {/*botonModoEdicion()*/}
             <div key={"reel"} ref={extraContainerRef} className="visualizador_reel">
