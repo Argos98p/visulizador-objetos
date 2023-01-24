@@ -94,14 +94,12 @@ export function Visualizador({id, extras,edit}) {
     }
     
     useEffect(() => {
-
         axios.get(infoObjectUrl(id)).then(
             response=>{
                 if (response.status===200){
                     setObjetoData(response.data);
                     setInfoObjectData(response.data.info);
                     let numberOfFrames = {};
-
                     for(let index in response.data.escenas){
                         numberOfFrames[index] = Object.keys(response.data.escenas[index].imagenes).length;
                     }
@@ -323,34 +321,40 @@ export function Visualizador({id, extras,edit}) {
     const handleWheel = (e) => {
             e.deltaY > 0 ? handleZoomOut() : handleZoomIn();
     }
-    const handleButtonEscena=useCallback((escena)=>{
+    const handleButtonEscena=(escena)=>{
         //para que la escena que no esta en pantalla siga moviendose
         if(tridiRef.current!=null){
-            tridiRef.current.toggleAutoplay(false)
+            tridiRef.current.toggleAutoplay(false);
         }
         setActiveEscena(escena.toString())
         setPins(prepararPins(hotspotsMap[escena]));
-    },[hotspotsMap,height,width,tridiRef]);
-    useEffect(() => {
+        console.log("cambia de escena")
+    }
+    useEffect( () => {
         async function fetchData() {
             const myDiv = tridiContainerRef.current;
+            console.log(myDiv)
             let activeTridi = Array.from(myDiv.querySelectorAll('.visible .info-value '))[0];
-            if(activeTridi !== undefined) {
-                let actualFrame = parseInt(activeTridi.innerHTML);
-                let previousFrame = currentFrameIndex;
-                if(actualFrame>previousFrame){
-                    for(let i = actualFrame;i>previousFrame;i--){
-                        await tridiRef.current.prev();
+            let aux= 0;
+            if (tridiContainerRef.current!==undefined) {
+                tridiRef.current.imageIndex(currentFrameIndex)
+                //tridiContainerRef.current.imageIndex();
+                /*
+                if (actualFrame > previousFrame) {
+                    for (let i = actualFrame; i > previousFrame; i--) {
+                        await console.log("s")
+                        await tridiRef.current.prev(1);
                     }
-                }else {
-                    for(let i = actualFrame;i<previousFrame;i++){
-                        await tridiRef.current.next();
+                } else {
+                    for (let i = actualFrame; i < previousFrame; i++) {
+                        await console.log("s")
+                        await tridiRef.current.next(1);
                     }
-                }
+                }*/
             }
         }
-        fetchData();
-        if(tridiRef.current!== null){
+         fetchData();
+        if (tridiRef.current !== null) {
             tridiRef.current.toggleAutoplay(isAutoPlayRunning)
         }
     }, [activeEscena,isMobile,isAutoPlayRunning]);
@@ -541,7 +545,6 @@ export function Visualizador({id, extras,edit}) {
             <span>Quitar fondo</span>
         </label>
     }
-
     const addPdfVis=(file)=>{console.log(file)}
     const convertToSlug=(Text)=> {
         return Text.toLowerCase()
@@ -710,6 +713,7 @@ export function Visualizador({id, extras,edit}) {
                                   images={imagesSrcOneScene}
                                   autoplaySpeed={70}
                                   zoom={1}
+                                   indexcurrent = {100}
                                   maxZoom={3}
                                   minZoom={1}
                                   onZoom={zoomValueHandler}
@@ -1060,7 +1064,6 @@ export function Visualizador({id, extras,edit}) {
             setAwaitAddHotspot(true);
             frameReplicateOneReference(calculaUbicacionHotspot(e));
         }
-
         if(addHotspotMode && isMobile ===false && activeEscena === "2" && interior360===true ){
             if(panellumRef.current!= null){
                 let coordenadas =  panellumRef.current.getViewer().mouseEventToCoords(e);

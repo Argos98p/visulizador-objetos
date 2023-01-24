@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, forwardRef, useState, useCallback, useImperativeHandle, Fragment } from 'react';
+import React, {useRef, useEffect, forwardRef, useState, useCallback, useImperativeHandle, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import Animated from 'animated/lib/targets/react-dom';
 import Hammer from 'hammerjs';
@@ -6,7 +6,20 @@ import {useCounter} from "usehooks-ts";
 import {after} from "underscore";
 
 
-var styles = {"tridi-viewer":"_lqEjs","tridi-draggable-true":"_2kfM8","tridi-recording-true":"_f-Ry5","tridi-viewer-image":"_2VqNg","tridi-viewer-image-shown":"_3zqPm","tridi-viewer-image-hidden":"_1WW7u","tridi-hint-overlay":"_3Ohj5","tridi-hint":"_1Wsta","tridi-hint-text":"_14UgB","tridi-loading":"_JdKYk","load8":"_IpOvS","fadeIn":"_3uImN"};
+var styles = {
+    "tridi-viewer": "_lqEjs",
+    "tridi-draggable-true": "_2kfM8",
+    "tridi-recording-true": "_f-Ry5",
+    "tridi-viewer-image": "_2VqNg",
+    "tridi-viewer-image-shown": "_3zqPm",
+    "tridi-viewer-image-hidden": "_1WW7u",
+    "tridi-hint-overlay": "_3Ohj5",
+    "tridi-hint": "_1Wsta",
+    "tridi-hint-text": "_14UgB",
+    "tridi-loading": "_JdKYk",
+    "load8": "_IpOvS",
+    "fadeIn": "_3uImN"
+};
 
 function useInterval(callback, delay) {
     for (var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
@@ -67,7 +80,7 @@ function useTridiKeyPressHandler(_ref) {
     }, []);
 }
 
-var styles$1 = {"tridi-control-bar":"_3jUN-","tridi-control-button":"_gReMg"};
+var styles$1 = {"tridi-control-bar": "_3jUN-", "tridi-control-button": "_gReMg"};
 
 var TargetIcon = function TargetIcon(props) {
     return /*#__PURE__*/React.createElement("svg", props, /*#__PURE__*/React.createElement("path", {
@@ -285,7 +298,7 @@ var ControlBar = function ControlBar(_ref) {
     }, /*#__PURE__*/React.createElement(StopIcon, null)));
 };
 
-var styles$2 = {"tridi-dot":"_1TrFD","tridi-pin":"_1QXU8"};
+var styles$2 = {"tridi-dot": "_1TrFD", "tridi-pin": "_1QXU8"};
 
 var Pins = function Pins(_ref) {
     var pins = _ref.pins,
@@ -350,17 +363,19 @@ Pins.defaultProps = {
     pins: [],
     pinWidth: 10,
     pinHeight: 10,
-    onDoubleClick: function onDoubleClick() {},
-    onPinClick: function onPinClick() {}
+    onDoubleClick: function onDoubleClick() {
+    },
+    onPinClick: function onPinClick() {
+    }
 };
 
-var styles$3 = {"tridi-status-bar":"_2_pZm"};
+var styles$3 = {"tridi-status-bar": "_2_pZm"};
 
 var StatusBar = function StatusBar(_ref) {
 
-    if(_ref.currentImageIndex === 0  || isNaN(_ref.currentImageIndex) ){
+    if (_ref.currentImageIndex === 0 || isNaN(_ref.currentImageIndex)) {
 
-    }else {
+    } else {
         //console.log(_ref)
         var isRecording = _ref.isRecording,
             currentImageIndex = _ref.currentImageIndex;
@@ -404,7 +419,8 @@ DragIcon.defaultProps = {
 };
 var AnimatedDiv = Animated.div;
 
-var TridiUtils = function TridiUtils() {};
+var TridiUtils = function TridiUtils() {
+};
 
 TridiUtils.isValidProps = function (_ref2) {
     var images = _ref2.images,
@@ -441,12 +457,15 @@ TridiUtils.uid = function () {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
 };
 
+
+
 var Tridi = forwardRef(function (_ref, ref) {
 
 
     var className = _ref.className,
         images = _ref.images,
         pins = _ref.pins,
+        indexcurrent = _ref.indexcurrent,
         pinWidth = _ref.pinWidth,
         pinHeight = _ref.pinHeight,
         setPins = _ref.setPins,
@@ -542,7 +561,10 @@ var Tridi = forwardRef(function (_ref, ref) {
 
     var _count = Array.isArray(images) ? images.length : Number(count);
 
+
     var _images = TridiUtils.normalizedImages(images, format, location, _count);
+
+
 
     var _viewerImageRef = useRef(null);
 
@@ -559,6 +581,7 @@ var Tridi = forwardRef(function (_ref, ref) {
         onHintHide();
     };
 
+    /*
     var nextFrame = useCallback(function () {
         var newIndex = currentImageIndex >= _count - 1 ? 0 : currentImageIndex + 1;
         setCurrentImageIndex(newIndex);
@@ -570,45 +593,54 @@ var Tridi = forwardRef(function (_ref, ref) {
         setCurrentImageIndex(newIndex);
         onPrevFrame();
         onFrameChange(newIndex);
-    }, [_count, currentImageIndex, onFrameChange, onPrevFrame]);
-    /*
+    }, [_count, currentImageIndex, onFrameChange, onPrevFrame]);*/
+
     var nextFrame = function (slide) {
-        var newIndex = currentImageIndex +slide >= _count ? 0 : currentImageIndex + slide;
+        var newIndex = currentImageIndex + slide >= _count ? 0 : currentImageIndex + slide;
         // console.log('current image index ' + currentImageIndex);
-        setCurrentImageIndex(newIndex);
+
+        if(newIndex===0){
+            setCurrentImageIndex(1);
+        }else{
+            setCurrentImageIndex(newIndex);
+        }
+
         onNextFrame();
         onFrameChange(newIndex);
         return newIndex;
     }
     var prevFrame = function (slide) {
-
-        var newIndex = currentImageIndex-slide <= 0 ? _count+currentImageIndex-slide-1 : currentImageIndex - slide;
-        //console.log(slide, newIndex,currentImageIndex);
-
-        setCurrentImageIndex(newIndex);
+        var newIndex = currentImageIndex - slide <= 0 ? _count + currentImageIndex - slide - 1 : currentImageIndex - slide;
+        if(newIndex===0){
+            setCurrentImageIndex(1);
+        }else{
+            setCurrentImageIndex(newIndex);
+        }
         onPrevFrame();
         onFrameChange(newIndex);
         return newIndex;
-    }*/
+    }
     var nextMove = useCallback(function () {
         onNextMove();
-        return inverse ? prevFrame() : nextFrame();
+        return inverse ? prevFrame(1) : nextFrame(1);
     }, [inverse, nextFrame, onNextMove, prevFrame]);
 
     var prevMove = useCallback(function () {
         onPrevMove();
-        return inverse ? nextFrame() : prevFrame();
+        return inverse ? nextFrame(1) : prevFrame(1);
     }, [inverse, nextFrame, onPrevMove, prevFrame]);
 
+
     const [contador, setcontador] = useState(0);
-    var aux=0;
-    var rotateViewerImage = useCallback(function (e,isTouch=false) {
+    var aux = 0;
+    var rotateViewerImage = function (e, isTouch = false) {
 
         var interval = e.touches ? touchDragInterval : dragInterval;
         var eventX = e.touches ? Math.round(e.touches[0].clientX) : e.clientX;
         var coord = eventX - _viewerImageRef.current.offsetLeft;
         var newMoveBufffer = moveBuffer;
 
+        /*
 
         if (moveBuffer.length < 2) {
             newMoveBufffer = moveBuffer.concat(coord);
@@ -620,22 +652,23 @@ var Tridi = forwardRef(function (_ref, ref) {
         var threshold = !(coord % interval);
         var oldMove = newMoveBufffer[0];
         var newMove = newMoveBufffer[1];
-
+*/
+        /*
         if (threshold && newMove < oldMove) {
             nextMove();
         } else if (threshold && newMove > oldMove) {
             prevMove();
-        }
-        /*
+        }*/
+
+
         if (moveBuffer.length < 2) {
             newMoveBufffer = moveBuffer.concat(coord);
         } else {
             newMoveBufffer = [moveBuffer[1], coord];
         }
-        if(newMoveBufffer!==[]){
+        if (newMoveBufffer !== []) {
             setMoveBuffer(newMoveBufffer)
             setmyBuffer(newMoveBufffer)
-        }else{
         }
 
 
@@ -643,8 +676,14 @@ var Tridi = forwardRef(function (_ref, ref) {
         var oldMove = newMoveBufffer[0];
         var newMove = newMoveBufffer[1];
 
-        if(isTouch){
-            if(threshold && newMove >oldMove){
+        let diferencia = newMove - oldMove;
+
+        if (isTouch) {
+            let framesPorMover = Math.round(diferencia*1.5 / 10);
+            console.log(diferencia,framesPorMover)
+            if (threshold && newMove > oldMove) {
+
+                /*
                 if(newMove > oldMove && newMove < oldMove+5){
                     setcontador(contador+1);
                     if(contador>=0){
@@ -661,8 +700,19 @@ var Tridi = forwardRef(function (_ref, ref) {
                     prevFrame(4);
                 }else if (newMove > oldMove+100){
                     prevFrame(4);
+                }*/
+                if (framesPorMover === 0) {
+                    setcontador(contador + 1);
+                    if (contador > 2) {
+                        prevFrame(1);
+                        setcontador(0)
+                    }
+                } else {
+                    prevFrame(Math.abs(framesPorMover))
                 }
-            }else if (threshold && newMove < oldMove){
+
+            } else if (threshold && newMove < oldMove) {
+                /*
                 if( newMove < oldMove && newMove > oldMove-5){
                     setcontador(contador+1);
                     if(contador>=0){
@@ -680,51 +730,47 @@ var Tridi = forwardRef(function (_ref, ref) {
                     nextFrame(4);
                 }else if (newMove < oldMove-100 ){
                     nextFrame(4);
-                }
-            }
-        }else{
-            if(threshold && newMove >oldMove){
-                if(newMove > oldMove && newMove < oldMove+5){
-                    setcontador(contador+1);
-                    if(contador>3){
-                        prevFrame(1);
-                        setcontador(0)
-                    }
-                }
-                else if( newMove > oldMove+5 && newMove < oldMove+25  ){
-                    prevFrame(1);
-                }
-                else if (newMove > oldMove+25 && newMove < oldMove +50){
-                    prevFrame(1);
-                }
-                else if (newMove > oldMove+50 && newMove<oldMove+100){
-                    prevFrame(2);
-                }else if (newMove > oldMove+100){
-                    prevFrame(2);
-                }
-            }else if (threshold && newMove < oldMove){
-                if( newMove < oldMove && newMove > oldMove-5){
-                    setcontador(contador+1);
-                    if(contador>3){
+                }*/
+                if (framesPorMover === 0) {
+                    setcontador(contador + 1);
+                    if (contador > 3) {
                         nextFrame(1);
                         setcontador(0)
                     }
-                }
-                else if (newMove < oldMove-5 && newMove > oldMove-25){
-                    nextFrame(1);
-                }
-                else if (newMove < oldMove-25 && newMove > oldMove-50){
-                    nextFrame(1);
-                }
-                else if (newMove < oldMove-50 && newMove > oldMove-100){
-                    nextFrame(2);
-                }else if (newMove < oldMove-100 ){
-                    nextFrame(2);
+                } else {
+                    nextFrame(Math.abs(framesPorMover))
                 }
             }
-        }*/
+        } else {
 
-    }, [dragInterval, moveBuffer, nextMove, prevMove, touchDragInterval]);
+            let framesPorMover = Math.round(diferencia / 10);
+            if (threshold && newMove > oldMove) {
+
+                if (framesPorMover === 0) {
+                    setcontador(contador + 1);
+                    if (contador > 3) {
+                        prevFrame(1);
+                        setcontador(0)
+                    }
+                } else {
+                    prevFrame(Math.abs(framesPorMover))
+                }
+
+            } else if (threshold && newMove < oldMove) {
+                if (framesPorMover === 0) {
+                    setcontador(contador + 1);
+                    if (contador > 3) {
+                        nextFrame(1);
+                        setcontador(0)
+                    }
+                } else {
+                    nextFrame(Math.abs(framesPorMover))
+                }
+
+            }
+        }
+
+    }
 
     var resetMoveBuffer = function resetMoveBuffer() {
         return setMoveBuffer([]);
@@ -744,6 +790,15 @@ var Tridi = forwardRef(function (_ref, ref) {
         setIsAutoPlayRunning(state);
         return state ? onAutoplayStart() : onAutoplayStop();
     }, [onAutoplayStart, onAutoplayStop]);
+
+    var _setImageIndex = function (index){
+        if(index>=_count){
+            setCurrentImageIndex(1);
+        }else{
+            setCurrentImageIndex(index);
+        }
+
+    }
 
     var _toggleRecording = useCallback(function (state, existingSessionId) {
         setIsRecording(state);
@@ -771,7 +826,6 @@ var Tridi = forwardRef(function (_ref, ref) {
     var _toggleMoving = useCallback(function (isMoving) {
         if (isMoving) {
             _toggleRecording(false);
-
             setIsMoveing(true);
         } else {
             resetPosition();
@@ -909,7 +963,7 @@ var Tridi = forwardRef(function (_ref, ref) {
 
         if (touch) {
             startDragging();
-            rotateViewerImage(e);
+            rotateViewerImage(e,true);
         }
 
         if (isAutoPlayRunning && stopAutoplayOnClick) {
@@ -928,13 +982,13 @@ var Tridi = forwardRef(function (_ref, ref) {
             return;
         }
         if (touch) {
-            rotateViewerImage(e);
+            rotateViewerImage(e,true);
         }
     }, [rotateViewerImage, touch, isMoveing]);
     var imageViewerTouchEndHandler = function (e) {
         AnimatedValues.current.originOffset = null;
         if (touch) {
-           // momentumEffect(myBuffer,true);
+            // momentumEffect(myBuffer,true);
             stopDragging();
             resetMoveBuffer();
         }
@@ -1033,13 +1087,19 @@ var Tridi = forwardRef(function (_ref, ref) {
             },
             prev: function prev() {
                 return prevMove();
+            },
+            imageIndex: function imageIndex(index){
+                return _setImageIndex(index);
             }
+
         };
     });
 
+    const setImageIndex = (index) =>{
+        setCurrentImageIndex(index);
+    }
 
-
-    let loadImageAfter=after(_count-5, () => {
+    let loadImageAfter = after(_count - 5, () => {
         console.log("loaded");
         onLoadChange(true, 100);
         /*
@@ -1055,8 +1115,8 @@ var Tridi = forwardRef(function (_ref, ref) {
 
     let loadImage = function loadImage(index) {
 
-        let aux= _count -1;
-        if(index === aux){
+        let aux = _count - 1;
+        if (index === aux) {
             onLoadChange(true, 100);
         }
 
@@ -1084,7 +1144,7 @@ var Tridi = forwardRef(function (_ref, ref) {
             return /*#__PURE__*/React.createElement("img", {
                 key: index,
                 src: src,
-                onLoad:()=>loadImage(index),
+                onLoad: () => loadImage(index),
                 className: styles['tridi-viewer-image'] + " " + (currentImageIndex === index ? styles['tridi-viewer-image-shown'] : styles['tridi-viewer-image-hidden']),
                 alt: ""
             });
@@ -1249,6 +1309,7 @@ Tridi.propTypes = {
     format: PropTypes.string,
     location: PropTypes.string,
     count: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    indexcurrent: PropTypes.number,
     draggable: PropTypes.bool,
     hintOnStartup: PropTypes.bool,
     hintText: PropTypes.string,
@@ -1315,26 +1376,42 @@ Tridi.defaultProps = {
     showStatusBar: false,
     hideRecord: false,
     renderPin: undefined,
-    setPins: function setPins() {},
+    setPins: function setPins() {
+    },
     renderHint: undefined,
     zoom: 1,
     maxZoom: 3,
     minZoom: 1,
-    onHintHide: function onHintHide() {},
-    onAutoplayStart: function onAutoplayStart() {},
-    onAutoplayStop: function onAutoplayStop() {},
-    onNextMove: function onNextMove() {},
-    onPrevMove: function onPrevMove() {},
-    onNextFrame: function onNextFrame() {},
-    onPrevFrame: function onPrevFrame() {},
-    onDragStart: function onDragStart() {},
-    onDragEnd: function onDragEnd() {},
-    onFrameChange: function onFrameChange() {},
-    onRecordStart: function onRecordStart() {},
-    onRecordStop: function onRecordStop() {},
-    onPinClick: function onPinClick() {},
-    onZoom: function onZoom() {},
-    onLoadChange: function onLoadChange() {}
+    onHintHide: function onHintHide() {
+    },
+    onAutoplayStart: function onAutoplayStart() {
+    },
+    onAutoplayStop: function onAutoplayStop() {
+    },
+    onNextMove: function onNextMove() {
+    },
+    onPrevMove: function onPrevMove() {
+    },
+    onNextFrame: function onNextFrame() {
+    },
+    onPrevFrame: function onPrevFrame() {
+    },
+    onDragStart: function onDragStart() {
+    },
+    onDragEnd: function onDragEnd() {
+    },
+    onFrameChange: function onFrameChange() {
+    },
+    onRecordStart: function onRecordStart() {
+    },
+    onRecordStop: function onRecordStop() {
+    },
+    onPinClick: function onPinClick() {
+    },
+    onZoom: function onZoom() {
+    },
+    onLoadChange: function onLoadChange() {
+    }
 };
 
 export default Tridi;
