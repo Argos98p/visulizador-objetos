@@ -43,8 +43,9 @@ import Toggle from 'react-toggle'
 import "react-toggle/style.css"
 
 
-export function Visualizador({id, extras,edit}) {
+export function Visualizador({id, extras,edit,marketa}) {
 
+    console.log(marketa)
     const isMobile = /Mobi|Android/i.test(navigator.userAgent)
     const { height, width } = useWindowDimensions();
     const [objetoData,setObjetoData] = useState({escenas:{}});
@@ -507,16 +508,21 @@ export function Visualizador({id, extras,edit}) {
         </>
     }
     const botonCompartir=()=>{
+        if (marketa){
+            return null
+        }else{
+            return <>
+                {
+                    webview ==='false' ?<Link to={"compartir"}>
+                            <img className="visualizador_btn-share-img cursor-pointer"  src="/iconos/btn-compartir.png" alt=""/>
+                        </Link>
+                        : null
+                }
 
-    return <>
-        {
-            webview ==='false' ?<Link to={"compartir"}>
-                    <img className="visualizador_btn-share-img cursor-pointer"  src="/iconos/btn-compartir.png" alt=""/>
-                </Link>
-                : null
+            </>
         }
 
-    </>
+
     }
     const botonAgregarHotspot=()=>{
         if(isEditMode){
@@ -1145,10 +1151,17 @@ export function Visualizador({id, extras,edit}) {
         return <ToogleButton isEditMode={isEditMode} handleActivateEditMode={handleActivateEditMode}></ToogleButton>;
     }*/
     const logoCompany = ()=>{
-        return <div key={"logo"} className="logo-company">
-            <img src="/icono.png" alt=""/>
-            <label>MOTOR'S</label>
-        </div>
+
+        if(marketa){
+            return null
+        }else{
+            return <div key={"logo"} className="logo-company">
+                <img src="/icono.png" alt=""/>
+                <label>MOTOR'S</label>
+            </div>
+        }
+
+
     }
     const returnRoute=()=>{
         navigate(-1);
@@ -1183,7 +1196,7 @@ export function Visualizador({id, extras,edit}) {
                 {botonCompartir()}
                 {botonInfoObject()}
                 {botonAgregarHotspot()}
-                {botonQuitarFondo()}
+                {/*botonQuitarFondo()*/}
             </div>
             {/*botonModoEdicion()*/}
             <div key={"reel"} ref={extraContainerRef} className="visualizador_reel">

@@ -1,18 +1,18 @@
 @import url('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css');
 
-.header {
+.header2 {
     padding: 30px;
     text-align: left;
     background: #212529;
     color: #212529;
     font-size: 30px;
 }
-img{
+.img2{
     width:200px;
     height: 100px;
 }
 
-
+/*
 body {
     height: 100%;
     margin: 0;
@@ -20,9 +20,9 @@ body {
     align-content: center;
     alignment-baseline: center;
     align-items: center;
-}
+}*/
 
-.text-center{
+.text-center2{
     margin: 30px;
     font-size: 50px;
     align-content: center;

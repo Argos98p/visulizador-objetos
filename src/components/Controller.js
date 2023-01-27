@@ -7,7 +7,10 @@ import {infoObjectUrl, getExtrasUrl} from "../Api/apiRoutes";
 import LottieServerError from "../Animations/lottieServerError";
 
 
-function Controller({editMode}) {
+function Controller({editMode,marketa}) {
+
+    console.log(marketa);
+
     let {id} = useParams();
     const [myObjeto, setMyObjeto] = useState(null);
     const [extras, setExtras] = useState([]);
@@ -59,6 +62,7 @@ function Controller({editMode}) {
             { (myObjeto !=="NOT_FOUND" && myObjeto !== null )?
                 <Visualizador data={myObjeto}
                               edit={editMode}
+                              marketa={marketa}
                               tipo="vehiculo"
                               id={id} extras={extras}></Visualizador>
                 : null}
