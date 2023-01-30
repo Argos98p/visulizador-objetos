@@ -1,0 +1,12 @@
+.image-container2{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.imagen{
+    width: 300px;
+}
+.image-container2 a img {
+    width: 200px;
+}

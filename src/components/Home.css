@@ -1,13 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+
 .home-page-container{
+    font-family: 'Lato', sans-serif;
     background-color: #1e2125;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+
+    /*#background-color: #fff;
+
+    #width: 100vw;
+    #height: 100vh;
+    #display: flex;
+    #flex-direction: column;
+    #justify-content: center;
+    #align-items: center;*/
 
 }
+h1{
+    text-align:center;
+    padding: 0.6em;
+}
+.image-container3{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.images-marketa{
+    width: 50%;
+}
+
+.blanco{
+    color: #fff;
+}
+
+.cyan{
+    color:#00ffff;
+}
+
+.weigth{
+    font-weight: bold;
+}
+
+/*
 .image-container{
     width: 40vw;
 }
@@ -19,8 +54,9 @@
 }
 .image-container img, .image-container2 img{
     width: 100%;
-}
+}*/
 
+/*
 @media (min-width: 800px) {
     .image-container{
         width: 250px;
@@ -33,3 +69,5 @@
         bottom: 2em;
     }
 }
+
+ */
