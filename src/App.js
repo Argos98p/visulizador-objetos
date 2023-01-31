@@ -75,7 +75,8 @@ function App() {
                 <Route index element={<Home/>} />
                 {/*en la siguiente linea va false*/}
                 <Route path="/visualizador/view/:id/*" element={<Controller editMode={false} marketa={false}/> } />
-                <Route path="/visualizador/view/:id/marketa" element={<Controller editMode={false}  marketa={true} />}/>
+                <Route path="/visualizador/view/:id/marketa/*" element={<Controller editMode={false}  marketa={true} />}/>
+
                 <Route path="/visualizador/edit/:id/*" element={
                     <ProtectedRoute>
                         <Controller editMode={true}/>

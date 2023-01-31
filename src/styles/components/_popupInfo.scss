@@ -3,12 +3,15 @@
   background-color: $border-dark !important;
   .popup-info-container-content{
     width: 75% !important;
+    height: 80% !important;
     padding: 0;
     background-color: $modal-info !important;
     border-radius: 2em;
 
     border: 0 red solid !important;
     .popup-info-div-container{
+
+
       display: flex;
       flex-direction: row;
       justify-content: space-evenly;
@@ -78,7 +81,17 @@
     }
 
   }
-  
+
+  @media screen and (max-width: 400px){
+    font-size: 10px;
+  }
+  @media screen and (max-width: 600px){
+    font-size: 13px;
+  }
+  @media screen and (max-width: 800px){
+    font-size: 15px;
+  }
+
   @media screen and (max-width: 856px) {
     .popup-info-container-content{
       width: 90% !important;

@@ -9,8 +9,6 @@ import LottieServerError from "../Animations/lottieServerError";
 
 function Controller({editMode,marketa}) {
 
-    console.log(marketa);
-
     let {id} = useParams();
     const [myObjeto, setMyObjeto] = useState(null);
     const [extras, setExtras] = useState([]);

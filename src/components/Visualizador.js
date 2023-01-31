@@ -45,7 +45,6 @@ import "react-toggle/style.css"
 
 export function Visualizador({id, extras,edit,marketa}) {
 
-    console.log(marketa)
     const isMobile = /Mobi|Android/i.test(navigator.userAgent)
     const { height, width } = useWindowDimensions();
     const [objetoData,setObjetoData] = useState({escenas:{}});
@@ -1227,7 +1226,7 @@ export function Visualizador({id, extras,edit,marketa}) {
         </div>
             <Outlet/>
             <Routes>
-                <Route exact path="/info" element={<PopupInfoObjetct imgForInfoModal={imgForInfoModal} infoObjectData={infoObjectData}></PopupInfoObjetct>
+                <Route  path="/info" element={<PopupInfoObjetct imgForInfoModal={imgForInfoModal} infoObjectData={infoObjectData}></PopupInfoObjetct>
                 }/>
                 <Route path="/compartir" element={<PopupCompartir ></PopupCompartir>
                 }/>
