@@ -41,6 +41,7 @@ import {svgImagen, svgPdf, svgYoutube} from "../utils/iconsVisualizador";
 import LottieErrorScene from "../Animations/lottieErrorScene";
 import Toggle from 'react-toggle'
 import "react-toggle/style.css"
+import {useDoubleTap} from "use-double-tap";
 
 
 export function Visualizador({id, extras,edit,marketa}) {
@@ -768,8 +769,8 @@ export function Visualizador({id, extras,edit,marketa}) {
                         </div>
 
 
-                        {<div className={`imagesContainer ${ loadStatus===true ? "" : "abajo"}`}
-                              onClick={clickOnTridi}
+                        {<div  {...doubleTap} className={`imagesContainer ${ loadStatus===true ? "" : "abajo"}`}
+                              //onClick={clickOnTridi}
                               onDoubleClick={doubleClickOnTridi}
                               ref={containerRef}>
 
@@ -783,6 +784,15 @@ export function Visualizador({id, extras,edit,marketa}) {
         }
         return <h1>holaa</h1>
     }
+    const doubleTap = useDoubleTap((e) => {
+
+        if(isMobile){
+            handleAddNewHotspot(e);
+        }
+
+
+
+    });
     const replicateFrames = (indexEscena, lastPin) => {
 
         let move = 0.014;
@@ -925,11 +935,8 @@ export function Visualizador({id, extras,edit,marketa}) {
 
             let ultimoPin= {...lastPin};
             let ultimoPinV2 = {...lastPin};
-
-
             let arrayPuertasCerradas =  replicateFrames("0",ultimoPin);
             let arrayPuertasAbiertas =  replicateFrames("1",ultimoPinV2);
-
 
             postNewHotspots(id,"puertas_cerradas",arrayPuertasCerradas).then(
                 response=>{
@@ -1021,7 +1028,6 @@ export function Visualizador({id, extras,edit,marketa}) {
 
     }
     const clickOnTridi = (e) => {
-
         if(addHotspotMode && isMobile && interior360===true && activeEscena!=="2"){
             setAwaitAddHotspot(true);
             frameReplicateOneReference(calculaUbicacionHotspot(e));
@@ -1064,12 +1070,13 @@ export function Visualizador({id, extras,edit,marketa}) {
             }
         }
     }
-    const doubleClickOnTridi = (e) =>{
+
+    const handleAddNewHotspot=(e)=>{
         if(addHotspotMode  && activeEscena!=="2"){
             setAwaitAddHotspot(true);
             frameReplicateOneReference(calculaUbicacionHotspot(e));
         }
-        if(addHotspotMode && isMobile ===false && activeEscena === "2" && interior360===true ){
+        if(addHotspotMode  && activeEscena === "2" && interior360===true ){
             if(panellumRef.current!= null){
                 let coordenadas =  panellumRef.current.getViewer().mouseEventToCoords(e);
                 let newPin = {
@@ -1100,6 +1107,10 @@ export function Visualizador({id, extras,edit,marketa}) {
                 });
             }
         }
+    }
+    const doubleClickOnTridi = (e) =>{
+        handleAddNewHotspot(e);
+
 
     }
     const youtube_parser = (url="") => {

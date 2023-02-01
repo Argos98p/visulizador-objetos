@@ -28,10 +28,8 @@ function App() {
         let tk = searchParams.get("token");
         let idUser = searchParams.get("idUser");
 
-        console.log(webview)
-
+        console.log(tk,idUser)
         if(webview){
-            console.log('2ntrea')
             localStorage.setItem('webview',true);
         }else{
             localStorage.setItem('webview',false);
@@ -40,15 +38,12 @@ function App() {
             navigation(`/visualizador/view/${id}`);
             return <Navigate to={`/visualizador/view/${id}`} />
         }
-
-
         fetch(verificaToken(idUser), {
             method: "POST",
             headers: {
                 'Authorization': tk,
             }
         }).then(r => {
-
             if(r.status === 200){
                 localStorage.setItem('token', tk);
                 localStorage.setItem("idUser",idUser)
@@ -62,9 +57,6 @@ function App() {
             }
         }
         );
-
-
-
 
     }
 
