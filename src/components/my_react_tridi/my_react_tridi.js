@@ -564,7 +564,8 @@ var Tridi = forwardRef(function (_ref, ref) {
 
     var _images = TridiUtils.normalizedImages(images, format, location, _count);
 
-
+    const [initTime, setInitTime] = useState(0);
+    const [initIndex, setInitIndex] = useState(null);
 
     var _viewerImageRef = useRef(null);
 
@@ -595,7 +596,12 @@ var Tridi = forwardRef(function (_ref, ref) {
         onFrameChange(newIndex);
     }, [_count, currentImageIndex, onFrameChange, onPrevFrame]);*/
 
-    var nextFrame = function (slide) {
+    useEffect(() => {
+        console.log(currentImageIndex)
+    }, [currentImageIndex]);
+
+    var nextFrame = async function (slide) {
+        console.log("nextframe")
         var newIndex = currentImageIndex + slide >= _count ? 0 : currentImageIndex + slide;
         // console.log('current image index ' + currentImageIndex);
 
@@ -609,7 +615,7 @@ var Tridi = forwardRef(function (_ref, ref) {
         onFrameChange(newIndex);
         return newIndex;
     }
-    var prevFrame = function (slide) {
+    var prevFrame =async function (slide) {
         var newIndex = currentImageIndex - slide <= 0 ? _count + currentImageIndex - slide - 1 : currentImageIndex - slide;
         if(newIndex===0){
             setCurrentImageIndex(1);
@@ -640,27 +646,6 @@ var Tridi = forwardRef(function (_ref, ref) {
         var coord = eventX - _viewerImageRef.current.offsetLeft;
         var newMoveBufffer = moveBuffer;
 
-        /*
-
-        if (moveBuffer.length < 2) {
-            newMoveBufffer = moveBuffer.concat(coord);
-        } else {
-            newMoveBufffer = [moveBuffer[1], coord];
-        }
-
-        setMoveBuffer(newMoveBufffer);
-        var threshold = !(coord % interval);
-        var oldMove = newMoveBufffer[0];
-        var newMove = newMoveBufffer[1];
-*/
-        /*
-        if (threshold && newMove < oldMove) {
-            nextMove();
-        } else if (threshold && newMove > oldMove) {
-            prevMove();
-        }*/
-
-
         if (moveBuffer.length < 2) {
             newMoveBufffer = moveBuffer.concat(coord);
         } else {
@@ -671,7 +656,6 @@ var Tridi = forwardRef(function (_ref, ref) {
             setmyBuffer(newMoveBufffer)
         }
 
-
         var threshold = !(coord % interval);
         var oldMove = newMoveBufffer[0];
         var newMove = newMoveBufffer[1];
@@ -680,27 +664,8 @@ var Tridi = forwardRef(function (_ref, ref) {
 
         if (isTouch) {
             let framesPorMover = Math.round(diferencia*1.5 / 10);
-            console.log(diferencia,framesPorMover)
             if (threshold && newMove > oldMove) {
 
-                /*
-                if(newMove > oldMove && newMove < oldMove+5){
-                    setcontador(contador+1);
-                    if(contador>=0){
-                        prevFrame(3);
-                        setcontador(0)
-                    }
-                }
-                else if( newMove > oldMove+5 && newMove < oldMove+25  ){
-                    prevFrame(3);
-                }
-                else if (newMove > oldMove+25 && newMove < oldMove +50){
-                    prevFrame(3);
-                }else if (newMove > oldMove+50 && newMove<oldMove+100){
-                    prevFrame(4);
-                }else if (newMove > oldMove+100){
-                    prevFrame(4);
-                }*/
                 if (framesPorMover === 0) {
                     setcontador(contador + 1);
                     if (contador > 2) {
@@ -712,25 +677,7 @@ var Tridi = forwardRef(function (_ref, ref) {
                 }
 
             } else if (threshold && newMove < oldMove) {
-                /*
-                if( newMove < oldMove && newMove > oldMove-5){
-                    setcontador(contador+1);
-                    if(contador>=0){
-                        nextFrame(3);
-                        setcontador(0)
-                    }
-                }
-                else if (newMove < oldMove-5 && newMove > oldMove-25){
-                    nextFrame(3);
-                }
-                else if (newMove < oldMove-25 && newMove > oldMove-50){
-                    nextFrame(3);
-                }
-                else if (newMove < oldMove-50 && newMove > oldMove-100){
-                    nextFrame(4);
-                }else if (newMove < oldMove-100 ){
-                    nextFrame(4);
-                }*/
+
                 if (framesPorMover === 0) {
                     setcontador(contador + 1);
                     if (contador > 3) {
@@ -777,14 +724,60 @@ var Tridi = forwardRef(function (_ref, ref) {
     };
 
     const [myBuffer, setmyBuffer] = useState([]);
-    var startDragging = useCallback(function () {
+    const [myCount, setMyCount] = useState(0);
+    useEffect(() => {
+
+        if(isDragging){
+            setMyCount(myCount+1);
+        }
+    }, [currentImageIndex,isDragging]);
+
+
+    const provideInertia =async  (timeInit,timeEnd,count,indexInicio, indexFin) => {
+        let lag = timeEnd-timeInit;
+        if (lag > 300) return;
+        let imgInertia = count;
+        let nextDuration;
+        let initialInertiaLimit = 1;
+        let inertiaLimit = 2.5;
+        let inertiaReductionRatio = 1.2;
+
+        let durationMultiplier = 500/(1+Math.abs(2)/6);
+        if (imgInertia>initialInertiaLimit || imgInertia < -initialInertiaLimit) setTimeout(continueInertia, 50);
+        function continueInertia (){
+
+            if( indexFin > indexInicio ){
+                setCurrentImageIndex(currentImageIndex+1);
+            }else if ( indexFin < indexInicio ){
+                setCurrentImageIndex(currentImageIndex-1);
+            }
+
+            imgInertia = imgInertia/inertiaReductionRatio;
+            setDuration();
+
+            if (imgInertia > inertiaLimit || imgInertia < -inertiaLimit) {
+                setTimeout(continueInertia, nextDuration);
+            }
+        }
+
+        function setDuration(){
+            nextDuration = Math.abs( durationMultiplier / imgInertia );
+        }
+        setDuration();
+    }
+
+    var startDragging = function () {
+        setInitTime(Date.now());
+        setInitIndex(currentImageIndex);
         setIsDragging(true);
         onDragStart();
-    }, [onDragStart]);
-    var stopDragging = useCallback(function () {
+    }
+    var stopDragging =function () {
+       // provideInertia(initTime,Date.now(),myCount,initIndex,currentImageIndex)
         setIsDragging(false);
+        setMyCount(0);
         onDragEnd();
-    }, [onDragEnd]);
+    }
 
     var _toggleAutoplay = useCallback(function (state) {
         setIsAutoPlayRunning(state);
@@ -797,7 +790,6 @@ var Tridi = forwardRef(function (_ref, ref) {
         }else{
             setCurrentImageIndex(index);
         }
-
     }
 
     var _toggleRecording = useCallback(function (state, existingSessionId) {
@@ -840,42 +832,9 @@ var Tridi = forwardRef(function (_ref, ref) {
         onZoom(newZoom);
     };
 
-    const sleep = ms => new Promise(
-        resolve => setTimeout(resolve, ms)
-    );
-    var momentumEffect = null /*async (buffer, isTouch=false)=>{
-        let desplazamiento= Math.abs(buffer[0]-buffer[1]);
-        if(isTouch){
-            let k = 4;
-            if(buffer[0]<buffer[1]){
-                for(let i = 0;i<=desplazamiento+k;i++){
-                    await sleep(50);
-                    let auxs=prevFrame(i);
-                    setCurrentImageIndex(auxs);
-                }
-            }else if(buffer[0]>buffer[1]){
-                for(let i = 1;i<=desplazamiento+k;i++){
-                    await sleep(50);
-                    let auxs=nextFrame(i);
-                    setCurrentImageIndex(auxs);
-                }
-            }
-        }else{
-            if(buffer[0]<buffer[1]){
-                for(let i = 0;i<=desplazamiento;i++){
-                    await sleep(50);
-                    let auxs=prevFrame(i);
-                    setCurrentImageIndex(auxs);
-                }
-            }else if(buffer[0]>buffer[1]){
-                for(let i = 1;i<=desplazamiento;i++){
-                    await sleep(50);
-                    let auxs=nextFrame(i);
-                    setCurrentImageIndex(auxs);
-                }
-            }
-        }
-    }*/
+
+
+
     var imageViewerMouseDownHandler = function imageViewerMouseDownHandler(e) {
         if (_draggable) {
             if (e.preventDefault) e.preventDefault();
@@ -901,10 +860,8 @@ var Tridi = forwardRef(function (_ref, ref) {
         if (_draggable) {
             if (e.preventDefault) e.preventDefault();
             stopDragging();
-            //momentumEffect(moveBuffer);
             resetMoveBuffer();
         }
-
         AnimatedValues.current.originOffset = null;
     };
 
@@ -916,7 +873,6 @@ var Tridi = forwardRef(function (_ref, ref) {
             AnimatedValues.current.y.setValue(clientY - AnimatedValues.current.originOffset.y);
             return;
         }
-
         if (_draggable && isDragging) {
             rotateViewerImage(e);
         }
@@ -924,14 +880,11 @@ var Tridi = forwardRef(function (_ref, ref) {
 
     var imageViewerMouseLeaveHandler = function imageViewerMouseLeaveHandler() {
         if (_draggable) {
-            //momentumEffect(moveBuffer)
             resetMoveBuffer();
         }
-
         if (!isAutoPlayRunning && resumeAutoplayOnMouseLeave) {
             _toggleAutoplay(true);
         }
-
         if (mouseleaveDetect) {
             stopDragging();
             resetMoveBuffer();
@@ -988,7 +941,6 @@ var Tridi = forwardRef(function (_ref, ref) {
     var imageViewerTouchEndHandler = function (e) {
         AnimatedValues.current.originOffset = null;
         if (touch) {
-            // momentumEffect(myBuffer,true);
             stopDragging();
             resetMoveBuffer();
         }

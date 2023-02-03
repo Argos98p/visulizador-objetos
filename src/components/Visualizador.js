@@ -785,6 +785,7 @@ export function Visualizador({id, extras,edit,marketa}) {
         return <h1>holaa</h1>
     }
     const doubleTap = useDoubleTap((e) => {
+        console.log("double tap")
 
         if(isMobile){
             handleAddNewHotspot(e);
@@ -933,6 +934,7 @@ export function Visualizador({id, extras,edit,marketa}) {
         const newHotspotToast = toast.loading("Creando hotspot");
         if(objetoData.escenas[activeEscena].nombre === "puertas_cerradas" || objetoData.escenas[activeEscena].nombre === "puertas_abiertas"){
 
+
             let ultimoPin= {...lastPin};
             let ultimoPinV2 = {...lastPin};
             let arrayPuertasCerradas =  replicateFrames("0",ultimoPin);
@@ -944,7 +946,7 @@ export function Visualizador({id, extras,edit,marketa}) {
                         postNewHotspots(id, "puertas_abiertas",arrayPuertasAbiertas).then(
                             response => {
                                 if(response.status === 200){
-                                    toast.update(newHotspotToast, { render:`Hotspot  ${nameHotspot} creado`, type: "success", isLoading: false, autoClose: 2000,draggable: true});
+                                    toast.update(newHotspotToast, { render:`Hotspot  ${nameHotspot} creado en escenas 1 y 2`, type: "success", isLoading: false, autoClose: 2000,draggable: true});
                                     setUpdateObjectData(true);
                                     setUpdateExtras(true);
                                     setAwaitAddHotspot(false);
@@ -979,7 +981,6 @@ export function Visualizador({id, extras,edit,marketa}) {
 
             postNewHotspots(id, objetoData.escenas[activeEscena].nombre ,arrayEscena).then(
                 response => {
-                    console.log(response);
                     setUpdateObjectData(true);
                     setUpdateExtras(true);
                     setAwaitAddHotspot(false);
@@ -1027,12 +1028,16 @@ export function Visualizador({id, extras,edit,marketa}) {
         }
 
     }
+    /*
     const clickOnTridi = (e) => {
+        console.log("entra una vez")
+
         if(addHotspotMode && isMobile && interior360===true && activeEscena!=="2"){
             setAwaitAddHotspot(true);
             frameReplicateOneReference(calculaUbicacionHotspot(e));
         }
         if(addHotspotMode && isMobile && interior360===false ){
+
             setAwaitAddHotspot(true);
             frameReplicateOneReference(calculaUbicacionHotspot(e));
         }
@@ -1070,12 +1075,19 @@ export function Visualizador({id, extras,edit,marketa}) {
             }
         }
     }
-
+*/
     const handleAddNewHotspot=(e)=>{
+        console.log("entra una vez")
         if(addHotspotMode  && activeEscena!=="2"){
             setAwaitAddHotspot(true);
             frameReplicateOneReference(calculaUbicacionHotspot(e));
         }
+
+        if(addHotspotMode && activeEscena === "2" && interior360===false ){
+            setAwaitAddHotspot(true);
+            frameReplicateOneReference(calculaUbicacionHotspot(e));
+        }
+
         if(addHotspotMode  && activeEscena === "2" && interior360===true ){
             if(panellumRef.current!= null){
                 let coordenadas =  panellumRef.current.getViewer().mouseEventToCoords(e);
@@ -1093,6 +1105,7 @@ export function Visualizador({id, extras,edit,marketa}) {
 
                 axios.post(postAddHotspot(id, "interior",idUsuario), data,{headers:{'Authorization': `${token}`}}).then(r  =>{
                     if (r.status === 200){
+
                         toast.update(newHotspots360, { render:`Hotspot  ${nameHotspot} creado`, type: "success", isLoading: false, autoClose: 2000,draggable: true});
                         setUpdateObjectData(true);
                         setUpdateExtras(true);
@@ -1109,8 +1122,11 @@ export function Visualizador({id, extras,edit,marketa}) {
         }
     }
     const doubleClickOnTridi = (e) =>{
-        handleAddNewHotspot(e);
 
+        if(!isMobile){
+            console.log("tambien entra")
+            handleAddNewHotspot(e);
+        }
 
     }
     const youtube_parser = (url="") => {
