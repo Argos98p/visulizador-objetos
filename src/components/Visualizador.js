@@ -42,6 +42,7 @@ import LottieErrorScene from "../Animations/lottieErrorScene";
 import Toggle from 'react-toggle'
 import "react-toggle/style.css"
 import {useDoubleTap} from "use-double-tap";
+import LottieSwipe from "../Animations/lottieSwipe";
 
 
 export function Visualizador({id, extras,edit,marketa}) {
@@ -75,7 +76,7 @@ export function Visualizador({id, extras,edit,marketa}) {
     const [imagenesSinFondo, setImagenesSinFondo] = useState(false)
     const [fetchImgSinfondo, setFetchImgSinFondo] = useState(false);
 
-    const [loadScenes, setLoadScenes] = useState([true,true,true]);
+    const [showHintText, setShowHintText] = useState(true);
 
     const extraContainerRef=useRef();
     const extraInViewRef = useRef();
@@ -637,12 +638,19 @@ export function Visualizador({id, extras,edit,marketa}) {
 
 
     }
+    const myHint = ()=>{
+        return  <div style={{width:"300px",height:"300px"}}>
+            <h4 style={{textAlign:"center",color:"#212020", fontWeight:"bold"}}>Pulse y arrastre para mover</h4>
+            <LottieSwipe ></LottieSwipe>
+        </div>
+    }
     const loadAllTridiComponents=()=>{
         if(objetoData){
             let escenas=objetoData.escenas;
             let escenasSrcImages=[];
             let show=false;
             for (let index in escenas){
+
                 show=activeEscena===index
                 let imagesSrcOneScene = getArraySrcPath(escenas[index]);
                 try{
@@ -713,6 +721,10 @@ export function Visualizador({id, extras,edit,marketa}) {
                 else{
                     escenasSrcImages.push(
                             <Tridi ref={  show  && loadStatus ? tridiRef :null}
+                                   hintOnStartup={index === '0'}
+                                   hintText={"Arraste para mover"}
+                                   renderHint={myHint}
+
                                   key={index}
                                   count={imagesSrcOneScene.length}
                                   className={`${ addHotspotMode===true ? " addHotspotCursor " : ""} ${show && loadStatus === true ? "visible" : "oculto"}`}
