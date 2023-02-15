@@ -32,7 +32,7 @@ import PopupInfoObjetct from "./popup/PopupInfoObjetct";
 import {BsChevronDown, BsChevronUp} from "react-icons/bs";
 import PopupCompartir from "./popup/PopupCompartir";
 import ToogleButton from "./botones/ToogleButton";
-import {FaFile, FaFilm, FaImage} from "react-icons/fa";
+import {FaFile, FaFilm, FaImage, FaInfo, FaShare} from "react-icons/fa";
 import {Link, Outlet, Route, Routes, useNavigate} from "react-router-dom";
 
 import useWindowDimensions from "../hooks/useWindowSize";
@@ -1169,6 +1169,34 @@ export function Visualizador({id, extras,edit,marketa}) {
         else return "";
 
     }
+
+    const newBotonCompartir = useMemo(() => {
+        if (marketa){
+            return null
+        }else{
+            return <>
+                {
+                    webview ==='false' ?<Link to={"compartir"}>
+                            <FaShare/>
+                        </Link>
+                        : null
+                }
+
+            </>
+        }
+    }, []);
+    const botonInformacion = useMemo(() => {
+        return  <Link to={'info'}>
+        <div className={`button-escena_navigation-item`}  onClick={()=>{}} >
+            <button  data-for='soclose6' data-tip="Girar" className={`button-escena-btn `} >
+                <FaInfo></FaInfo>
+
+            </button>
+            <ReactTooltip  id="soclose6" place="right" effect="solid"  disable={isMobile}> Información
+            </ReactTooltip>
+        </div>
+        </Link>
+    }, []);
     const botonAutoGiro= useMemo(
     ()=>{
         return <div className={`button-escena_navigation-item`}  onClick={()=>{setIsAutoPlayRunning(!isAutoPlayRunning);
@@ -1232,7 +1260,8 @@ export function Visualizador({id, extras,edit,marketa}) {
             <ToastContainer />
             <div key={"buttons"} className="visualizador_top-buttons ">
                 {botonCompartir()}
-                {botonInfoObject()}
+
+                {/*botonInfoObject()*/}
                 {botonAgregarHotspot()}
                 {/*botonQuitarFondo()*/}
             </div>
@@ -1255,6 +1284,7 @@ export function Visualizador({id, extras,edit,marketa}) {
                 <div className="visualizador_navigation-container" key={"escenas-giro"} >
                     {botonesEscenas}
                     {botonAutoGiro}
+                    {botonInformacion}
                 </div>
             }
             {
