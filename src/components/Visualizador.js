@@ -43,6 +43,8 @@ import Toggle from 'react-toggle'
 import "react-toggle/style.css"
 import {useDoubleTap} from "use-double-tap";
 import LottieSwipe from "../Animations/lottieSwipe";
+import AyudaPopup from "./popup/PopupAyuda";
+import PopupTerminos from "./popup/PopupTerminos";
 
 
 export function Visualizador({id, extras,edit,marketa}) {
@@ -74,6 +76,7 @@ export function Visualizador({id, extras,edit,marketa}) {
     const [hotspotType, setHotspotType] = useState("imagen");
     const [interior360, setInterior360] = useState(false);
     const [imagenesSinFondo, setImagenesSinFondo] = useState(false)
+    const [visibleHotspots,setVisibleHotspots] = useState(true);
     const [fetchImgSinfondo, setFetchImgSinFondo] = useState(false);
 
     const [showHintText, setShowHintText] = useState(true);
@@ -397,11 +400,9 @@ export function Visualizador({id, extras,edit,marketa}) {
 
         return (
             <>
-                <div data-tip={"test"} data-for='test' key={pin.id}>
+                <div data-tip={"test"} className={!visibleHotspots ?"oculto" :""} data-for='test' key={pin.id}>
                     <label  >
-                        <div id="b3"
-                             className="button-hotspot"
-                        >
+                        <div id="b3" className={'button-hotspot '} >
                             {
                                 aux
                             }
@@ -524,6 +525,21 @@ export function Visualizador({id, extras,edit,marketa}) {
         }
 
 
+    }
+    const botonVisibleHotspots = () => {
+        const handleButtonVisibleHotspots=()=>{
+            if(visibleHotspots){
+                setVisibleHotspots(false);
+            }else{
+                setVisibleHotspots(true);
+            }
+        }
+        return <label style={{"display":"contents"}}>
+            <Toggle
+                defaultChecked={true}
+                onChange={()=>handleButtonVisibleHotspots()} />
+
+        </label>
     }
     const botonAgregarHotspot=()=>{
         if(isEditMode){
@@ -1040,54 +1056,7 @@ export function Visualizador({id, extras,edit,marketa}) {
         }
 
     }
-    /*
-    const clickOnTridi = (e) => {
-        console.log("entra una vez")
 
-        if(addHotspotMode && isMobile && interior360===true && activeEscena!=="2"){
-            setAwaitAddHotspot(true);
-            frameReplicateOneReference(calculaUbicacionHotspot(e));
-        }
-        if(addHotspotMode && isMobile && interior360===false ){
-
-            setAwaitAddHotspot(true);
-            frameReplicateOneReference(calculaUbicacionHotspot(e));
-        }
-
-        if(addHotspotMode && isMobile ===true && activeEscena ==="2" && interior360===true){
-            if(panellumRef.current!= null){
-                let coordenadas =  panellumRef.current.getViewer().mouseEventToCoords(e);
-                let newPin = {
-                    x: coordenadas[0],
-                    y: coordenadas[1],
-                    idframe: 1,
-                    tipo:hotspotType,
-                    nombreHotspot:nameHotspot,
-                    idExtra:extraSelected.idextra
-                }
-                let data = [];
-                data.push(newPin)
-                const newHotspots360 = toast.loading("Creando hotspot");
-                axios.post(postAddHotspot(id, "interior",idUsuario), data,{headers:{'Authorization': `${token}`}}).then(r  =>{
-                    if (r.status === 200){
-                        toast.update(newHotspots360, { render:`Hotspot  ${nameHotspot} creado`, type: "success", isLoading: false, autoClose: 2000,draggable: true});
-                        setUpdateObjectData(true);
-                        setUpdateExtras(true);
-                        setAwaitAddHotspot(false);
-                        setAddHotspotMode(false)
-                        setUpdateHotspots(true);
-                    }
-                }).catch(e=>{
-                    toast.update(newHotspots360, { render:`Error creando hotspot` +e, type: "error", isLoading: false, autoClose: 2000,draggable: true});
-                    setAddHotspotMode(false);
-                    setAwaitAddHotspot(false);
-                });
-
-
-            }
-        }
-    }
-*/
     const handleAddNewHotspot=(e)=>{
         console.log("entra una vez")
         if(addHotspotMode  && activeEscena!=="2"){
@@ -1209,13 +1178,7 @@ export function Visualizador({id, extras,edit,marketa}) {
         </div>
     },[isAutoPlayRunning,isMobile]
 );
-    /*
-    const botonModoEdicion =()=>{
-        function handleActivateEditMode() {
-            setIsEditMode(!isEditMode)
-        }
-        return <ToogleButton isEditMode={isEditMode} handleActivateEditMode={handleActivateEditMode}></ToogleButton>;
-    }*/
+
     const logoCompany = ()=>{
 
         if(marketa){
@@ -1260,6 +1223,7 @@ export function Visualizador({id, extras,edit,marketa}) {
             <ToastContainer />
             <div key={"buttons"} className="visualizador_top-buttons ">
                 {botonCompartir()}
+                {botonVisibleHotspots()}
 
                 {/*botonInfoObject()*/}
                 {botonAgregarHotspot()}
@@ -1292,6 +1256,12 @@ export function Visualizador({id, extras,edit,marketa}) {
                     ?  <div key={"await-hotspot"} className="await-hotspot"><DotLoader color="#0087D1"></DotLoader> </div>
                     : null
             }
+            <div className={"bottomBar"}>
+                <div className={"buttonBottomBar"}><img  src={"/logo_blanoc.svg"}  alt={"d"}/></div>
+                <div className={"buttonBottomBar"}><Link className={"textBottomBar"} to={"terminos"}>términos</Link></div>
+                <div className={"separator"}>|</div>
+                <div className={"buttonBottomBar"}><Link className={"textBottomBar"} to={"ayuda"}>ayuda</Link></div>
+            </div>
         </div>
             <Outlet/>
             <Routes>
@@ -1315,6 +1285,8 @@ export function Visualizador({id, extras,edit,marketa}) {
                     </Popup>
                 </div>
                 }></Route>
+                <Route path={"/ayuda"} element={<AyudaPopup/>}></Route>
+                <Route path={"/terminos"} element={<PopupTerminos/>}></Route>
             </Routes>
         </>
     );
