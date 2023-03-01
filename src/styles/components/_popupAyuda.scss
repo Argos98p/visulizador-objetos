@@ -1,0 +1,48 @@
+.popup-ayuda_container-content {
+
+  @media screen  and (max-width: 542px) {
+    .my-ayuda-container{
+      flex-direction: column !important;
+      overflow: auto;
+      height: 500px;
+      display: block !important;
+
+    }
+  }
+
+  width: 90vw!important;
+
+  background-color: $border-dark !important;
+  border: none !important;
+  border-radius: 1em;
+  height: 90vh;
+  button{
+    color: white;
+    border: none;
+    text-decoration: none;
+    border-radius: 0.5em;
+    height: 2em;
+    background-color: $primary-color;
+  }
+  .my-ayuda-container{
+    padding: 2em;
+    height: 80vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    .ayuda-row{
+      padding: 1em;
+      p{
+        color: white;
+      }
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      img{
+        height: 130px;
+        width: 130px;
+      }
+    }
+  }
+}
