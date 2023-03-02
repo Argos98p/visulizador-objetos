@@ -17,8 +17,8 @@ jobs:
       -   name: Push dockerhub
           uses: mr-smithers-excellent/docker-build-push@v5
           with:
-            image: 3dspace/micros
-            tags: visualizador-vehiculos
+            image: 3dspace/visualizador_vehiculos
+            tags: latest
             registry: docker.io
             username: ${{secrets.DOCKER_MAIL}}
             password: ${{ secrets.DOCKER_PASSWD }}

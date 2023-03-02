@@ -1257,7 +1257,7 @@ export function Visualizador({id, extras,edit,marketa}) {
                     : null
             }
             <div className={"bottomBar"}>
-                <div className={"buttonBottomBar"}><img  src={"/logo_blanoc.svg"}  alt={"d"}/></div>
+                <div className={"buttonBottomBar"}><img  src={"/motors_logo.png"}  alt={"d"}/></div>
                 <div className={"buttonBottomBar"}><Link className={"textBottomBar"} to={"terminos"}>términos</Link></div>
                 <div className={"separator"}>|</div>
                 <div className={"buttonBottomBar"}><Link className={"textBottomBar"} to={"ayuda"}>ayuda</Link></div>
