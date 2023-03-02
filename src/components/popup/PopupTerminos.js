@@ -5,12 +5,13 @@ import React from "react";
 const PopupTerminos =()=>{
     const navigate = useNavigate();
     return <Popup
-        className="popup-compartir_container"
+        className="popup-terminos_container"
         onClose={()=>{navigate(-1)}}
         open={true}
         modal
         nested >
         <div className="popup-terminos-relative">
+            <div className={"content-terminos"}>
             <h2>1. CONDICIONES GENERALES DE USO</h2>
             <p>El presente documento tiene por objeto establecer las Condiciones Generales de Uso de las aplicaciones móviles titularidad de 3D Space Inc. (en adelante 3D Space). 3D Space se reserva el derecho a modificar las presentes Condiciones de Uso con el objeto de adecuarlas a la legislación vigente aplicable en cada momento.</p>
             <p>Las presentes Condiciones de Uso no excluyen la posibilidad de que determinados Servicios de las aplicaciones, por sus características particulares, sean sometidos, además de a las Condiciones Generales de Uso, a sus propias condiciones particulares de uso (en adelante las Condiciones Particulares).</p>
@@ -58,6 +59,11 @@ const PopupTerminos =()=>{
             <p>Con carácter general, para hacer uso de los Servicios de la presente aplicación móvil los menores de edad deben haber obtenido previamente la autorización de sus padres, tutores o representantes legales, quienes serán responsables de todos los actos realizados a través de la presente aplicación móvil por los menores a su cargo. En aquellos Servicios en los que expresamente se señale, el acceso quedará restringido única y exclusivamente a mayores de 18 años.</p>
             <h3>DURACIÓN Y TERMINACIÓN</h3>
             <p>La prestación de los servicios y/o contenidos de la presente aplicación móvil tiene una duración indefinida. Sin perjuicio de lo anterior, 3D Space está facultada para dar por terminada, suspender o interrumpir unilateralmente, en cualquier momento y sin necesidad de preaviso, la prestación del servicio y de la presente aplicación móvil y/o de cualquiera de los servicios, sin perjuicio de lo que se hubiera dispuesto al respecto en las correspondientes condiciones particulares.</p>
+            </div>
+            <div className={"div-btn"}>
+                <button onClick={()=>{navigate(-1)}}>Cerrar</button>
+            </div>
+
         </div>
 
     </Popup>
