@@ -1185,8 +1185,8 @@ export function Visualizador({id, extras,edit,marketa}) {
             return null
         }else{
             return <div key={"logo"} className="logo-company">
-                <img src="/icono.png" alt=""/>
-                <label className={"texto-logo"}>MOTOR'S</label>
+                <img src="/motors.png" alt=""/>
+
             </div>
         }
 

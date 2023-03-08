@@ -136,14 +136,11 @@
   img {
     width: 100px
   }
-  .texto-logo{
 
-  }
-  @media (max-width: 428px) {
-    img {
-      width: 50px
-    }
-
+  @media (max-width: 307px) {
+    align-items: flex-start ;
+    left: 10px;
+    right: auto;
   }
 
 
@@ -361,7 +358,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: end;
-    margin-top: 1.5em;
+    margin-top: 15px;
 
     button {
       margin-left: 0.5em;
@@ -378,7 +375,7 @@
     position: fixed;
     top: 50%;
     transform: translate(-50%, -50%);
-    right: 0;
+    right: -18px;
   }
   .visualizador_container-handle-buttons{
     z-index: 100;
