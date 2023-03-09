@@ -597,11 +597,11 @@ var Tridi = forwardRef(function (_ref, ref) {
     }, [_count, currentImageIndex, onFrameChange, onPrevFrame]);*/
 
     useEffect(() => {
-        console.log(currentImageIndex)
+        //console.log(currentImageIndex)
     }, [currentImageIndex]);
 
     var nextFrame = async function (slide) {
-        console.log("nextframe")
+        //console.log("nextframe")
         var newIndex = currentImageIndex + slide >= _count ? 0 : currentImageIndex + slide;
         // console.log('current image index ' + currentImageIndex);
 
@@ -809,7 +809,7 @@ var Tridi = forwardRef(function (_ref, ref) {
     }, [onRecordStart, onRecordStop, recordingSessionId]);
 
     var resetPosition = useCallback(function () {
-        console.log('resetPosition');
+        //console.log('resetPosition');
         AnimatedValues.current.x.setValue(0);
         AnimatedValues.current.y.setValue(0);
         AnimatedValues.current.zoom.setValue(zoom);
@@ -1052,7 +1052,7 @@ var Tridi = forwardRef(function (_ref, ref) {
     }
 
     let loadImageAfter = after(_count - 5, () => {
-        console.log("loaded");
+        //console.log("loaded");
         onLoadChange(true, 100);
         /*
         if (!viewerSize) {

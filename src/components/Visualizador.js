@@ -79,6 +79,7 @@ export function Visualizador({id, extras,edit,marketa}) {
     const [visibleHotspots,setVisibleHotspots] = useState(true);
     const [fetchImgSinfondo, setFetchImgSinFondo] = useState(false);
 
+
     const [showHintText, setShowHintText] = useState(true);
 
     const extraContainerRef=useRef();
@@ -197,6 +198,16 @@ export function Visualizador({id, extras,edit,marketa}) {
         };
     }, [updateExtras,id]);
 
+
+    useEffect(() => {
+        if(loadStatus === true){
+            console.log("load status change");
+            if (tridiContainerRef.current!==undefined) {
+                tridiRef.current.imageIndex(20);
+            }
+
+        }
+    }, [loadStatus]);
 
 
     const prepararPins = (fetchedPinsObject) => {
