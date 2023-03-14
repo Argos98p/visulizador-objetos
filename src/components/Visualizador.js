@@ -216,8 +216,8 @@ export function Visualizador({id, extras,edit,marketa}) {
         {
             let newPins=[]
             for (let hotspot of fetchedPinsObject ){
-                hotspot.frameId=hotspot.idFrame -1;
-                hotspot.id=hotspot.idHotspot-1;
+                hotspot.frameId=hotspot.idFrame ;
+                hotspot.id=hotspot.idHotspot;
                 hotspot.recordingSessionId=null;
                 newPins.push(hotspot);
             }
@@ -753,7 +753,7 @@ export function Visualizador({id, extras,edit,marketa}) {
                                    renderHint={myHint}
 
                                   key={index}
-                                  count={imagesSrcOneScene.length}
+                                  count={imagesSrcOneScene.length-1}
                                   className={`${ addHotspotMode===true ? " addHotspotCursor " : ""} ${show && loadStatus === true ? "visible" : "oculto"}`}
                                   images={imagesSrcOneScene}
                                   autoplaySpeed={70}
@@ -1268,7 +1268,7 @@ export function Visualizador({id, extras,edit,marketa}) {
                     : null
             }
             <div className={"bottomBar"}>
-                <div className={"buttonBottomBar"}><img  src={"/motors_logo.png"}  alt={"d"}/></div>
+                <div className={"buttonBottomBar"}><a href={"https://3dspaceinc.com/motors"} target="_blank"><img  src={"/motors_logo.png"}  alt={"d"}/></a></div>
                 <div className={"buttonBottomBar"}><Link className={"textBottomBar"} to={"terminos"}>términos</Link></div>
                 <div className={"separator"}>|</div>
                 <div className={"buttonBottomBar"}><Link className={"textBottomBar"} to={"ayuda"}>ayuda</Link></div>
