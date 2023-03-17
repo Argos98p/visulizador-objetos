@@ -1272,7 +1272,7 @@ export function Visualizador({id, extras,edit,marketa}) {
                         <div className={"buttonBottomBar"}>
                             {
                                 isMobile
-                                ?<a href={"https://www.3dspaceinc.com/contenido"} target="_blank">
+                                ?<a href={"https://www.3dspaceinc.com/contenido/motors/3DSpaceINC-Gu%C3%ADa-de-carros-2022-3.pdf"} target="_blank">
                                         <img  src={"/motors_logo.png"}  alt={"d"}/>
                                     </a>
                                     :  <a href={"https://3dspaceinc.com/motors"} target="_blank"><img  src={"/motors_logo.png"}  alt={"d"}/></a>
