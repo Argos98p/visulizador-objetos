@@ -6,8 +6,9 @@ const CuentaVerificada = () => {
                 <img className={"img2"} src={"/logo.png"} alt="logo "/>
             </div>
             <div>
-                <h1 className={"text-center2"}>Cuenta Verificada</h1>
-                <p className={"text-center2"}><a href={"https://marketa3d.com"}>Sigue el link para continuar en Marketa3D</a> </p>
+                <h1 className={"text-center2"}>Tu Cuenta está verificada</h1>
+                <p>Aquí te mostramos como funciona la aplicación 3D MOTOR's para que puedas sacarle el máximo provecho</p>
+                <p className={"text-center2"}><a href={"https://www.youtube.com/watch?v=ouxXyP89rcc"}>Ir al link de Youtube</a> </p>
             </div>
         </>
     );
