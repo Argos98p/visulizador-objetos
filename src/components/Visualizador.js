@@ -16,7 +16,7 @@ import {
     getHotspots,
     getPDF,
     img360CompleteUrl,
-    infoObjectUrl,
+    infoObjectUrl, logoEmpresaImage,
     postAddHotspot, viewResource,
 } from "../Api/apiRoutes";
 import ButtonEscena from "./botones/buttonEscena";
@@ -95,6 +95,11 @@ export function Visualizador({id, extras,edit,marketa}) {
     let token = localStorage.getItem("token");
     let idUsuario = localStorage.getItem("idUser");
     let webview=localStorage.getItem("webview") ;
+
+
+
+    const [logoEmpresa, setLogoEmpresa] = useState("/motors.png");
+
     if(webview==null){
         webview=false;
     }
@@ -111,6 +116,10 @@ export function Visualizador({id, extras,edit,marketa}) {
                     }
                     if(numberOfFrames[2]===2){
                         setInterior360(true)
+                    }
+                    if(response.data.idusuario!=null){
+
+                        setLogoEmpresa(logoEmpresaImage(response.data.idusuario))
                     }
                     setFrames(numberOfFrames)
                 }
@@ -1196,7 +1205,7 @@ export function Visualizador({id, extras,edit,marketa}) {
             return null
         }else{
             return <div key={"logo"} className="logo-company">
-                <img src="/motors.png" alt=""/>
+                <img src={logoEmpresa} alt=""/>
 
             </div>
         }
@@ -1278,8 +1287,6 @@ export function Visualizador({id, extras,edit,marketa}) {
                                     :  <a href={"https://3dspaceinc.com/motors"} target="_blank"><img  src={"/motors_logo.png"}  alt={"d"}/></a>
 
                             }
-
-
 
                         </div>
 

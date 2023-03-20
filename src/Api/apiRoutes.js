@@ -10,6 +10,10 @@ function infoObjectUrl(id){
     return `${BaseURL}/objects/getobject?idobjeto=${id}`;
 }
 
+function logoEmpresaImage(idUser){
+    return `https://3dmotores.com/images/getuserimage?idusuario=${idUser}`
+}
+
 /*
 function numberFramesInScene(id,escena){
     return `${BaseURL}:8084/api/objects/getnumberframes?idobjeto=${id}&nombre_escena=${escena}`
@@ -72,4 +76,4 @@ function verificaToken(idUser){
 function loginUser(){
     return `${BaseURL}:8086/api/auth/signin`
 }
-export {verificaToken,viewResource,loginUser,addLinkYoutube,img360CompleteUrl,getPDF,addExtraPdf,deleteHotspot,uploadExtraUrl,infoObjectUrl,getHotspots,completeImageUrl,getExtrasUrl,ImagePath,postAddHotspot,deleteExtra}
+export {logoEmpresaImage,verificaToken,viewResource,loginUser,addLinkYoutube,img360CompleteUrl,getPDF,addExtraPdf,deleteHotspot,uploadExtraUrl,infoObjectUrl,getHotspots,completeImageUrl,getExtrasUrl,ImagePath,postAddHotspot,deleteExtra}
