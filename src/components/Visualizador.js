@@ -117,7 +117,7 @@ export function Visualizador({id, extras,edit,marketa}) {
                     if(numberOfFrames[2]===2){
                         setInterior360(true)
                     }
-                    if(response.data.idusuario!=null){
+                    if(response.data.idusuario!=null ){
 
                         setLogoEmpresa(logoEmpresaImage(response.data.idusuario))
                     }
@@ -1205,7 +1205,11 @@ export function Visualizador({id, extras,edit,marketa}) {
             return null
         }else{
             return <div key={"logo"} className="logo-company">
-                <img src={logoEmpresa} alt=""/>
+
+                <img src={logoEmpresa} onError={({ currentTarget }) => {
+                    currentTarget.onerror = null; // prevents looping
+                    currentTarget.src="/motors.png";
+                }} />
 
             </div>
         }
