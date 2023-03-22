@@ -1177,9 +1177,8 @@ export function Visualizador({id, extras,edit,marketa}) {
     const botonInformacion = useMemo(() => {
         return  <Link to={'info'}>
         <div className={`button-escena_navigation-item`}  onClick={()=>{}} >
-            <button  data-for='soclose6' data-tip="Girar" className={`button-escena-btn `} >
-                <FaInfo></FaInfo>
-
+            <button  data-for='soclose6' data-tip="info" className={`button-escena-btn `} >
+                <img style={{width:"20px"}} src="/iconos/information.png" alt=""/>
             </button>
             <ReactTooltip  id="soclose6" place="right" effect="solid"  disable={isMobile}> Información
             </ReactTooltip>

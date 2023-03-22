@@ -11,7 +11,7 @@ const ButtonEscena = memo(({escenaInfo, onClick , activo,disabled})=>{
 
     switch (escenaInfo[1].nombre) {
         case "puertas_cerradas":
-            icono=<img src="/iconos/carro-cerrado.png" alt=""/>
+            icono=<img id={"foo"} src="/iconos/carro-cerrado.png" alt=""/>
             break;
         case "puertas_abiertas":
             icono = <img src="/iconos/carro-abierto.png" alt=""/>
@@ -25,7 +25,7 @@ const ButtonEscena = memo(({escenaInfo, onClick , activo,disabled})=>{
             break;
     }
     return <div className="button-escena_navigation-item">
-    <button   data-for='soclose2' data-tip={escenaInfo[1].nombre}  className={`button-escena-btn ${activo ? "activo":""}`} onClick={()=>onClick(escenaInfo)}>
+    <button    className={`button-escena-btn ${activo ? "activo":""}`} onClick={()=>onClick(escenaInfo)}>
       {icono}
     </button>
     <ReactTooltip id="soclose2" place="right" disable={isMobile} effect="solid" getContent={(dataTip=>dataTip)}>

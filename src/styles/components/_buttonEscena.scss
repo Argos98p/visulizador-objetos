@@ -3,15 +3,16 @@
   width: 45px;
   height: 40px;
   margin: 0.2em 0;
-  img{
-    width: 100%;
-  }
+
   .activo{
-    background-color: $buttons-backgroud-hover !important;
+   background-color: $buttons-backgroud-hover !important;
   }
   .button-escena-btn{
-    width: 100%;
-    height: 100%;
+    img{
+      width: 30px;
+    }
+    width: 45px;
+    height: 40px;
     cursor: pointer;
     border:none;
     color: $secondary-color;
@@ -19,6 +20,9 @@
     background-color: $buttons-backgroud;
     font-size: 22px;
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     svg{
       margin-left: auto;
