@@ -8,7 +8,6 @@ import {Navigate, Route, Routes, useNavigate, useParams, useSearchParams} from "
 import ProtectedRoute from "./components/ProtectedRoute";
 import {uploadExtraUrl, verificaToken} from "./Api/apiRoutes";
 import Home from "./components/Home";
-import CuentaVerificada from "./components/cuentaVerificada/CuentaVerificada";
 
 
 function App() {
@@ -63,7 +62,7 @@ function App() {
     return (
             <Routes>
 
-                <Route path={"/cuentaverificada"} element={<CuentaVerificada/>} />
+                
                 <Route index element={<Home/>} />
                 {/*en la siguiente linea va false*/}
                 <Route path="/visualizador/view/:id/*" element={<Controller editMode={false} marketa={false}/> } />
