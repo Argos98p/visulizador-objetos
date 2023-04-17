@@ -979,7 +979,6 @@ export function Visualizador({id, extras,edit,marketa}) {
                     currentTarget.onerror = null; // prevents looping
                     currentTarget.src="/logo3dobjeto.png";
                 }} />
-
             </div>
         }
 
@@ -1060,10 +1059,7 @@ export function Visualizador({id, extras,edit,marketa}) {
                                     :  <a href={"https://3dspaceinc.com/motors"} target="_blank"><img  src={"/motors_logo.png"}  alt={"d"}/></a>
 
                             }
-
                         </div>
-
-
                 <div className={"buttonBottomBar"}><Link className={"textBottomBar"} to={"terminos"}>términos</Link></div>
                 <div className={"separator"}>|</div>
                 <div className={"buttonBottomBar"}><Link className={"textBottomBar"} to={"ayuda"}>ayuda</Link></div>
