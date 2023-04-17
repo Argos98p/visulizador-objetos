@@ -6,7 +6,7 @@ const ProtectedRoute = ({ children }) => {
     if (localStorage.getItem("token") ) {
         return children;
     }else{
-        return <Navigate to={`/visualizador/view/${id}`} replace />;
+        return <Navigate to={`/visualizadorobjeto/view/${id}`} replace />;
     }
 };
 

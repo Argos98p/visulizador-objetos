@@ -86,7 +86,7 @@ export function Visualizador({id, extras,edit,marketa}) {
     let idUsuario = localStorage.getItem("idUser");
     let webview=localStorage.getItem("webview") ;
 
-    const [logoEmpresa, setLogoEmpresa] = useState("/motors.png");
+    const [logoEmpresa, setLogoEmpresa] = useState("/logo3dobjeto.png");
 
     if(webview==null){
         webview=false;
@@ -977,7 +977,7 @@ export function Visualizador({id, extras,edit,marketa}) {
 
                 <img src={logoEmpresa} onError={({ currentTarget }) => {
                     currentTarget.onerror = null; // prevents looping
-                    currentTarget.src="/motors.png";
+                    currentTarget.src="/logo3dobjeto.png";
                 }} />
 
             </div>
@@ -1055,7 +1055,7 @@ export function Visualizador({id, extras,edit,marketa}) {
                             {
                                 isMobile
                                 ?<a href={"https://www.3dspaceinc.com/contenido/motors/3DSpaceINC-Gu%C3%ADa-de-carros-2022-3.pdf"} target="_blank">
-                                        <img  src={"/motors_logo.png"}  alt={"d"}/>
+                                        <img  src={"/logo3dobjeto.png"}  alt={"d"}/>
                                     </a>
                                     :  <a href={"https://3dspaceinc.com/motors"} target="_blank"><img  src={"/motors_logo.png"}  alt={"d"}/></a>
 
