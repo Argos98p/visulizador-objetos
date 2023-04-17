@@ -998,7 +998,6 @@ export function Visualizador({id, extras,edit,marketa}) {
         Object.keys(hotspotsMap).forEach(key => {
             let hotspotsImagen = structuredClone(hotspotsMap[key])
             hotspotsEliminar=hotspotsEliminar.concat(hotspotsImagen.filter(hotspot => hotspot.idExtra === extraId))
-
         });
         let nombresHotspots = [...new Set(hotspotsEliminar.map(x=> x.nombreHotspot))];
         if(nombresHotspots.length>0){
@@ -1057,7 +1056,6 @@ export function Visualizador({id, extras,edit,marketa}) {
                                         <img  src={"/logo3dobjeto.png"}  alt={"d"}/>
                                     </a>
                                     :  <a href={"https://3dspaceinc.com/motors"} target="_blank"><img  src={"/motors_logo.png"}  alt={"d"}/></a>
-
                             }
                         </div>
                 <div className={"buttonBottomBar"}><Link className={"textBottomBar"} to={"terminos"}>términos</Link></div>
