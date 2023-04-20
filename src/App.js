@@ -15,7 +15,7 @@ function App() {
 
     const VisualizadorRedirect = () => {
         const { id } = useParams();
-        return <Navigate to={`/visualizador/view/${id}`} />
+        return <Navigate to={`/visualizadorobjeto/view/${id}`} />
     }
 
     const SaveToken = () =>{
@@ -34,8 +34,8 @@ function App() {
             localStorage.setItem('webview',false);
         }
         if(!tk){
-            navigation(`/visualizador/view/${id}`);
-            return <Navigate to={`/visualizador/view/${id}`} />
+            navigation(`/visualizadorobjeto/view/${id}`);
+            return <Navigate to={`/visualizadorobjeto/view/${id}`} />
         }
         fetch(verificaToken(idUser), {
             method: "POST",
@@ -46,11 +46,11 @@ function App() {
             if(r.status === 200){
                 localStorage.setItem('token', tk);
                 localStorage.setItem("idUser",idUser)
-                navigation(`/visualizador/edit/${id}`);
-                return <Navigate to={`/visualizador/edit/${id}`} />
+                navigation(`/visualizadorobjeto/edit/${id}`);
+                return <Navigate to={`/visualizadorobjeto/edit/${id}`} />
             }else if(r.status === 401){
-                navigation(`/visualizador/view/${id}`);
-                return <Navigate to={`/visualizador/view/${id}`} />
+                navigation(`/visualizadorobjeto/view/${id}`);
+                return <Navigate to={`/visualizadorobjeto/view/${id}`} />
             }else{
                 console.log(r.status)
             }
