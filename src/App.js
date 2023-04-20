@@ -11,23 +11,21 @@ import Home from "./components/Home";
 
 
 function App() {
-
+    const { id } = useParams();
 
     const VisualizadorRedirect = () => {
-        const { id } = useParams();
+
         return <Navigate to={`/visualizadorobjeto/view/${id}`} />
     }
 
     const SaveToken = () =>{
         const { id,webview } = useParams();
-
-
         const navigation = useNavigate()
         const [searchParams, setSearchParams] = useSearchParams();
         let tk = searchParams.get("token");
         let idUser = searchParams.get("idUser");
 
-        console.log(tk,idUser)
+
         if(webview){
             localStorage.setItem('webview',true);
         }else{
@@ -61,8 +59,6 @@ function App() {
 
     return (
             <Routes>
-
-                
                 <Route index element={<Home/>} />
                 {/*en la siguiente linea va false*/}
                 <Route path="/visualizadorobjeto/view/:id/*" element={<Controller editMode={false} marketa={false}/> } />

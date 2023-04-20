@@ -5,6 +5,7 @@ import axios from "axios";
 import NoEncontrado from "./publicidad/paginaNoEncontrado";
 import {infoObjectUrl, getExtrasUrl} from "../Api/apiRoutes";
 import LottieServerError from "../Animations/lottieServerError";
+import {VisualizadorObjeto} from "./VisualizadorObjeto";
 
 
 function Controller({editMode,marketa}) {
@@ -58,11 +59,16 @@ function Controller({editMode,marketa}) {
                 noEscenas ? <h3>No hay escenas</h3>: null
             }
             { (myObjeto !=="NOT_FOUND" && myObjeto !== null )?
+                (myObjeto["tipo"]==="carro") ?
                 <Visualizador data={myObjeto}
                               edit={editMode}
                               marketa={marketa}
                               tipo="vehiculo"
-                              id={id} extras={extras}></Visualizador>
+                              id={id} extras={extras}></Visualizador>:<VisualizadorObjeto data={myObjeto}
+                                                                                    edit={editMode}
+                                                                                    marketa={marketa}
+                                                                                    tipo="objeto"
+                                                                                    id={id} extras={extras}></VisualizadorObjeto>
                 : null}
 
         </>
